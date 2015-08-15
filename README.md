@@ -26,7 +26,7 @@ The original code comes from @ivomarel's [InfinityScroll](https://github.com/ivo
 
 Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells. 
 
-Note: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) 5.1 rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`.
+**Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) 5.1 rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a litter easier.
 
 Note: If you need scroll infinitely, you can simply delete codes about `itemTypeStart`, `itemTypeEnd` in my scripts.
 
@@ -36,20 +36,20 @@ These steps may be confusing, so you can just open the demo scene and copy & pas
 
 You can also remove EasyObjPool and use your pool instead.
 
-1. Prepare cell prefabs in `Resources` folder
+1. Prepare cell prefabs
     - The cell needs `Layout Element` attached and preferred width/height
     - You should add a script receiving message `void ScrollCellIndex (int idx) `
 ![ScrollCell](Images/ScrollCell.png)
 2. Prepare EasyObjectPool with different cell prefabs
 ![EasyObjectPool](Images/EasyObjectPool.png)
-3. Attach `LoopVerticalScrollRect` and `Mask` to the Scroll gameObject
+3. Attach `LoopVerticalScrollRect` and `Mask` to the ScrollRect gameObject. I highly suggests you trying modify these when playing.
 	- Clear Cells: remove existing cells and keep uninitialized
 	- Refill Cells: initialize and fill up cells
 	- Init in Start: call Refill cells automatically when Start
 	- Prefab Pool: the EasyObjPool gameObject
 	- Prefab Pool Name: the corresponding pool in step 2
 	- Total Count: How many cells are available (index: 0 ~ TotalCount-1)
-	- Cache Extend Pixels: How many cells should be prepared before start or after end? If it is too small, it may bounce back when dragging. I highly suggests you modify it and simply try.
+	- Cache Extend Pixels: How many cells should be prepared before start or after end? If it is too small, it may bounce back when dragging. 
 ![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
-4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject.
+4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot.
 ![Content](Images/Content.png)
