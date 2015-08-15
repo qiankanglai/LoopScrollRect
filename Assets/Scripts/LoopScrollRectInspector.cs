@@ -1,0 +1,30 @@
+﻿#if UNITY_EDITOR
+using UnityEngine;
+using System.Collections;
+using UnityEditor;
+
+[CustomEditor(typeof(LoopScrollRect), true)]
+public class LoopScrollRectInspector : Editor
+{
+	public override void OnInspectorGUI ()
+	{
+		LoopScrollRect scroll = (LoopScrollRect)target;
+        scroll.initInStart = EditorGUILayout.Toggle("Init in Start", scroll.initInStart);
+		scroll.prefabPool = (MarchingBytes.EasyObjectPool)EditorGUILayout.ObjectField("Prefab Pool", scroll.prefabPool, typeof(MarchingBytes.EasyObjectPool), true);
+		scroll.prefabPoolName = EditorGUILayout.TextField("Prefab Pool Name", scroll.prefabPoolName);
+        scroll.totalCount = EditorGUILayout.IntField("Total Count", scroll.totalCount);
+        scroll.cacheExtendPixels = Mathf.Max(1, EditorGUILayout.IntField("Cache Extend Pixels", scroll.cacheExtendPixels));
+        EditorGUILayout.BeginHorizontal();
+        if(GUILayout.Button("Clear Cells"))
+        {
+            scroll.ClearCells();
+        }
+        if(GUILayout.Button("Refill Cells"))
+        {
+            scroll.RefillCells();
+        }
+        EditorGUILayout.EndHorizontal();
+		base.OnInspectorGUI ();
+	}
+}
+#endif
