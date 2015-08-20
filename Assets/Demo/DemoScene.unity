@@ -371,7 +371,7 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell2
   totalCount: 30
-  cacheExtendPixels: 200
+  cacheExtendCount: 5
   initInStart: 1
   m_Content: {fileID: 289570324}
   m_Horizontal: 1
@@ -642,7 +642,7 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell1
   totalCount: 50
-  cacheExtendPixels: 100
+  cacheExtendCount: 5
   initInStart: 1
   m_Content: {fileID: 1193905515}
   m_Horizontal: 0
@@ -942,7 +942,7 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell3
   totalCount: 54
-  cacheExtendPixels: 200
+  cacheExtendCount: 5
   initInStart: 1
   m_Content: {fileID: 1483812047}
   m_Horizontal: 0

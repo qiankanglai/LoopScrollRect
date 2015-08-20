@@ -19,7 +19,7 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 	[HideInInspector]
 	public string prefabPoolName;
 	[HideInInspector]
-    public int totalCount, cacheExtendPixels = 5;
+    public int totalCount, cacheExtendCount = 3;
     [HideInInspector]
     public bool initInStart = true;
 
@@ -63,8 +63,8 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         }
     }
 
-    private float m_ContentConstraintCount = 0;
-    protected float contentConstraintCount
+    private int m_ContentConstraintCount = 0;
+    protected int contentConstraintCount
     {
         get
         {
@@ -353,6 +353,76 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         return nextItem;
     }
 
+    private bool NeedItemAtEnd(float viewRectEnd)
+    {
+        if (itemTypeEnd >= totalCount)
+            return false;
+        if (content.childCount == 0)
+            return true;
+        int idx = Math.Max(0, content.childCount - 1 - contentConstraintCount * (cacheExtendCount - 1));
+        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
+
+        childToCheck.GetWorldCorners(fourCornersArray);
+        float childEnd = GetDimension(fourCornersArray[3]);
+
+        if (childEnd * directionSign < viewRectEnd * directionSign)
+            return true;
+        else
+            return false;
+    }
+
+    private bool NoNeedItemAtEnd(float viewRectEnd)
+    {
+        if (content.childCount == 0)
+            return false;
+        int idx = content.childCount - 1 - contentConstraintCount * cacheExtendCount;
+        if (idx < 0)
+            return false;
+        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
+
+        childToCheck.GetWorldCorners(fourCornersArray);
+        float childEnd = GetDimension(fourCornersArray[3]);
+
+        if (childEnd * directionSign < viewRectEnd * directionSign)
+            return false;
+        else
+            return true;
+    }
+
+    private bool NeedItemAtStart(float viewRectStart)
+    {
+        if (itemTypeStart < contentConstraintCount)
+            return false;
+        if (content.childCount == 0)
+            return true;
+        int idx = Math.Min(content.childCount - 1, contentConstraintCount * (cacheExtendCount - 1));
+        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
+
+        childToCheck.GetWorldCorners(fourCornersArray);
+        float childStart = GetDimension(fourCornersArray[1]);
+
+        if (childStart * directionSign > viewRectStart * directionSign)
+            return true;
+        else
+            return false;
+    }
+    private bool NoNeedItemAtStart(float viewRectStart)
+    {
+        if (content.childCount == 0)
+            return false;
+        int idx = contentConstraintCount * cacheExtendCount;
+        if (idx >= content.childCount)
+            return false;
+        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
+
+        childToCheck.GetWorldCorners(fourCornersArray);
+        float childStart = GetDimension(fourCornersArray[1]);
+
+        if (childStart * directionSign > viewRectStart * directionSign)
+            return false;
+        else
+            return true;
+    }
     //==========LoopScrollRect==========
 
     protected override void OnEnable()
@@ -502,56 +572,40 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             UpdateBounds();
         }
     }
-
+    
     protected virtual void LateUpdate()
     {
         if (!m_Content)
             return;
 
         //==========LoopScrollRect==========
-        //TODO: check anchor
         if (Application.isPlaying && LoopScollInitialized)
         {
             viewRect.GetWorldCorners(fourCornersArray);
             float viewRectEnd = GetDimension(fourCornersArray[3]);
             float viewRectStart = GetDimension(fourCornersArray[1]);
 
-            content.GetWorldCorners(fourCornersArray);
-            float contentEnd = GetDimension(fourCornersArray[3]);
-            float contentStart = GetDimension(fourCornersArray[1]);
-            if (itemTypeEnd < totalCount && contentEnd * directionSign < (viewRectEnd + cacheExtendPixels * directionSign) * directionSign)
+            if (NeedItemAtEnd(viewRectEnd))
             {
                 NewItemAtEnd();
             }
-            else if (itemTypeStart > contentConstraintCount - 1 && contentStart * directionSign > (viewRectStart - cacheExtendPixels * directionSign) * directionSign)
+            else if (NeedItemAtStart(viewRectStart))
             {
                 NewItemAtStart();
             }
-            else if (!m_Dragging)
+            else
             {
-                if (content.childCount > 0)
+                if (NoNeedItemAtStart(viewRectStart))
                 {
-                    RectTransform child = content.GetChild(0) as RectTransform;
-                    child.GetWorldCorners(fourCornersArray);
-                    float childEnd = GetDimension(fourCornersArray[3]);
-                    if (childEnd * directionSign < (viewRectStart - cacheExtendPixels * 1.5f * directionSign) * directionSign)
-                    {
-                        Vector2 offset2 = GetVector(DeleteItemAtStart());
-                        content.localPosition -= new Vector3(offset2.x, offset2.y, 0);
+                    Vector2 offset2 = GetVector(DeleteItemAtStart());
+                    content.localPosition -= new Vector3(offset2.x, offset2.y, 0);
 
-                        m_PrevPosition -= offset2;
-                        m_ContentStartPosition -= offset2;
-                    }
+                    m_PrevPosition -= offset2;
+                    m_ContentStartPosition -= offset2;
                 }
-                if (content.childCount > 0)
+                if (NoNeedItemAtEnd(viewRectEnd))
                 {
-                    RectTransform child = content.GetChild(content.childCount - 1) as RectTransform;
-                    child.GetWorldCorners(fourCornersArray);
-                    float childStart = GetDimension(fourCornersArray[1]);
-                    if (childStart * directionSign > (viewRectEnd + cacheExtendPixels * 1.5f * directionSign) * directionSign)
-                    {
-                        DeleteItemAtEnd();
-                    }
+                    DeleteItemAtEnd();
                 }
             }
         }

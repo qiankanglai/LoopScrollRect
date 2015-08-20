@@ -13,7 +13,7 @@ public class LoopScrollRectInspector : Editor
 		scroll.prefabPool = (MarchingBytes.EasyObjectPool)EditorGUILayout.ObjectField("Prefab Pool", scroll.prefabPool, typeof(MarchingBytes.EasyObjectPool), true);
 		scroll.prefabPoolName = EditorGUILayout.TextField("Prefab Pool Name", scroll.prefabPoolName);
         scroll.totalCount = EditorGUILayout.IntField("Total Count", scroll.totalCount);
-        scroll.cacheExtendPixels = Mathf.Max(1, EditorGUILayout.IntField("Cache Extend Pixels", scroll.cacheExtendPixels));
+        scroll.cacheExtendCount = Mathf.Max(1, EditorGUILayout.IntField("Cache Extend Count", scroll.cacheExtendCount));
         EditorGUILayout.BeginHorizontal();
         if(GUILayout.Button("Clear Cells"))
         {
