@@ -49,7 +49,7 @@ You can also remove EasyObjPool and use your pool instead.
 	- Prefab Pool: the EasyObjPool gameObject
 	- Prefab Pool Name: the corresponding pool in step 2
 	- Total Count: How many cells are available (index: 0 ~ TotalCount-1)
-	- Cache Extend Pixels: How many cells should be prepared before start or after end? If it is too small, it may bounce back when dragging. 
+	- Cache Extend Count: How many additional cells should be prepared before start or after end? If it is too small, it may bounce back when dragging. 
 ![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
 4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot.
 ![Content](Images/Content.png)
