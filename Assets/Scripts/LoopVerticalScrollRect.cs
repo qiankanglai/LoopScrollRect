@@ -34,9 +34,5 @@ public class LoopVerticalScrollRect : LoopScrollRect
         {
             Debug.LogError("[LoopHorizontalScrollRect] unsupported GridLayoutGroup constraint");
         }
-        if (content.pivot.y != 1)
-        {
-            Debug.LogError("[LoopHorizontalScrollRect] Content pivot y should be one");
-        }
     }
 }

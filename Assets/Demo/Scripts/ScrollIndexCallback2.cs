@@ -14,7 +14,7 @@ public class ScrollIndexCallback2 : MonoBehaviour
         {
             text.text = name;
         }
-        element.preferredWidth = randomWidths[idx % 3];
+        element.preferredWidth = randomWidths[Mathf.Abs(idx) % 3];
         gameObject.name = name;
     }
 }

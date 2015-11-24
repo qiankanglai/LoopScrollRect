@@ -18,8 +18,10 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 	public MarchingBytes.EasyObjectPool prefabPool;
 	[HideInInspector]
 	public string prefabPoolName;
-	[HideInInspector]
-    public int totalCount, cacheExtendCount = 3;
+    [HideInInspector]
+    public int totalCount;  //useless in INFINITE mode
+    [HideInInspector]
+    public int cacheExtendCount = 3;
     [HideInInspector]
     public bool initInStart = true;
 
@@ -246,31 +248,71 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             }
         }
     }
-    public void RefillCells()
+    public void RefillCells(int startIdx = 0)
     {
         if (Application.isPlaying)
         {
             LoopScollInitialized = true;
 
+            StopMovement();
+            itemTypeStart = startIdx;
+            itemTypeEnd = startIdx;
+
+            float containerSize = 0;
+            for (int i = 0; i < content.childCount; i++)
+            {
+#if !INFINITE
+                if (itemTypeEnd >= totalCount)
+                {
+                    prefabPool.ReturnObjectToPool(content.GetChild(i).gameObject);
+                    i--;
+                }
+                else
+#endif
+                {
+                    content.GetChild(i).SendMessage("ScrollCellIndex", itemTypeEnd);
+                    containerSize += GetSize(content.GetChild(i) as RectTransform);
+                    itemTypeEnd++;
+                }
+            }
+
             viewRect.GetLocalCorners(fourCornersArray);
             float viewRectSize = GetDimension(fourCornersArray[2]) - GetDimension(fourCornersArray[0]);
-            
-            float containerSize = 0;
+
             //Filling up the scrollview with initial items
-            while (itemTypeEnd < totalCount && containerSize < viewRectSize)
+            while (
+#if !INFINITE
+                itemTypeEnd < totalCount && 
+#endif
+                containerSize < viewRectSize)
             {
                 containerSize += NewItemAtEnd();
             }
+
+            if (content.childCount > 0)
+            {
+                Canvas.ForceUpdateCanvases();
+                // make sure the first one is aligned left-top most                
+                Vector2 pos = content.anchoredPosition;
+                if (directionSign == -1)
+                    pos.y = 0;
+                else if (directionSign == 1)
+                    pos.x = 0;
+                content.anchoredPosition = pos;
+                UpdateBounds();
+            }
         }
     }
+
     private float NewItemAtStart()
     {
+#if !INFINITE
         if (itemTypeStart - contentConstraintCount < 0)
         {
             Debug.LogWarning("[LoopScrollRect] not enough condidates at start");
             return 0;
         }
-
+#endif
         RectTransform newItem = null;
         for (int i = 0; i < contentConstraintCount; i++)
         {
@@ -305,21 +347,24 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 
     private float NewItemAtEnd()
     {
+#if !INFINITE
         if (itemTypeEnd >= totalCount)
         {
             Debug.LogWarning("[LoopScrollRect] not enough condidates at end");
             return 0;
         }
-
+#endif
         RectTransform newItem = null;
         for (int i = 0; i < contentConstraintCount; i++)
         {
             newItem = InstantiateNextItem(itemTypeEnd);
             itemTypeEnd++;
+#if !INFINITE
             if (itemTypeEnd >= totalCount)
             {
                 break;
             }
+#endif
         }
 
         return GetSize(newItem);
@@ -348,15 +393,16 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         RectTransform nextItem = prefabPool.GetObjectFromPool(prefabPoolName).GetComponent<RectTransform>();
         nextItem.transform.SetParent(content, false);
         nextItem.gameObject.SetActive(true);
-        //nextItem.name = itemIdx.ToString();
         nextItem.SendMessage("ScrollCellIndex", itemIdx);
         return nextItem;
     }
 
     private bool NeedItemAtEnd(float viewRectEnd)
     {
+#if !INFINITE
         if (itemTypeEnd >= totalCount)
             return false;
+#endif
         if (content.childCount == 0)
             return true;
         int idx = Math.Max(0, content.childCount - 1 - contentConstraintCount * (cacheExtendCount - 1));
@@ -391,8 +437,10 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 
     private bool NeedItemAtStart(float viewRectStart)
     {
+#if !INFINITE
         if (itemTypeStart < contentConstraintCount)
             return false;
+#endif
         if (content.childCount == 0)
             return true;
         int idx = Math.Min(content.childCount - 1, contentConstraintCount * (cacheExtendCount - 1));
@@ -589,24 +637,31 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             {
                 NewItemAtEnd();
             }
-            else if (NeedItemAtStart(viewRectStart))
+            // Kanglai: check itemTypeStart so we don't delete items when at left-most
+            // This is tricky & expensive (while keeping more elements) but prevents bouncing back 
+            else if (
+#if !INFINITE
+                itemTypeStart > 0 && 
+#endif
+                NoNeedItemAtEnd(viewRectEnd))
+            {
+                DeleteItemAtEnd();
+            }
+            if (NeedItemAtStart(viewRectStart))
             {
                 NewItemAtStart();
             }
-            else
+            else if (
+#if !INFINITE
+                itemTypeEnd < totalCount - 1 && 
+#endif
+                NoNeedItemAtStart(viewRectStart))
             {
-                if (NoNeedItemAtStart(viewRectStart))
-                {
-                    Vector2 offset2 = GetVector(DeleteItemAtStart());
-                    content.localPosition -= new Vector3(offset2.x, offset2.y, 0);
+                Vector2 offset2 = GetVector(DeleteItemAtStart());
+                content.localPosition -= new Vector3(offset2.x, offset2.y, 0);
 
-                    m_PrevPosition -= offset2;
-                    m_ContentStartPosition -= offset2;
-                }
-                if (NoNeedItemAtEnd(viewRectEnd))
-                {
-                    DeleteItemAtEnd();
-                }
+                m_PrevPosition -= offset2;
+                m_ContentStartPosition -= offset2;
             }
         }
         //==========LoopScrollRect==========

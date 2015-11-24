@@ -28,7 +28,9 @@ Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/con
 
 **Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) 5.1 rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a litter easier.
 
-Note: If you need scroll infinitely, you can simply delete codes about `itemTypeStart`, `itemTypeEnd` in my scripts.
+Note: If you need scroll infinitely, you can simply delete codes about `itemTypeStart`, `itemTypeEnd` in my scripts. I've completed a simple infinite version, for which you can open by adding `INFINITE` into define symbols.
+
+![infinite](Images/infinite.png)
 
 ## Example: Loop Vertical Scroll Rect
 
