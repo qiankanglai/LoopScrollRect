@@ -35,47 +35,47 @@ public class LoopHorizontalScrollRect : LoopScrollRect
     protected override bool UpdateItems(Bounds viewBounds, Bounds contentBounds)
     {
         bool changed = false;
-        if (
-#if !INFINITE
-            (itemTypeEnd < totalCount) &&
-#endif
-            viewBounds.max.x > contentBounds.max.x)
+        if (viewBounds.max.x > contentBounds.max.x)
         {
             float size = NewItemAtEnd();
-            if(threshold < size)
+            if (size > 0)
             {
-                // Preventing new and delete repeatly...
-                threshold = size * 1.1f;
+                if (threshold < size)
+                {
+                    // Preventing new and delete repeatly...
+                    threshold = size * 1.1f;
+                }
+                changed = true;
             }
-            changed = true;
         }
         else if(viewBounds.max.x < contentBounds.max.x - threshold)
         {
-            DeleteItemAtEnd();
-            changed = true;
+            float size = DeleteItemAtEnd();
+            if (size > 0)
+            {
+                changed = true;
+            }
         }
         
-        if (
-#if !INFINITE
-            (itemTypeStart >= contentConstraintCount) &&
-#endif
-            viewBounds.min.x < contentBounds.min.x)
+        if (viewBounds.min.x < contentBounds.min.x)
         {
             float size = NewItemAtStart();
-            if (threshold < size)
+            if (size > 0)
             {
-                threshold = size * 1.1f;
+                if (threshold < size)
+                {
+                    threshold = size * 1.1f;
+                }
+                changed = true;
             }
-            changed = true;
         }
-        else if (
-#if !INFINITE
-                itemTypeEnd < totalCount - 1 &&
-#endif
-                viewBounds.min.x > contentBounds.min.x + threshold)
+        else if (viewBounds.min.x > contentBounds.min.x + threshold)
         {
-            DeleteItemAtStart();
-            changed = true;
+            float size = DeleteItemAtStart();
+            if (size > 0)
+            {
+                changed = true;
+            }
         }
         return changed;
     }

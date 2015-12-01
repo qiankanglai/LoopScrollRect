@@ -302,7 +302,6 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 #if !INFINITE
         if (itemTypeStart - contentConstraintCount < 0)
         {
-            Debug.LogWarning("[LoopScrollRect] not enough condidates at start");
             return 0;
         }
 #endif
@@ -325,7 +324,12 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 
     protected float DeleteItemAtStart()
     {
-        if (content.childCount > 0)
+        if (
+#if !INFINITE
+           itemTypeEnd >= totalCount - 1 ||
+#endif
+           content.childCount == 0
+           )
         {
             return 0;
         }
@@ -358,7 +362,6 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 #if !INFINITE
         if (itemTypeEnd >= totalCount)
         {
-            Debug.LogWarning("[LoopScrollRect] not enough condidates at end");
             return 0;
         }
 #endif
@@ -381,7 +384,12 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 
     protected float DeleteItemAtEnd()
     {
-        if (content.childCount > 0)
+        if (
+#if !INFINITE
+           itemTypeStart < contentConstraintCount ||
+#endif
+           content.childCount == 0
+           )
         {
             return 0;
         }
