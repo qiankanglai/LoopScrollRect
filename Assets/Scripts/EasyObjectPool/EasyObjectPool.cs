@@ -45,7 +45,7 @@ namespace MarchingBytes {
 			po.gameObject.SetActive(false);
 			availableObjStack.Push(po);
 			po.isPooled = true;
-            po.transform.SetParent(poolRoot);
+            po.transform.SetParent(poolRoot, false);
 		}
 		
 		private PoolObject NewObjectInstance() {

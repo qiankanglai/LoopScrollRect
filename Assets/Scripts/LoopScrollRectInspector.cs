@@ -14,6 +14,7 @@ public class LoopScrollRectInspector : Editor
 		scroll.prefabPoolName = EditorGUILayout.TextField("Prefab Pool Name", scroll.prefabPoolName);
         scroll.totalCount = EditorGUILayout.IntField("Total Count", scroll.totalCount);
         scroll.threshold = Mathf.Max(10, EditorGUILayout.FloatField("Threshold", scroll.threshold));
+        scroll.reverseDirection = EditorGUILayout.Toggle("Reverse Direction", scroll.reverseDirection);
         EditorGUILayout.BeginHorizontal();
         if(GUILayout.Button("Clear Cells"))
         {

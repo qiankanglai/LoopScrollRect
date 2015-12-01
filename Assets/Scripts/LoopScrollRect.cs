@@ -24,6 +24,8 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
     public bool initInStart = true;
     [HideInInspector]
     public float threshold = 100;
+    [HideInInspector]
+    public bool reverseDirection = false;
 
     protected int itemTypeStart = 0;
     protected int itemTypeEnd = 0;
@@ -243,6 +245,7 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             LoopScollInitialized = false;
             itemTypeStart = 0;
             itemTypeEnd = 0;
+            totalCount = 0;
             for (int i = content.childCount - 1; i >= 0; i--)
             {
                 prefabPool.ReturnObjectToPool(content.GetChild(i).gameObject);
@@ -256,8 +259,8 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             LoopScollInitialized = true;
 
             StopMovement();
-            itemTypeStart = startIdx;
-            itemTypeEnd = startIdx;
+            itemTypeStart = reverseDirection ? totalCount - startIdx : startIdx;
+            itemTypeEnd = itemTypeStart;
 
             Canvas.ForceUpdateCanvases();
 
@@ -313,12 +316,13 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             newItem.SetAsFirstSibling();
             size = Mathf.Max(GetSize(newItem), size);
         }
-
-        Vector2 offset = GetVector(size);
-        content.anchoredPosition += offset;
-        m_PrevPosition += offset;
-        m_ContentStartPosition += offset;
-
+        if (!reverseDirection)
+        {
+            Vector2 offset = GetVector(size);
+            content.anchoredPosition += offset;
+            m_PrevPosition += offset;
+            m_ContentStartPosition += offset;
+        }
         return size;
     }
 
@@ -349,11 +353,13 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             }
         }
 
-        Vector2 offset = GetVector(size);
-        content.anchoredPosition -= offset;
-        m_PrevPosition -= offset;
-        m_ContentStartPosition -= offset;
-
+        if (!reverseDirection)
+        {
+            Vector2 offset = GetVector(size);
+            content.anchoredPosition -= offset;
+            m_PrevPosition -= offset;
+            m_ContentStartPosition -= offset;
+        }
         return size;
     }
 
@@ -379,6 +385,13 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 #endif
         }
 
+        if (reverseDirection)
+        {
+            Vector2 offset = GetVector(size);
+            content.anchoredPosition -= offset;
+            m_PrevPosition -= offset;
+            m_ContentStartPosition -= offset;
+        }
         return size;
     }
 
@@ -407,6 +420,13 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             }
         }
 
+        if (reverseDirection)
+        {
+            Vector2 offset = GetVector(size);
+            content.anchoredPosition += offset;
+            m_PrevPosition += offset;
+            m_ContentStartPosition += offset;
+        }
         return size;
     }
 
