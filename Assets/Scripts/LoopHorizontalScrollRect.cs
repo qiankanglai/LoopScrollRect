@@ -7,18 +7,13 @@ public class LoopHorizontalScrollRect : LoopScrollRect
 {
 	protected override float GetSize (RectTransform item)
 	{
-        return item.GetComponent<LayoutElement>().preferredWidth + contentSpacing;
+        return LayoutUtility.GetPreferredWidth(item) + contentSpacing;
 	}
 
 	protected override float GetDimension (Vector2 vector)
 	{
 		return vector.x;
 	}
-
-    protected override float GetDimension(Vector3 vector)
-    {
-        return vector.x;
-    }
 
 	protected override Vector2 GetVector (float value)
 	{
@@ -36,4 +31,52 @@ public class LoopHorizontalScrollRect : LoopScrollRect
             Debug.LogError("[LoopHorizontalScrollRect] unsupported GridLayoutGroup constraint");
         }
 	}
+
+    protected override bool UpdateItems(Bounds viewBounds, Bounds contentBounds)
+    {
+        bool changed = false;
+        if (
+#if !INFINITE
+            (itemTypeEnd < totalCount) &&
+#endif
+            viewBounds.max.x > contentBounds.max.x)
+        {
+            float size = NewItemAtEnd();
+            if(threshold < size)
+            {
+                // Preventing new and delete repeatly...
+                threshold = size * 1.1f;
+            }
+            changed = true;
+        }
+        else if(viewBounds.max.x < contentBounds.max.x - threshold)
+        {
+            DeleteItemAtEnd();
+            changed = true;
+        }
+        
+        if (
+#if !INFINITE
+            (itemTypeStart >= contentConstraintCount) &&
+#endif
+            viewBounds.min.x < contentBounds.min.x)
+        {
+            float size = NewItemAtStart();
+            if (threshold < size)
+            {
+                threshold = size * 1.1f;
+            }
+            changed = true;
+        }
+        else if (
+#if !INFINITE
+                itemTypeEnd < totalCount - 1 &&
+#endif
+                viewBounds.min.x > contentBounds.min.x + threshold)
+        {
+            DeleteItemAtStart();
+            changed = true;
+        }
+        return changed;
+    }
 }

@@ -21,17 +21,15 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
     [HideInInspector]
     public int totalCount;  //useless in INFINITE mode
     [HideInInspector]
-    public int cacheExtendCount = 3;
-    [HideInInspector]
     public bool initInStart = true;
+    [HideInInspector]
+    public float threshold = 100;
 
-    private int itemTypeStart = 0;
-    private int itemTypeEnd = 0;
-
-    private Vector3[] fourCornersArray = new Vector3[4];
+    protected int itemTypeStart = 0;
+    protected int itemTypeEnd = 0;
+    
     protected abstract float GetSize(RectTransform item);
     protected abstract float GetDimension(Vector2 vector);
-    protected abstract float GetDimension(Vector3 vector);
     protected abstract Vector2 GetVector(float value);
     protected int directionSign = 0;
 
@@ -65,6 +63,7 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         }
     }
 
+    
     private int m_ContentConstraintCount = 0;
     protected int contentConstraintCount
     {
@@ -90,6 +89,8 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             return m_ContentConstraintCount;
         }
     }
+
+    protected virtual bool UpdateItems(Bounds viewBounds, Bounds contentBounds) { return false; }
     //==========LoopScrollRect==========
 
     public enum MovementType
@@ -212,7 +213,7 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         if (executing != CanvasUpdate.PostLayout)
             return;
 
-        UpdateBounds();
+        UpdateBounds(false);
         UpdateScrollbars(Vector2.zero);
         UpdatePrevData();
         m_HasRebuiltLayout = true;
@@ -258,11 +259,16 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             itemTypeStart = startIdx;
             itemTypeEnd = startIdx;
 
+            Canvas.ForceUpdateCanvases();
+
             float containerSize = 0;
+            viewRect.GetLocalCorners(m_Corners);
+            float viewRectSize = GetDimension(m_Corners[2]) - GetDimension(m_Corners[0]);
+
             for (int i = 0; i < content.childCount; i++)
             {
 #if !INFINITE
-                if (itemTypeEnd >= totalCount)
+                if (itemTypeEnd >= totalCount && containerSize < viewRectSize)
                 {
                     prefabPool.ReturnObjectToPool(content.GetChild(i).gameObject);
                     i--;
@@ -275,20 +281,7 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
                     itemTypeEnd++;
                 }
             }
-
-            viewRect.GetLocalCorners(fourCornersArray);
-            float viewRectSize = GetDimension(fourCornersArray[2]) - GetDimension(fourCornersArray[0]);
-
-            //Filling up the scrollview with initial items
-            while (
-#if !INFINITE
-                itemTypeEnd < totalCount && 
-#endif
-                containerSize < viewRectSize)
-            {
-                containerSize += NewItemAtEnd();
-            }
-
+           
             if (content.childCount > 0)
             {
                 Canvas.ForceUpdateCanvases();
@@ -304,7 +297,7 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         }
     }
 
-    private float NewItemAtStart()
+    protected float NewItemAtStart()
     {
 #if !INFINITE
         if (itemTypeStart - contentConstraintCount < 0)
@@ -313,39 +306,54 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             return 0;
         }
 #endif
-        RectTransform newItem = null;
+        float size = 0;
         for (int i = 0; i < contentConstraintCount; i++)
         {
             itemTypeStart--;
-            newItem = InstantiateNextItem(itemTypeStart);
+            RectTransform newItem = InstantiateNextItem(itemTypeStart);
             newItem.SetAsFirstSibling();
+            size = Mathf.Max(GetSize(newItem), size);
         }
 
-        float size = GetSize(newItem);
         Vector2 offset = GetVector(size);
-        content.localPosition += new Vector3(offset.x, offset.y, 0);
-        // adapte to UGUI
+        content.anchoredPosition += offset;
         m_PrevPosition += offset;
         m_ContentStartPosition += offset;
 
         return size;
     }
 
-    private float DeleteItemAtStart()
+    protected float DeleteItemAtStart()
     {
-        RectTransform oldItem = null;
+        if (content.childCount > 0)
+        {
+            return 0;
+        }
+
+        float size = 0;
         for (int i = 0; i < contentConstraintCount; i++)
         {
-            oldItem = content.GetChild(0) as RectTransform;
+            RectTransform oldItem = content.GetChild(0) as RectTransform;
+            size = Mathf.Max(GetSize(oldItem), size);
             prefabPool.ReturnObjectToPool(oldItem.gameObject);
 
             itemTypeStart++;
+
+            if (content.childCount == 0)
+            {
+                break;
+            }
         }
 
-        return GetSize(oldItem);
+        Vector2 offset = GetVector(size);
+        content.anchoredPosition -= offset;
+        m_PrevPosition -= offset;
+        m_ContentStartPosition -= offset;
+
+        return size;
     }
 
-    private float NewItemAtEnd()
+    protected float NewItemAtEnd()
     {
 #if !INFINITE
         if (itemTypeEnd >= totalCount)
@@ -354,10 +362,11 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
             return 0;
         }
 #endif
-        RectTransform newItem = null;
+        float size = 0;
         for (int i = 0; i < contentConstraintCount; i++)
         {
-            newItem = InstantiateNextItem(itemTypeEnd);
+            RectTransform newItem = InstantiateNextItem(itemTypeEnd);
+            size = Mathf.Max(GetSize(newItem), size);
             itemTypeEnd++;
 #if !INFINITE
             if (itemTypeEnd >= totalCount)
@@ -367,25 +376,30 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
 #endif
         }
 
-        return GetSize(newItem);
+        return size;
     }
 
-    private float DeleteItemAtEnd()
+    protected float DeleteItemAtEnd()
     {
-        RectTransform oldItem = null;
+        if (content.childCount > 0)
+        {
+            return 0;
+        }
+        float size = 0;
         for (int i = 0; i < contentConstraintCount; i++)
         {
-            oldItem = content.GetChild(content.childCount - 1) as RectTransform;
+            RectTransform oldItem = content.GetChild(content.childCount - 1) as RectTransform;
+            size = Mathf.Max(GetSize(oldItem), size);
             prefabPool.ReturnObjectToPool(oldItem.gameObject);
 
             itemTypeEnd--;
-            if (itemTypeEnd % contentConstraintCount == 0)
+            if (itemTypeEnd % contentConstraintCount == 0 || content.childCount == 0)
             {
                 break;  //just delete the whole row
             }
         }
 
-        return GetSize(oldItem);
+        return size;
     }
 
     private RectTransform InstantiateNextItem(int itemIdx)
@@ -395,81 +409,6 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         nextItem.gameObject.SetActive(true);
         nextItem.SendMessage("ScrollCellIndex", itemIdx);
         return nextItem;
-    }
-
-    private bool NeedItemAtEnd(float viewRectEnd)
-    {
-#if !INFINITE
-        if (itemTypeEnd >= totalCount)
-            return false;
-#endif
-        if (content.childCount == 0)
-            return true;
-        int idx = Math.Max(0, content.childCount - 1 - contentConstraintCount * (cacheExtendCount - 1));
-        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
-
-        childToCheck.GetWorldCorners(fourCornersArray);
-        float childEnd = GetDimension(fourCornersArray[3]);
-
-        if (childEnd * directionSign < viewRectEnd * directionSign)
-            return true;
-        else
-            return false;
-    }
-
-    private bool NoNeedItemAtEnd(float viewRectEnd)
-    {
-        if (content.childCount == 0)
-            return false;
-        int idx = content.childCount - 1 - contentConstraintCount * cacheExtendCount;
-        if (idx < 0)
-            return false;
-        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
-
-        childToCheck.GetWorldCorners(fourCornersArray);
-        float childEnd = GetDimension(fourCornersArray[3]);
-
-        if (childEnd * directionSign < viewRectEnd * directionSign)
-            return false;
-        else
-            return true;
-    }
-
-    private bool NeedItemAtStart(float viewRectStart)
-    {
-#if !INFINITE
-        if (itemTypeStart < contentConstraintCount)
-            return false;
-#endif
-        if (content.childCount == 0)
-            return true;
-        int idx = Math.Min(content.childCount - 1, contentConstraintCount * (cacheExtendCount - 1));
-        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
-
-        childToCheck.GetWorldCorners(fourCornersArray);
-        float childStart = GetDimension(fourCornersArray[1]);
-
-        if (childStart * directionSign > viewRectStart * directionSign)
-            return true;
-        else
-            return false;
-    }
-    private bool NoNeedItemAtStart(float viewRectStart)
-    {
-        if (content.childCount == 0)
-            return false;
-        int idx = contentConstraintCount * cacheExtendCount;
-        if (idx >= content.childCount)
-            return false;
-        RectTransform childToCheck = content.GetChild(idx) as RectTransform;
-
-        childToCheck.GetWorldCorners(fourCornersArray);
-        float childStart = GetDimension(fourCornersArray[1]);
-
-        if (childStart * directionSign > viewRectStart * directionSign)
-            return false;
-        else
-            return true;
     }
     //==========LoopScrollRect==========
 
@@ -625,46 +564,6 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
     {
         if (!m_Content)
             return;
-
-        //==========LoopScrollRect==========
-        if (Application.isPlaying && LoopScollInitialized)
-        {
-            viewRect.GetWorldCorners(fourCornersArray);
-            float viewRectEnd = GetDimension(fourCornersArray[3]);
-            float viewRectStart = GetDimension(fourCornersArray[1]);
-
-            if (NeedItemAtEnd(viewRectEnd))
-            {
-                NewItemAtEnd();
-            }
-            // Kanglai: check itemTypeStart so we don't delete items when at left-most
-            // This is tricky & expensive (while keeping more elements) but prevents bouncing back 
-            else if (
-#if !INFINITE
-                itemTypeStart > 0 && 
-#endif
-                NoNeedItemAtEnd(viewRectEnd))
-            {
-                DeleteItemAtEnd();
-            }
-            if (NeedItemAtStart(viewRectStart))
-            {
-                NewItemAtStart();
-            }
-            else if (
-#if !INFINITE
-                itemTypeEnd < totalCount - 1 && 
-#endif
-                NoNeedItemAtStart(viewRectStart))
-            {
-                Vector2 offset2 = GetVector(DeleteItemAtStart());
-                content.localPosition -= new Vector3(offset2.x, offset2.y, 0);
-
-                m_PrevPosition -= offset2;
-                m_ContentStartPosition -= offset2;
-            }
-        }
-        //==========LoopScrollRect==========
 
         EnsureLayoutHasRebuilt();
         UpdateBounds();
@@ -829,13 +728,22 @@ public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHand
         return (1 - (1 / ((Mathf.Abs(overStretching) * 0.55f / viewSize) + 1))) * viewSize * Mathf.Sign(overStretching);
     }
 
-    private void UpdateBounds()
+    private void UpdateBounds(bool updateItems = true)
     {
         m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);  
         m_ContentBounds = GetBounds();
 
         if (m_Content == null)
             return;
+
+        // ============LoopScrollRect============
+        // Don't do this in Rebuild
+        if (Application.isPlaying && updateItems && UpdateItems(m_ViewBounds, m_ContentBounds))
+        {
+            Canvas.ForceUpdateCanvases();
+            m_ContentBounds = GetBounds();
+        }
+        // ============LoopScrollRect============
 
         // Make sure content bounds are at least as large as view by adding padding if not.
         // One might think at first that if the content is smaller than the view, scrolling should be allowed.
