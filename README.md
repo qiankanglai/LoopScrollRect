@@ -1,5 +1,7 @@
 # Loop Scroll Rect
 
+## v1.01
+
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
 中文说明请看[这里](http://qiankanglai.me/misc/2015/08/15/LoopScrollRect/)。
@@ -14,21 +16,27 @@ Demo without mask. As you can see, the cells are only instantiated when needed a
 
 ![Demo2](Images/demo2.gif)
 
+Demo for reverse direction.
+
+![Demo3](Images/demo3.gif)
+
 ## Introduction
 
-The original code comes from @ivomarel's [InfinityScroll](https://github.com/ivomarel/InfinityScroll). I improved his code in several fields:
+The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivomarel/InfinityScroll). After serveral refactorisations, I almost rewrite all the codes:
 - Avoid using `sizeDelta` directly since it doesn't always mean size
 - Support GridLayout
-- Check Anchor and Pivot for convenience
-- **KEY** Avoid blocking when dragging back
+- Avoid blocking when dragging back
 - Take advantage of pool rather than instantiate/destroy every time
 - Improve some other details for performance
+- Supports reverse direction
 
 Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells. 
 
 **Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) 5.1 rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a litter easier.
 
-Note: If you need scroll infinitely, you can simply delete codes about `itemTypeStart`, `itemTypeEnd` in my scripts. I've completed a simple infinite version, for which you can open by adding `INFINITE` into define symbols.
+### Infinite Version
+
+If you need scroll infinitely, you can simply delete codes about `itemTypeStart`, `itemTypeEnd` in my scripts. I've completed a simple infinite version, for which you can open by adding `INFINITE` into define symbols.
 
 ![infinite](Images/infinite.png)
 
@@ -51,7 +59,10 @@ You can also remove EasyObjPool and use your pool instead.
 	- Prefab Pool: the EasyObjPool gameObject
 	- Prefab Pool Name: the corresponding pool in step 2
 	- Total Count: How many cells are available (index: 0 ~ TotalCount-1)
-	- Cache Extend Count: How many additional cells should be prepared before start or after end? If it is too small, it may bounce back when dragging. 
+	- Threshold: How many additional pixels of content should be prepared before start or after end?
+	- ReverseDirection: If you want scroll from bottom or right, you should toggle this
 ![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
-4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot.
+4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot. 
 ![Content](Images/Content.png)
+
+If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
