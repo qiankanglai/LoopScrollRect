@@ -36,9 +36,7 @@ Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/con
 
 ### Infinite Version
 
-If you need scroll infinitely, you can simply delete codes about `itemTypeStart`, `itemTypeEnd` in my scripts. I've completed a simple infinite version, for which you can open by adding `INFINITE` into define symbols.
-
-![infinite](Images/infinite.png)
+If you need scroll infinitely, you can simply set `totalCount` to negative.
 
 ## Example: Loop Vertical Scroll Rect
 
