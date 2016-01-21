@@ -1,6 +1,8 @@
 # Loop Scroll Rect
 
-## v1.01
+## v1.02 
+
+### compatible with Unity 5.2
 
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
@@ -32,11 +34,11 @@ The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivo
 
 Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells. 
 
-**Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) 5.1 rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a litter easier.
+**Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) source code, rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a little easier.
 
 ### Infinite Version
 
-If you need scroll infinitely, you can simply set `totalCount` to negative.
+If you need scroll infinitely, you can simply set `totalCount` to a negative number.
 
 ## Example: Loop Vertical Scroll Rect
 
@@ -64,3 +66,5 @@ You can also remove EasyObjPool and use your pool instead.
 ![Content](Images/Content.png)
 
 If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
+
+More details can be found in demo.
