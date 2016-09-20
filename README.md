@@ -1,12 +1,14 @@
 # Loop Scroll Rect
 
-## v1.02 
+## v1.02
 
-### compatible with Unity 5.2
+### compatible with Unity 5.2/5.3
 
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
 中文说明请看[这里](http://qiankanglai.me/2015/08/15/LoopScrollRect/)。
+
+License: [WTFPL](http://sam.zoy.org/wtfpl/) Are You Serious? Yes.
 
 ## Demo
 
@@ -32,7 +34,7 @@ The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivo
 - Improve some other details for performance
 - Supports reverse direction
 
-Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells. 
+Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells.
 
 **Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) source code, rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a little easier.
 
@@ -62,7 +64,7 @@ You can also remove EasyObjPool and use your pool instead.
 	- Threshold: How many additional pixels of content should be prepared before start or after end?
 	- ReverseDirection: If you want scroll from bottom or right, you should toggle this
 ![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
-4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot. 
+4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot.
 ![Content](Images/Content.png)
 
 If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
