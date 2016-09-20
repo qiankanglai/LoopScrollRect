@@ -35,6 +35,7 @@ namespace UnityEngine.UI
         protected int directionSign = 0;
 
         private float m_ContentSpacing = -1;
+        protected GridLayoutGroup m_GridLayout = null;
         protected float contentSpacing
         {
             get
@@ -51,13 +52,10 @@ namespace UnityEngine.UI
                     {
                         m_ContentSpacing = layout1.spacing;
                     }
-                    else
+                    m_GridLayout = content.GetComponent<GridLayoutGroup>();
+                    if (m_GridLayout != null)
                     {
-                        GridLayoutGroup layout2 = content.GetComponent<GridLayoutGroup>();
-                        if (layout2 != null)
-                        {
-                            m_ContentSpacing = GetDimension(layout2.spacing);
-                        }
+                        m_ContentSpacing = GetDimension(m_GridLayout.spacing);
                     }
                 }
                 return m_ContentSpacing;

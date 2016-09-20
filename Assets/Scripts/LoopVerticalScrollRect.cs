@@ -8,7 +8,16 @@ namespace UnityEngine.UI
     {
         protected override float GetSize(RectTransform item)
         {
-            return LayoutUtility.GetPreferredHeight(item) + contentSpacing;
+            float size = contentSpacing;
+            if (m_GridLayout != null)
+            {
+                size += m_GridLayout.cellSize.y;
+            }
+            else
+            {
+                size += LayoutUtility.GetPreferredHeight(item);
+            }
+            return size;
         }
 
         protected override float GetDimension(Vector2 vector)
