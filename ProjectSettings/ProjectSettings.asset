@@ -3,11 +3,10 @@
 --- !u!129 &1
 PlayerSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 7
+  serializedVersion: 8
   AndroidProfiler: 0
   defaultScreenOrientation: 4
   targetDevice: 2
-  targetResolution: 0
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
@@ -15,6 +14,7 @@ PlayerSettings:
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_ShowUnitySplashScreen: 1
+  m_VirtualRealitySplashScreen: {fileID: 0}
   defaultScreenWidth: 1024
   defaultScreenHeight: 768
   defaultScreenWidthWeb: 960
@@ -56,16 +56,22 @@ PlayerSettings:
   xboxEnableKinectAutoTracking: 0
   xboxEnableFitness: 0
   visibleInBackground: 0
+  allowFullscreenSwitch: 1
   macFullscreenMode: 2
   d3d9FullscreenMode: 1
   d3d11FullscreenMode: 1
   xboxSpeechDB: 0
   xboxEnableHeadOrientation: 0
   xboxEnableGuest: 0
+  xboxEnablePIXSampling: 0
+  xboxEnableEnableRenderThreadRunsJobs: 0
   n3dsDisableStereoscopicView: 0
   n3dsEnableSharedListOpt: 1
   n3dsEnableVSync: 0
+  uiUse16BitDepthBuffer: 0
+  ignoreAlphaClear: 0
   xboxOneResolution: 0
+  xboxOneMonoLoggingLevel: 0
   ps3SplashScreen: {fileID: 0}
   videoMemoryForVertexBuffers: 0
   psp2PowerMode: 0
@@ -113,6 +119,8 @@ PlayerSettings:
     m_Bits: 238
   iPhoneSdkVersion: 988
   iPhoneTargetOSVersion: 22
+  tvOSSdkVersion: 0
+  tvOSTargetOSVersion: 900
   uIPrerenderedIcon: 0
   uIRequiresPersistentWiFi: 0
   uIRequiresFullScreen: 1
@@ -129,6 +137,10 @@ PlayerSettings:
   iPadHighResPortraitSplashScreen: {fileID: 0}
   iPadLandscapeSplashScreen: {fileID: 0}
   iPadHighResLandscapeSplashScreen: {fileID: 0}
+  appleTVSplashScreen: {fileID: 0}
+  tvOSSmallIconLayers: []
+  tvOSLargeIconLayers: []
+  tvOSTopShelfImageLayers: []
   iOSLaunchScreenType: 0
   iOSLaunchScreenPortrait: {fileID: 0}
   iOSLaunchScreenLandscape: {fileID: 0}
@@ -188,6 +200,7 @@ PlayerSettings:
   wiiUSystemHeapSize: 128
   wiiUTVStartupScreen: {fileID: 0}
   wiiUGamePadStartupScreen: {fileID: 0}
+  wiiUDrcBufferDisabled: 0
   wiiUProfilerLibPath: 
   actionOnDotNetUnhandledException: 1
   enableInternalProfiler: 0
@@ -247,6 +260,7 @@ PlayerSettings:
   ps4NPtitleDatPath: 
   ps4RemotePlayKeyAssignment: -1
   ps4RemotePlayKeyMappingDir: 
+  ps4PlayTogetherPlayerCount: 0
   ps4EnterButtonAssignment: 1
   ps4ApplicationParam1: 0
   ps4ApplicationParam2: 0
@@ -255,6 +269,7 @@ PlayerSettings:
   ps4DownloadDataSize: 0
   ps4GarlicHeapSize: 2048
   ps4Passcode: frAQBc8Wsa1xVPfvJcrgRYwTiizs2trQ
+  ps4UseDebugIl2cppLibs: 0
   ps4pnSessions: 1
   ps4pnPresence: 1
   ps4pnFriends: 1
@@ -262,13 +277,18 @@ PlayerSettings:
   playerPrefsSupport: 0
   ps4ReprojectionSupport: 0
   ps4UseAudio3dBackend: 0
+  ps4SocialScreenEnabled: 0
   ps4Audio3dVirtualSpeakerCount: 14
   ps4attribCpuUsage: 0
-  ps4SocialScreenEnabled: 0
+  ps4PatchPkgPath: 
+  ps4PatchLatestPkgPath: 
+  ps4PatchChangeinfoPath: 
   ps4attribUserManagement: 0
   ps4attribMoveSupport: 0
   ps4attrib3DSupport: 0
   ps4attribShareSupport: 0
+  ps4attribExclusiveVR: 0
+  ps4disableAutoHideSplash: 0
   ps4IncludedModules: []
   monoEnv: 
   psp2Splashimage: {fileID: 0}
@@ -317,15 +337,12 @@ PlayerSettings:
   psp2UseLibLocation: 0
   psp2InfoBarOnStartup: 0
   psp2InfoBarColor: 0
+  psp2UseDebugIl2cppLibs: 0
   psmSplashimage: {fileID: 0}
   spritePackerPolicy: 
   scriptingDefineSymbols:
     1: INFINITE
   metroPackageName: LoopScroll
-  metroPackageLogo: 
-  metroPackageLogo140: 
-  metroPackageLogo180: 
-  metroPackageLogo240: 
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
@@ -333,44 +350,7 @@ PlayerSettings:
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: LoopScroll
-  metroStoreTileLogo80: 
-  metroStoreTileLogo: 
-  metroStoreTileLogo140: 
-  metroStoreTileLogo180: 
-  metroStoreTileWideLogo80: 
-  metroStoreTileWideLogo: 
-  metroStoreTileWideLogo140: 
-  metroStoreTileWideLogo180: 
-  metroStoreTileSmallLogo80: 
-  metroStoreTileSmallLogo: 
-  metroStoreTileSmallLogo140: 
-  metroStoreTileSmallLogo180: 
-  metroStoreSmallTile80: 
-  metroStoreSmallTile: 
-  metroStoreSmallTile140: 
-  metroStoreSmallTile180: 
-  metroStoreLargeTile80: 
-  metroStoreLargeTile: 
-  metroStoreLargeTile140: 
-  metroStoreLargeTile180: 
-  metroStoreSplashScreenImage: 
-  metroStoreSplashScreenImage140: 
-  metroStoreSplashScreenImage180: 
-  metroPhoneAppIcon: 
-  metroPhoneAppIcon140: 
-  metroPhoneAppIcon240: 
-  metroPhoneSmallTile: 
-  metroPhoneSmallTile140: 
-  metroPhoneSmallTile240: 
-  metroPhoneMediumTile: 
-  metroPhoneMediumTile140: 
-  metroPhoneMediumTile240: 
-  metroPhoneWideTile: 
-  metroPhoneWideTile140: 
-  metroPhoneWideTile240: 
-  metroPhoneSplashScreenImage: 
-  metroPhoneSplashScreenImage140: 
-  metroPhoneSplashScreenImage240: 
+  wsaImages: {}
   metroTileShortName: 
   metroCommandLineArgsFile: 
   metroTileShowName: 0
@@ -484,7 +464,6 @@ PlayerSettings:
   WebGL::emscriptenArgs: 
   WebGL::template: APPLICATION:Default
   additionalIl2CppArgs::additionalIl2CppArgs: 
-  firstStreamedSceneWithResources: 0
   cloudProjectId: 
   projectName: 
   organizationId: 
