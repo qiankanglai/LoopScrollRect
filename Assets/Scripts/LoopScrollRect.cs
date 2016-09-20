@@ -389,7 +389,9 @@ namespace UnityEngine.UI
                 return 0;
             }
             float size = 0;
-            for (int i = 0; i < contentConstraintCount; i++)
+            // issue 4: fill lines to end first
+            int count = contentConstraintCount - (content.childCount % contentConstraintCount);
+            for (int i = 0; i < count; i++)
             {
                 RectTransform newItem = InstantiateNextItem(itemTypeEnd);
                 size = Mathf.Max(GetSize(newItem), size);
