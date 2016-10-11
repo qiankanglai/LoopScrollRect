@@ -292,8 +292,8 @@ namespace UnityEngine.UI
                 itemTypeStart = reverseDirection ? totalCount - startIdx : startIdx;
                 itemTypeEnd = itemTypeStart;
 
-                Canvas.ForceUpdateCanvases();
-                
+                // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
+
                 // recycle items if we can
                 for (int i = 0; i < content.childCount; i++)
                 {
