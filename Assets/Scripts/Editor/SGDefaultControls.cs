@@ -20,11 +20,11 @@ namespace UnityEngine.UI
         private const float kWidth = 160f;
         private const float kThickHeight = 30f;
         private const float kThinHeight = 20f;
-        private static Vector2 s_ThickElementSize = new Vector2(kWidth, kThickHeight);
+        //private static Vector2 s_ThickElementSize = new Vector2(kWidth, kThickHeight);
         //private static Vector2 s_ThinElementSize = new Vector2(kWidth, kThinHeight);
         //private static Vector2 s_ImageElementSize = new Vector2(100f, 100f);
-        private static Color s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
-        private static Color s_PanelColor = new Color(1f, 1f, 1f, 0.392f);
+        //private static Color s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
+        //private static Color s_PanelColor = new Color(1f, 1f, 1f, 0.392f);
         private static Color s_TextColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f);
 
         // Helper methods at top

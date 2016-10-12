@@ -815,23 +815,39 @@ namespace UnityEngine.UI
                 SetNormalizedPosition(value, 1);
             }
         }
-
-        // TODO
-        private void SetHorizontalNormalizedPosition(float value) { /*SetNormalizedPosition(value, 0);*/ }
-        private void SetVerticalNormalizedPosition(float value) { /*SetNormalizedPosition(value, 1);*/ }
+        
+        private void SetHorizontalNormalizedPosition(float value) { SetNormalizedPosition(value, 0); }
+        private void SetVerticalNormalizedPosition(float value) { SetNormalizedPosition(value, 1); }
 
         private void SetNormalizedPosition(float value, int axis)
         {
+            if (totalCount <= 0 || itemTypeEnd <= itemTypeStart)
+                return;
+
             EnsureLayoutHasRebuilt();
             UpdateBounds();
-            // How much the content is larger than the view.
-            float hiddenLength = m_ContentBounds.size[axis] - m_ViewBounds.size[axis];
-            // Where the position of the lower left corner of the content bounds should be, in the space of the view.
-            float contentBoundsMinPosition = m_ViewBounds.min[axis] - value * hiddenLength;
-            // The new content localPosition, in the space of the view.
-            float newLocalPosition = m_Content.localPosition[axis] + contentBoundsMinPosition - m_ContentBounds.min[axis];
 
+            //==========LoopScrollRect==========
             Vector3 localPosition = m_Content.localPosition;
+            float newLocalPosition = localPosition[axis];
+            if (axis == 0)
+            {
+                float elementSize = m_ContentBounds.size.x / (itemTypeEnd - itemTypeStart);
+                float totalSize = elementSize * totalCount;
+                float offset = m_ContentBounds.min.x - elementSize * itemTypeStart;
+                
+                newLocalPosition += m_ViewBounds.min.x - value * (totalSize - m_ViewBounds.size[axis]) - offset;
+            }
+            else if(axis == 1)
+            {
+                float elementSize = m_ContentBounds.size.y / (itemTypeEnd - itemTypeStart);
+                float totalSize = elementSize * totalCount;
+                float offset = m_ContentBounds.max.y + elementSize * itemTypeStart;
+                
+                newLocalPosition -= offset - value * (totalSize - m_ViewBounds.size.y) - m_ViewBounds.max.y;
+            }
+            //==========LoopScrollRect==========
+
             if (Mathf.Abs(localPosition[axis] - newLocalPosition) > 0.01f)
             {
                 localPosition[axis] = newLocalPosition;
