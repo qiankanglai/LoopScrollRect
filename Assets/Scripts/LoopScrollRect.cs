@@ -5,9 +5,7 @@ using System;
 
 namespace UnityEngine.UI
 {
-    [AddComponentMenu("UI/Loop Scroll Rect", 16)]
-    [SelectionBase]
-    [ExecuteInEditMode]
+    [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
     public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup

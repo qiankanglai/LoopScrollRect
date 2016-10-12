@@ -4,6 +4,8 @@ using System.Collections;
 
 namespace UnityEngine.UI
 {
+    [AddComponentMenu("UI/Loop Vertical Scroll Rect", 51)]
+    [DisallowMultipleComponent]
     public class LoopVerticalScrollRect : LoopScrollRect
     {
         protected override float GetSize(RectTransform item)
