@@ -53,7 +53,7 @@ You can also remove EasyObjPool and use your pool instead.
     - The cell needs `Layout Element` attached and preferred width/height
     - You should add a script receiving message `void ScrollCellIndex (int idx) `
 ![ScrollCell](Images/ScrollCell.png)
-2. Right click in Hierarchy and click **UI/Loop Horizontal/Vertical Scroll Rect**. I highly suggests you trying modify these when playing.
+2. Right click in Hierarchy and click **UI/Loop Horizontal Scroll Rect** or **UI/Loop Vertical Scroll Rect**. It is the same for these two in the Component Menu.
 	- Init in Start: call Refill cells automatically when Start
 	- Prefab Pool: the EasyObjPool gameObject
 	- Prefab Pool Name: the corresponding pool in step 1
@@ -63,6 +63,8 @@ You can also remove EasyObjPool and use your pool instead.
   - Clear Cells: remove existing cells and keep uninitialized
   - Refill Cells: initialize and fill up cells
 ![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
+
+I highly suggests you trying these parameters by hand.
 
 If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
 
