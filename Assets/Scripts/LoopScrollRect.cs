@@ -723,9 +723,13 @@ namespace UnityEngine.UI
         private void UpdateScrollbars(Vector2 offset)
         {
             if (m_HorizontalScrollbar)
-            {
-                if (m_ContentBounds.size.x > 0)
-                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x);
+			{
+				//==========LoopScrollRect==========
+                if (m_ContentBounds.size.x > 0 && totalCount > 0)
+				{
+					m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x * (itemTypeEnd - itemTypeStart) / totalCount);
+				}
+				//==========LoopScrollRect==========
                 else
                     m_HorizontalScrollbar.size = 1;
 
@@ -733,9 +737,13 @@ namespace UnityEngine.UI
             }
 
             if (m_VerticalScrollbar)
-            {
-                if (m_ContentBounds.size.y > 0)
-                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y);
+			{
+				//==========LoopScrollRect==========
+				if (m_ContentBounds.size.y > 0 && totalCount > 0)
+				{
+					m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y * (itemTypeEnd - itemTypeStart) / totalCount);
+				}
+				//==========LoopScrollRect==========
                 else
                     m_VerticalScrollbar.size = 1;
 
@@ -760,10 +768,22 @@ namespace UnityEngine.UI
         {
             get
             {
-                UpdateBounds();
-                if (m_ContentBounds.size.x <= m_ViewBounds.size.x)
-                    return (m_ViewBounds.min.x > m_ContentBounds.min.x) ? 1 : 0;
-                return (m_ViewBounds.min.x - m_ContentBounds.min.x) / (m_ContentBounds.size.x - m_ViewBounds.size.x);
+				UpdateBounds();
+				//==========LoopScrollRect==========
+				if(totalCount > 0 && itemTypeEnd > itemTypeStart)
+                {
+                    //TODO: space
+                    float elementSize = m_ContentBounds.size.x / (itemTypeEnd - itemTypeStart);
+                    float totalSize = elementSize * totalCount;
+                    float offset = m_ContentBounds.min.x - elementSize * itemTypeStart;
+
+                    if (totalSize <= m_ViewBounds.size.x)
+                        return (m_ViewBounds.min.x > offset) ? 1 : 0;
+                    return (m_ViewBounds.min.x - offset) / (totalSize - m_ViewBounds.size.x);
+				}
+				else
+					return 0.5f;
+				//==========LoopScrollRect==========
             }
             set
             {
@@ -775,11 +795,22 @@ namespace UnityEngine.UI
         {
             get
             {
-                UpdateBounds();
-                if (m_ContentBounds.size.y <= m_ViewBounds.size.y)
-                    return (m_ViewBounds.min.y > m_ContentBounds.min.y) ? 1 : 0;
-                ;
-                return (m_ViewBounds.min.y - m_ContentBounds.min.y) / (m_ContentBounds.size.y - m_ViewBounds.size.y);
+				UpdateBounds();
+				//==========LoopScrollRect==========
+				if(totalCount > 0 && itemTypeEnd > itemTypeStart)
+				{
+                    //TODO: space
+                    float elementSize = m_ContentBounds.size.y / (itemTypeEnd - itemTypeStart);
+                    float totalSize = elementSize * totalCount;
+                    float offset = m_ContentBounds.max.y + elementSize * itemTypeStart;
+
+                    if (totalSize <= m_ViewBounds.size.y)
+                        return (offset > m_ViewBounds.max.y) ? 1 : 0;
+                    return (offset - m_ViewBounds.max.y) / (totalSize - m_ViewBounds.size.y);
+				}
+				else
+					return 0.5f;
+				//==========LoopScrollRect==========
             }
             set
             {
@@ -787,8 +818,9 @@ namespace UnityEngine.UI
             }
         }
 
-        private void SetHorizontalNormalizedPosition(float value) { SetNormalizedPosition(value, 0); }
-        private void SetVerticalNormalizedPosition(float value) { SetNormalizedPosition(value, 1); }
+        // TODO
+        private void SetHorizontalNormalizedPosition(float value) { /*SetNormalizedPosition(value, 0);*/ }
+        private void SetVerticalNormalizedPosition(float value) { /*SetNormalizedPosition(value, 1);*/ }
 
         private void SetNormalizedPosition(float value, int axis)
         {
