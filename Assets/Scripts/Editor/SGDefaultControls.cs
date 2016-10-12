@@ -128,7 +128,7 @@ namespace UnityEngine.UI
             RectTransform contentRT = content.GetComponent<RectTransform>();
             contentRT.anchorMin = new Vector2(0.5f, 1);
             contentRT.anchorMax = new Vector2(0.5f, 1);
-            contentRT.sizeDelta = new Vector2(0, 200);
+            contentRT.sizeDelta = new Vector2(200, 0);
             contentRT.pivot = new Vector2(0.5f, 1);
 
             // Setup UI components.

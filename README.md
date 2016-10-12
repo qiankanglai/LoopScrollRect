@@ -1,6 +1,6 @@
 # Loop Scroll Rect
 
-## v1.02
+## v1.03
 
 ### compatible with Unity 5.2/5.3
 
@@ -12,15 +12,15 @@ License: [WTFPL](http://sam.zoy.org/wtfpl/) Are You Serious? Yes.
 
 ## Demo
 
-Demo for Loop Scroll Rect. Each cell knows its index, and it is able to modify its content/size/color easily.
+Demo for Loop Scroll Rect. Each cell knows its own index, and it is able to modify its content/size/color easily.
 
-![Demo](Images/demo1.gif)
+Also ScrollBar is supported now! It supports both vertical & horizontal directions, back and forth.
 
-Demo without mask. As you can see, the cells are only instantiated when needed and recycled.
+![Demo1](Images/demo1.gif)
 
 ![Demo2](Images/demo2.gif)
 
-Demo for reverse direction.
+Demo without mask. As you can see, the cells are only instantiated when needed and recycled.
 
 ![Demo3](Images/demo3.gif)
 
@@ -33,6 +33,7 @@ The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivo
 - Take advantage of pool rather than instantiate/destroy every time
 - Improve some other details for performance
 - Supports reverse direction
+- **Supports ScrollBar** (this doesn't work in Infinite mode, and may behavior strange for cells with different size)
 
 Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells.
 
@@ -52,21 +53,17 @@ You can also remove EasyObjPool and use your pool instead.
     - The cell needs `Layout Element` attached and preferred width/height
     - You should add a script receiving message `void ScrollCellIndex (int idx) `
 ![ScrollCell](Images/ScrollCell.png)
-2. Prepare EasyObjectPool with different cell prefabs
-![EasyObjectPool](Images/EasyObjectPool.png)
-3. Attach `LoopVerticalScrollRect` and `Mask` to the ScrollRect gameObject. I highly suggests you trying modify these when playing.
-	- Clear Cells: remove existing cells and keep uninitialized
-	- Refill Cells: initialize and fill up cells
+2. Right click in Hierarchy and click **UI/Loop Horizontal/Vertical Scroll Rect**. I highly suggests you trying modify these when playing.
 	- Init in Start: call Refill cells automatically when Start
 	- Prefab Pool: the EasyObjPool gameObject
-	- Prefab Pool Name: the corresponding pool in step 2
+	- Prefab Pool Name: the corresponding pool in step 1
 	- Total Count: How many cells are available (index: 0 ~ TotalCount-1)
 	- Threshold: How many additional pixels of content should be prepared before start or after end?
 	- ReverseDirection: If you want scroll from bottom or right, you should toggle this
+  - Clear Cells: remove existing cells and keep uninitialized
+  - Refill Cells: initialize and fill up cells
 ![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
-4. Attach `Content Size Filter` and `Vertical Layout Group` to the Content gameObject. Pay attention to the pivot.
-![Content](Images/Content.png)
 
 If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
 
-More details can be found in demo.
+More details can be found in the demo scene.
