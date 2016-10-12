@@ -49,23 +49,24 @@ These steps may be confusing, so you can just open the demo scene and copy & pas
 
 You can also remove EasyObjPool and use your pool instead.
 
-1. Prepare cell prefabs
+- Prepare cell prefabs
     - The cell needs `Layout Element` attached and preferred width/height
     - You should add a script receiving message `void ScrollCellIndex (int idx) `
-![ScrollCell](Images/ScrollCell.png)
-2. Right click in Hierarchy and click **UI/Loop Horizontal Scroll Rect** or **UI/Loop Vertical Scroll Rect**. It is the same for these two in the Component Menu.
-	- Init in Start: call Refill cells automatically when Start
-	- Prefab Pool: the EasyObjPool gameObject
-	- Prefab Pool Name: the corresponding pool in step 1
-	- Total Count: How many cells are available (index: 0 ~ TotalCount-1)
-	- Threshold: How many additional pixels of content should be prepared before start or after end?
-	- ReverseDirection: If you want scroll from bottom or right, you should toggle this
-  - Clear Cells: remove existing cells and keep uninitialized
-  - Refill Cells: initialize and fill up cells
-![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
 
-I highly suggests you trying these parameters by hand.
+![ScrollCell](Images/ScrollCell.png)
+
+- Right click in Hierarchy and click **UI/Loop Horizontal Scroll Rect** or **UI/Loop Vertical Scroll Rect**. It is the same for these two in the Component Menu.
+    - Init in Start: call Refill cells automatically when Start
+    - Prefab Pool: the EasyObjPool gameObject
+    - Prefab Pool Name: the corresponding pool in step 1
+    - Total Count: How many cells are available (index: 0 ~ TotalCount-1)
+    - Threshold: How many additional pixels of content should be prepared before start or after end?
+    - ReverseDirection: If you want scroll from bottom or right, you should toggle this
+    - Clear Cells: remove existing cells and keep uninitialized
+    - Refill Cells: initialize and fill up cells
+
+![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
 
 If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
 
-More details can be found in the demo scene.
+I highly suggests you trying these parameters by hand. More details can be found in the demo scene.
