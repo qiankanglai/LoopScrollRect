@@ -11,18 +11,27 @@ namespace UnityEngine.UI
     public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup
     {
         //==========LoopScrollRect==========
+        public delegate string prefabNameDelegate(int idx);
+        public delegate int prefabCountDelegate(int idx);
         [HideInInspector]
         public MarchingBytes.EasyObjectPool prefabPool;
         [HideInInspector]
-        public string prefabPoolName;
+        public string prefabPoolName;   // TODO: improved pool
+        [HideInInspector]
+        public prefabNameDelegate prefabNameFunc = null;
+        [HideInInspector]
+        public prefabCountDelegate prefabCountFunc = null;
         [HideInInspector]
         public int totalCount;  //negative means INFINITE mode
         [HideInInspector]
-        public bool initInStart = true;
+        [NonSerialized]
+        public object[] objectsToFill = null;
         [HideInInspector]
         public float threshold = 100;
         [HideInInspector]
         public bool reverseDirection = false;
+        [HideInInspector]
+        public float rubberScale = 1;
 
         protected int itemTypeStart = 0;
         protected int itemTypeEnd = 0;
@@ -260,13 +269,24 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
-        protected override void Start()
+        private void SendMessageToNewObject(Transform go, int idx)
         {
-            base.Start();
-            if (initInStart)
+            go.SendMessage("ScrollCellIndex", idx);
+            if (objectsToFill != null)
             {
-                RefillCells();
+                object o = null;
+                if (idx >= 0 && idx < objectsToFill.Length)
+                {
+                    o = objectsToFill[idx];
+                }
+                go.SendMessage("ScrollCellContent", o, SendMessageOptions.DontRequireReceiver);
             }
+        }
+
+        private void ReturnObjectAndSendMessage(Transform go)
+        {
+            go.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
+            prefabPool.ReturnObjectToPool(go.gameObject);
         }
 
         public void ClearCells()
@@ -276,12 +296,36 @@ namespace UnityEngine.UI
                 itemTypeStart = 0;
                 itemTypeEnd = 0;
                 totalCount = 0;
+                objectsToFill = null;
                 for (int i = content.childCount - 1; i >= 0; i--)
                 {
-                    prefabPool.ReturnObjectToPool(content.GetChild(i).gameObject);
+                    ReturnObjectAndSendMessage(content.GetChild(i));
                 }
             }
         }
+
+        public void RefreshCells()
+        {
+            if (Application.isPlaying && this.isActiveAndEnabled)
+            {
+                itemTypeEnd = itemTypeStart;
+                // recycle items if we can
+                for (int i = 0; i < content.childCount; i++)
+                {
+                    if (itemTypeEnd < totalCount)
+                    {
+                        SendMessageToNewObject(content.GetChild(i), itemTypeEnd);
+                        itemTypeEnd++;
+                    }
+                    else
+                    {
+                        ReturnObjectAndSendMessage(content.GetChild(i));
+                        i--;
+                    }
+                }
+            }
+        }
+
         public void RefillCells(int startIdx = 0)
         {
             if (Application.isPlaying)
@@ -292,31 +336,39 @@ namespace UnityEngine.UI
 
                 // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
 
-                // recycle items if we can
-                for (int i = 0; i < content.childCount; i++)
+                if (prefabNameFunc != null/* && prefabCountFunc != null*/)
                 {
-                    if (totalCount >= 0 && itemTypeEnd >= totalCount)
+                    // since prefabs are not the same, we first return all
+                    for (int i = 0; i < content.childCount; i++)
                     {
-                        prefabPool.ReturnObjectToPool(content.GetChild(i).gameObject);
+                        ReturnObjectAndSendMessage(content.GetChild(i));
                         i--;
                     }
-                    else
+                }
+                else
+                {
+                    // recycle items if we can
+                    for (int i = 0; i < content.childCount; i++)
                     {
-                        content.GetChild(i).SendMessage("ScrollCellIndex", itemTypeEnd);
-                        itemTypeEnd++;
+                        if (totalCount >= 0 && itemTypeEnd >= totalCount)
+                        {
+                            ReturnObjectAndSendMessage(content.GetChild(i));
+                            i--;
+                        }
+                        else
+                        {
+                            SendMessageToNewObject(content.GetChild(i), itemTypeEnd);
+                            itemTypeEnd++;
+                        }
                     }
                 }
-                if (content.childCount > 0)
-                {
-                    Canvas.ForceUpdateCanvases();
-                    Vector2 pos = content.anchoredPosition;
-                    if (directionSign == -1)
-                        pos.y = 0;
-                    else if (directionSign == 1)
-                        pos.x = 0;
-                    content.anchoredPosition = pos;
-                    UpdateBounds();
-                }
+
+                Vector2 pos = content.anchoredPosition;
+                if (directionSign == -1)
+                    pos.y = 0;
+                else if (directionSign == 1)
+                    pos.x = 0;
+                content.anchoredPosition = pos;
             }
         }
 
@@ -357,7 +409,7 @@ namespace UnityEngine.UI
             {
                 RectTransform oldItem = content.GetChild(0) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                prefabPool.ReturnObjectToPool(oldItem.gameObject);
+                ReturnObjectAndSendMessage(oldItem);
 
                 itemTypeStart++;
 
@@ -420,8 +472,7 @@ namespace UnityEngine.UI
             {
                 RectTransform oldItem = content.GetChild(content.childCount - 1) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                oldItem.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
-                prefabPool.ReturnObjectToPool(oldItem.gameObject);
+                ReturnObjectAndSendMessage(oldItem);
 
                 itemTypeEnd--;
                 if (itemTypeEnd % contentConstraintCount == 0 || content.childCount == 0)
@@ -442,10 +493,15 @@ namespace UnityEngine.UI
 
         private RectTransform InstantiateNextItem(int itemIdx)
         {
-            RectTransform nextItem = prefabPool.GetObjectFromPool(prefabPoolName).GetComponent<RectTransform>();
+            string name = prefabPoolName;
+            if (prefabNameFunc != null)
+            {
+                name = prefabNameFunc(itemIdx);
+            }
+            RectTransform nextItem = prefabPool.GetObjectFromPool(name).GetComponent<RectTransform>();
             nextItem.transform.SetParent(content, false);
             nextItem.gameObject.SetActive(true);
-            nextItem.SendMessage("ScrollCellIndex", itemIdx);
+            SendMessageToNewObject(nextItem, itemIdx);
             return nextItem;
         }
         //==========LoopScrollRect==========
@@ -821,8 +877,10 @@ namespace UnityEngine.UI
 
         private void SetNormalizedPosition(float value, int axis)
         {
+            //==========LoopScrollRect==========
             if (totalCount <= 0 || itemTypeEnd <= itemTypeStart)
                 return;
+            //==========LoopScrollRect==========
 
             EnsureLayoutHasRebuilt();
             UpdateBounds();

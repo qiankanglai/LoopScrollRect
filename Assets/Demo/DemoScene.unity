@@ -557,9 +557,9 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell2
   totalCount: 30
-  initInStart: 1
   threshold: 100
   reverseDirection: 0
+  rubberScale: 1
   m_Content: {fileID: 289570324}
   m_Horizontal: 1
   m_Vertical: 0
@@ -919,6 +919,7 @@ GameObject:
   - 222: {fileID: 771261322}
   - 114: {fileID: 771261320}
   - 114: {fileID: 771261319}
+  - 114: {fileID: 771261321}
   m_Layer: 5
   m_Name: VerticalScroll_Reverse
   m_TagString: Untagged
@@ -960,9 +961,9 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell1
   totalCount: 50
-  initInStart: 1
   threshold: 100
   reverseDirection: 1
+  rubberScale: 1
   m_Content: {fileID: 575004231}
   m_Horizontal: 0
   m_Vertical: 1
@@ -992,6 +993,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -146154839, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &771261321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 771261317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!222 &771261322
@@ -1052,9 +1064,9 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell3
   totalCount: 30
-  initInStart: 1
   threshold: 100
   reverseDirection: 0
+  rubberScale: 1
   m_Content: {fileID: 517917757}
   m_Horizontal: 1
   m_Vertical: 0
@@ -1403,9 +1415,9 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell1
   totalCount: 50
-  initInStart: 1
   threshold: 100
   reverseDirection: 0
+  rubberScale: 1
   m_Content: {fileID: 1193905515}
   m_Horizontal: 0
   m_Vertical: 1
@@ -1848,9 +1860,9 @@ MonoBehaviour:
   prefabPool: {fileID: 1375269299}
   prefabPoolName: ScrollCell3
   totalCount: 54
-  initInStart: 1
   threshold: 100
   reverseDirection: 0
+  rubberScale: 1
   m_Content: {fileID: 1483812047}
   m_Horizontal: 0
   m_Vertical: 1
