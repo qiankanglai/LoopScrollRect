@@ -14,15 +14,15 @@ namespace UnityEngine.UI
         public delegate string prefabNameDelegate(int idx);
         public delegate int prefabCountDelegate(int idx);
         [HideInInspector]
-        public MarchingBytes.EasyObjectPool prefabPool;
-        [HideInInspector]
-        public string prefabPoolName;   // TODO: improved pool
+        public string prefabName;
         [HideInInspector]
         public prefabNameDelegate prefabNameFunc = null;
         [HideInInspector]
         public prefabCountDelegate prefabCountFunc = null;
         [HideInInspector]
         public int totalCount;  //negative means INFINITE mode
+        [HideInInspector]
+        public int poolSize = 5;
         [HideInInspector]
         [NonSerialized]
         public object[] objectsToFill = null;
@@ -286,7 +286,7 @@ namespace UnityEngine.UI
         private void ReturnObjectAndSendMessage(Transform go)
         {
             go.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
-            prefabPool.ReturnObjectToPool(go.gameObject);
+            ResourceManager.Instance.ReturnObjectToPool(go.gameObject);
         }
 
         public void ClearCells()
@@ -493,12 +493,17 @@ namespace UnityEngine.UI
 
         private RectTransform InstantiateNextItem(int itemIdx)
         {
-            string name = prefabPoolName;
+            string name = prefabName;
+            int count = poolSize;
             if (prefabNameFunc != null)
             {
                 name = prefabNameFunc(itemIdx);
             }
-            RectTransform nextItem = prefabPool.GetObjectFromPool(name).GetComponent<RectTransform>();
+            if (prefabCountFunc != null)
+            {
+                count = prefabCountFunc(itemIdx);
+            }
+            RectTransform nextItem = ResourceManager.Instance.GetObjectFromPool(name, true, count).GetComponent<RectTransform>();
             nextItem.transform.SetParent(content, false);
             nextItem.gameObject.SetActive(true);
             SendMessageToNewObject(nextItem, itemIdx);
@@ -678,10 +683,12 @@ namespace UnityEngine.UI
             position += offset;
             if (m_MovementType == MovementType.Elastic)
             {
+                //==========LoopScrollRect==========
                 if (offset.x != 0)
-                    position.x = position.x - RubberDelta(offset.x, m_ViewBounds.size.x);
+                    position.x = position.x - RubberDelta(offset.x, m_ViewBounds.size.x) * rubberScale;
                 if (offset.y != 0)
-                    position.y = position.y - RubberDelta(offset.y, m_ViewBounds.size.y);
+                    position.y = position.y - RubberDelta(offset.y, m_ViewBounds.size.y) * rubberScale;
+                //==========LoopScrollRect==========
             }
 
             SetContentAnchoredPosition(position);

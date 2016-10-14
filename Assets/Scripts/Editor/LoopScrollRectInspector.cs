@@ -11,11 +11,11 @@ public class LoopScrollRectInspector : Editor
         EditorGUILayout.Space();
 
         LoopScrollRect scroll = (LoopScrollRect)target;
-		scroll.prefabPool = (MarchingBytes.EasyObjectPool)EditorGUILayout.ObjectField("Prefab Pool", scroll.prefabPool, typeof(MarchingBytes.EasyObjectPool), true);
-		scroll.prefabPoolName = EditorGUILayout.TextField("Prefab Pool Name", scroll.prefabPoolName);
+		scroll.prefabName = EditorGUILayout.TextField("Prefab Name", scroll.prefabName);
         scroll.totalCount = EditorGUILayout.IntField("Total Count", scroll.totalCount);
         scroll.threshold = Mathf.Max(10, EditorGUILayout.FloatField("Threshold", scroll.threshold));
         scroll.reverseDirection = EditorGUILayout.Toggle("Reverse Direction", scroll.reverseDirection);
+        scroll.rubberScale = Mathf.Max(0.01f, EditorGUILayout.FloatField("Rubber Scale", scroll.rubberScale));
         EditorGUILayout.BeginHorizontal();
         if(GUILayout.Button("Clear"))
         {

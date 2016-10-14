@@ -554,7 +554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7b38d60c9f6a944831d24146f39793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabPool: {fileID: 1375269299}
+  prefabPool: {fileID: 0}
   prefabPoolName: ScrollCell2
   totalCount: 30
   threshold: 100
@@ -958,7 +958,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabPool: {fileID: 1375269299}
+  prefabPool: {fileID: 0}
   prefabPoolName: ScrollCell1
   totalCount: 50
   threshold: 100
@@ -1061,7 +1061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7b38d60c9f6a944831d24146f39793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabPool: {fileID: 1375269299}
+  prefabPool: {fileID: 0}
   prefabPoolName: ScrollCell3
   totalCount: 30
   threshold: 100
@@ -1412,7 +1412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabPool: {fileID: 1375269299}
+  prefabPool: {fileID: 0}
   prefabPoolName: ScrollCell1
   totalCount: 50
   threshold: 100
@@ -1455,59 +1455,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1320192875}
---- !u!1 &1375269298
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1375269300}
-  - 114: {fileID: 1375269299}
-  m_Layer: 0
-  m_Name: EasyObjectPool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1375269299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1375269298}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25ed55ef4750fc64a8d2879276865942, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolInfo:
-  - poolName: ScrollCell1
-    prefab: {fileID: 183744, guid: 22b5f8ed284b7904299d6ca6a21597ad, type: 2}
-    poolSize: 40
-    fixedSize: 0
-  - poolName: ScrollCell2
-    prefab: {fileID: 137000, guid: 58f2a669cd6976d4ca4c72cd7bfa298c, type: 2}
-    poolSize: 30
-    fixedSize: 0
-  - poolName: ScrollCell3
-    prefab: {fileID: 174784, guid: 56b618cf8c6e1584db503ad2cee1f27f, type: 2}
-    poolSize: 50
-    fixedSize: 0
---- !u!4 &1375269300
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1375269298}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
 --- !u!1 &1483812046
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,7 +1804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabPool: {fileID: 1375269299}
+  prefabPool: {fileID: 0}
   prefabPoolName: ScrollCell3
   totalCount: 54
   threshold: 100
