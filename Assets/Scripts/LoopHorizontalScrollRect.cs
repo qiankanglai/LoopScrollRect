@@ -3,6 +3,8 @@ using System.Collections;
 
 namespace UnityEngine.UI
 {
+    [AddComponentMenu("UI/Loop Horizontal Scroll Rect", 50)]
+    [DisallowMultipleComponent]
     public class LoopHorizontalScrollRect : LoopScrollRect
     {
         protected override float GetSize(RectTransform item)
