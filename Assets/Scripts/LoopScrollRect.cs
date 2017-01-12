@@ -13,24 +13,24 @@ namespace UnityEngine.UI
         //==========LoopScrollRect==========
         public delegate string prefabNameDelegate(int idx);
         public delegate int prefabCountDelegate(int idx);
-        [HideInInspector]
+        [Tooltip("Prefab Name in Resources")]
         public string prefabName;
         [HideInInspector]
         public prefabNameDelegate prefabNameFunc = null;
         [HideInInspector]
         public prefabCountDelegate prefabCountFunc = null;
-        [HideInInspector]
-        public int totalCount;  //negative means INFINITE mode
+        [Tooltip("Total count, negative means INFINITE mode")]
+        public int totalCount;
         [HideInInspector]
         public int poolSize = 5;
         [HideInInspector]
         [NonSerialized]
         public object[] objectsToFill = null;
-        [HideInInspector]
+        [Tooltip("Threshold for preloading")]
         public float threshold = 100;
-        [HideInInspector]
+        [Tooltip("Reverse direction for dragging")]
         public bool reverseDirection = false;
-        [HideInInspector]
+        [Tooltip("Rubber scale for outside")]
         public float rubberScale = 1;
 
         protected int itemTypeStart = 0;
