@@ -343,9 +343,9 @@ namespace UnityEngine.UI
 
 			float sizeToFill = 0, sizeFilled = 0;
 			if (directionSign == -1)
-				sizeToFill = m_ViewBounds.max.y - m_ViewBounds.min.y;
+				sizeToFill = viewRect.rect.size.y;
 			else
-				sizeToFill = m_ViewBounds.max.x - m_ViewBounds.min.x;
+				sizeToFill = viewRect.rect.size.x;
 			
 			while(sizeToFill > sizeFilled)
 			{
@@ -355,7 +355,9 @@ namespace UnityEngine.UI
 			}
 
 			Vector2 pos = m_Content.anchoredPosition;
-			float dist = reverseDirection ? (sizeToFill - sizeFilled) : (sizeFilled - sizeToFill);
+            float dist = Mathf.Max(0, sizeFilled - sizeToFill);
+            if (reverseDirection)
+                dist = -dist;
 			if (directionSign == -1)
 				pos.y = dist;
 			else if (directionSign == 1)
@@ -379,10 +381,11 @@ namespace UnityEngine.UI
 			}
 
 			float sizeToFill = 0, sizeFilled = 0;
+			// m_ViewBounds may be not ready when RefillCells on Start
 			if (directionSign == -1)
-				sizeToFill = m_ViewBounds.max.y - m_ViewBounds.min.y;
+				sizeToFill = viewRect.rect.size.y;
 			else
-				sizeToFill = m_ViewBounds.max.x - m_ViewBounds.min.x;
+				sizeToFill = viewRect.rect.size.x;
 			
 			while(sizeToFill > sizeFilled)
 			{
@@ -860,7 +863,7 @@ namespace UnityEngine.UI
 				//==========LoopScrollRect==========
 				if(totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
-                    //TODO: space
+					//TODO: consider contentSpacing
                     float elementSize = m_ContentBounds.size.x / (itemTypeEnd - itemTypeStart);
                     float totalSize = elementSize * totalCount;
                     float offset = m_ContentBounds.min.x - elementSize * itemTypeStart;
@@ -887,7 +890,7 @@ namespace UnityEngine.UI
 				//==========LoopScrollRect==========
 				if(totalCount > 0 && itemTypeEnd > itemTypeStart)
 				{
-                    //TODO: space
+					//TODO: consider contentSpacinge
                     float elementSize = m_ContentBounds.size.y / (itemTypeEnd - itemTypeStart);
                     float totalSize = elementSize * totalCount;
                     float offset = m_ContentBounds.max.y + elementSize * itemTypeStart;
