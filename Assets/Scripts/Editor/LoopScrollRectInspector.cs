@@ -16,14 +16,18 @@ public class LoopScrollRectInspector : Editor
         {
             scroll.ClearCells();
         }
-        if(GUILayout.Button("Refill"))
-        {
-            scroll.RefillCells();
-        }
         if (GUILayout.Button("Refresh"))
         {
             scroll.RefreshCells();
-        }
+		}
+		if(GUILayout.Button("Refill"))
+		{
+			scroll.RefillCells();
+		}
+		if(GUILayout.Button("RefillFromEnd"))
+		{
+			scroll.RefillCellsFromEnd();
+		}
         EditorGUILayout.EndHorizontal();
 	}
 }

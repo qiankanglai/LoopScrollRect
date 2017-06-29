@@ -326,50 +326,77 @@ namespace UnityEngine.UI
             }
         }
 
-        public void RefillCells(int startIdx = 0)
+		public void RefillCellsFromEnd(int offset = 0)
+		{
+			//TODO: unsupported for Infinity or Grid yet
+			if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1)
+				return;
+
+			StopMovement();
+			itemTypeEnd = reverseDirection ? offset : totalCount - offset;
+			itemTypeStart = itemTypeEnd;
+
+			for (int i = m_Content.childCount - 1; i >= 0; i--)
+			{
+				ReturnObjectAndSendMessage(m_Content.GetChild(i));
+			}
+
+			float sizeToFill = 0, sizeFilled = 0;
+			if (directionSign == -1)
+				sizeToFill = m_ViewBounds.max.y - m_ViewBounds.min.y;
+			else
+				sizeToFill = m_ViewBounds.max.x - m_ViewBounds.min.x;
+			
+			while(sizeToFill > sizeFilled)
+			{
+				float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+				if(size <= 0) break;
+				sizeFilled += size;
+			}
+
+			Vector2 pos = m_Content.anchoredPosition;
+			float dist = reverseDirection ? (sizeToFill - sizeFilled) : (sizeFilled - sizeToFill);
+			if (directionSign == -1)
+				pos.y = dist;
+			else if (directionSign == 1)
+				pos.x = dist;
+			m_Content.anchoredPosition = pos;
+		}
+
+        public void RefillCells(int offset = 0)
         {
-            if (Application.isPlaying)
-            {
-                StopMovement();
-                itemTypeStart = reverseDirection ? totalCount - startIdx : startIdx;
-                itemTypeEnd = itemTypeStart;
+            if (!Application.isPlaying)
+				return;
+			
+            StopMovement();
+			itemTypeStart = reverseDirection ? totalCount - offset : offset;
+            itemTypeEnd = itemTypeStart;
 
-                // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
+            // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
+			for (int i = m_Content.childCount - 1; i >= 0; i--)
+			{
+				ReturnObjectAndSendMessage(m_Content.GetChild(i));
+			}
 
-                if (prefabNameFunc != null/* && prefabCountFunc != null*/)
-                {
-                    // since prefabs are not the same, we first return all
-                    for (int i = 0; i < content.childCount; i++)
-                    {
-                        ReturnObjectAndSendMessage(content.GetChild(i));
-                        i--;
-                    }
-                }
-                else
-                {
-                    // recycle items if we can
-                    for (int i = 0; i < content.childCount; i++)
-                    {
-                        if (totalCount >= 0 && itemTypeEnd >= totalCount)
-                        {
-                            ReturnObjectAndSendMessage(content.GetChild(i));
-                            i--;
-                        }
-                        else
-                        {
-                            SendMessageToNewObject(content.GetChild(i), itemTypeEnd);
-                            itemTypeEnd++;
-                        }
-                    }
-                }
+			float sizeToFill = 0, sizeFilled = 0;
+			if (directionSign == -1)
+				sizeToFill = m_ViewBounds.max.y - m_ViewBounds.min.y;
+			else
+				sizeToFill = m_ViewBounds.max.x - m_ViewBounds.min.x;
+			
+			while(sizeToFill > sizeFilled)
+			{
+				float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+				if(size <= 0) break;
+				sizeFilled += size;
+			}
 
-                Vector2 pos = content.anchoredPosition;
-                if (directionSign == -1)
-                    pos.y = 0;
-                else if (directionSign == 1)
-                    pos.x = 0;
-                content.anchoredPosition = pos;
-            }
+			Vector2 pos = m_Content.anchoredPosition;
+			if (directionSign == -1)
+				pos.y = 0;
+			else if (directionSign == 1)
+				pos.x = 0;
+			m_Content.anchoredPosition = pos;
         }
 
         protected float NewItemAtStart()
