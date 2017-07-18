@@ -10,19 +10,12 @@ namespace UnityEngine.UI
     [RequireComponent(typeof(RectTransform))]
     public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup
     {
-        //==========LoopScrollRect==========
-        public delegate string prefabNameDelegate(int idx);
-        public delegate int prefabCountDelegate(int idx);
-        [Tooltip("Prefab Name in Resources")]
-        public string prefabName;
-        [HideInInspector]
-        public prefabNameDelegate prefabNameFunc = null;
-        [HideInInspector]
-        public prefabCountDelegate prefabCountFunc = null;
+		//==========LoopScrollRect==========
+		[Tooltip("Prefab Source")]
+		public LoopScrollPrefabSource prefabSource;
+
         [Tooltip("Total count, negative means INFINITE mode")]
         public int totalCount;
-        [HideInInspector]
-        public int poolSize = 5;
 
 		[HideInInspector]
 		[NonSerialized]
@@ -328,8 +321,10 @@ namespace UnityEngine.UI
 		public void RefillCellsFromEnd(int offset = 0)
 		{
 			//TODO: unsupported for Infinity or Grid yet
-			if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1)
+			if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1 || prefabSource == null)
 				return;
+
+			prefabSource.InitPool();
 
 			StopMovement();
 			itemTypeEnd = reverseDirection ? offset : totalCount - offset;
@@ -366,9 +361,11 @@ namespace UnityEngine.UI
 
         public void RefillCells(int offset = 0)
         {
-            if (!Application.isPlaying)
+			if (!Application.isPlaying || prefabSource == null)
 				return;
-			
+
+			prefabSource.InitPool();
+
             StopMovement();
 			itemTypeStart = reverseDirection ? totalCount - offset : offset;
             itemTypeEnd = itemTypeStart;
@@ -521,18 +518,8 @@ namespace UnityEngine.UI
         }
 
         private RectTransform InstantiateNextItem(int itemIdx)
-        {
-            string name = prefabName;
-            int count = poolSize;
-            if (prefabNameFunc != null)
-            {
-                name = prefabNameFunc(itemIdx);
-            }
-            if (prefabCountFunc != null)
-            {
-                count = prefabCountFunc(itemIdx);
-            }
-            RectTransform nextItem = ResourceManager.Instance.GetObjectFromPool(name, true, count).GetComponent<RectTransform>();
+		{			
+			RectTransform nextItem = prefabSource.GetObject().GetComponent<RectTransform>();
             nextItem.transform.SetParent(content, false);
             nextItem.gameObject.SetActive(true);
 			dataSource.ProvideData(nextItem, itemIdx);

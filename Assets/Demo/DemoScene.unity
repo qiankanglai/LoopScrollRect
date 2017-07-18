@@ -673,9 +673,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7b38d60c9f6a944831d24146f39793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: ScrollCell2
+  prefabSource:
+    prefabName: ScrollCell2
+    poolSize: 5
   totalCount: 30
-  poolSize: 5
   threshold: 100
   reverseDirection: 0
   rubberScale: 1
@@ -1093,9 +1094,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: ScrollCell1
+  prefabSource:
+    prefabName: ScrollCell1
+    poolSize: 5
   totalCount: 50
-  poolSize: 5
   threshold: 100
   reverseDirection: 1
   rubberScale: 1
@@ -1196,9 +1198,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7b38d60c9f6a944831d24146f39793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: ScrollCell2
+  prefabSource:
+    prefabName: ScrollCell2
+    poolSize: 5
   totalCount: -1
-  poolSize: 5
   threshold: 100
   reverseDirection: 0
   rubberScale: 1
@@ -1558,9 +1561,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: ScrollCell1
+  prefabSource:
+    prefabName: ScrollCell1
+    poolSize: 5
   totalCount: 50
-  poolSize: 5
   threshold: 100
   reverseDirection: 0
   rubberScale: 1
@@ -1995,9 +1999,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7b38d60c9f6a944831d24146f39793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: ScrollCell2
+  prefabSource:
+    prefabName: ScrollCell2
+    poolSize: 5
   totalCount: 30
-  poolSize: 5
   threshold: 100
   reverseDirection: 0
   rubberScale: 1
@@ -2166,9 +2171,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce71017a2903f7c4c9a699e438d0b897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabName: ScrollCell3
+  prefabSource:
+    prefabName: ScrollCell3
+    poolSize: 5
   totalCount: 54
-  poolSize: 5
   threshold: 100
   reverseDirection: 0
   rubberScale: 1
