@@ -23,9 +23,22 @@ namespace UnityEngine.UI
         public int totalCount;
         [HideInInspector]
         public int poolSize = 5;
-        [HideInInspector]
-        [NonSerialized]
-        public object[] objectsToFill = null;
+
+		[HideInInspector]
+		[NonSerialized]
+		public LoopScrollDataSource dataSource = LoopScrollSendIndexSource.Instance;
+		public object[] objectsToFill
+		{
+			// wrapper for forward compatbility
+			set
+			{
+				if(value != null)
+					dataSource = new LoopScrollArraySource<object>(value);
+				else
+					dataSource = LoopScrollSendIndexSource.Instance;
+			}
+		}
+
         [Tooltip("Threshold for preloading")]
         public float threshold = 100;
         [Tooltip("Reverse direction for dragging")]
@@ -269,20 +282,6 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
-        private void SendMessageToNewObject(Transform go, int idx)
-        {
-            go.SendMessage("ScrollCellIndex", idx);
-            if (objectsToFill != null)
-            {
-                object o = null;
-                if (idx >= 0 && idx < objectsToFill.Length)
-                {
-                    o = objectsToFill[idx];
-                }
-                go.SendMessage("ScrollCellContent", o, SendMessageOptions.DontRequireReceiver);
-            }
-        }
-
         private void ReturnObjectAndSendMessage(Transform go)
         {
             go.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
@@ -314,7 +313,7 @@ namespace UnityEngine.UI
                 {
                     if (itemTypeEnd < totalCount)
                     {
-                        SendMessageToNewObject(content.GetChild(i), itemTypeEnd);
+						dataSource.ProvideData(content.GetChild(i), itemTypeEnd);
                         itemTypeEnd++;
                     }
                     else
@@ -536,7 +535,7 @@ namespace UnityEngine.UI
             RectTransform nextItem = ResourceManager.Instance.GetObjectFromPool(name, true, count).GetComponent<RectTransform>();
             nextItem.transform.SetParent(content, false);
             nextItem.gameObject.SetActive(true);
-            SendMessageToNewObject(nextItem, itemIdx);
+			dataSource.ProvideData(nextItem, itemIdx);
             return nextItem;
         }
         //==========LoopScrollRect==========
