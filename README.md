@@ -37,7 +37,7 @@ The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivo
 
 Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells.
 
-**Warning**: My scripts copies the `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) source code, rather than inherit `ScrollRect` like InfinityScroll, because I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a little easier.
+My scripts copies `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) rather than inherit `ScrollRect` like InfinityScroll. I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a little easier.
 
 ### Infinite Version
 
