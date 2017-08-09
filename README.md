@@ -2,7 +2,7 @@
 
 ## v1.03
 
-### compatible with Unity 5.2/5.3
+** For Unity 5.x. ** I havn't tested 4.x and any Pull Requests are welcomed.
 
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
