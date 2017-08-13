@@ -8,8 +8,6 @@ These scripts help make your ScrollRect `Reusable`, because it will only build c
 
 中文说明请看[这里](http://qiankanglai.me/2015/08/15/LoopScrollRect/)。
 
-License: [WTFPL](http://sam.zoy.org/wtfpl/) Are You Serious? Yes.
-
 ## Demo
 
 Demo for Loop Scroll Rect. Each cell knows its own index, and it is able to modify its content/size/color easily.
