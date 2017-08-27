@@ -41,6 +41,13 @@ My scripts copies `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technolog
 
 If you need scroll infinitely, you can simply set `totalCount` to a negative number.
 
+### Quick Jump
+
+As some people having the same issue here: how to jump to a specified cell directly:
+
+- Add a `Coroutine` for tween. As you can check the children by yourself, it is easy to find the right time to stop. However this is not elegant.
+- I've already provided a method called `RefillCells(int offset = 0)`. For example `RefillCells(3)` means a LoopScroll with `idx=3` as the first cell. But your lose the animation now.
+
 ## Example: Loop Vertical Scroll Rect
 
 These steps may be confusing, so you can just open the demo scene and copy & paste :D
