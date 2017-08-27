@@ -10,27 +10,27 @@ namespace UnityEngine.UI
     [RequireComponent(typeof(RectTransform))]
     public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup
     {
-		//==========LoopScrollRect==========
-		[Tooltip("Prefab Source")]
-		public LoopScrollPrefabSource prefabSource;
+        //==========LoopScrollRect==========
+        [Tooltip("Prefab Source")]
+        public LoopScrollPrefabSource prefabSource;
 
         [Tooltip("Total count, negative means INFINITE mode")]
         public int totalCount;
 
-		[HideInInspector]
-		[NonSerialized]
-		public LoopScrollDataSource dataSource = LoopScrollSendIndexSource.Instance;
-		public object[] objectsToFill
-		{
-			// wrapper for forward compatbility
-			set
-			{
-				if(value != null)
-					dataSource = new LoopScrollArraySource<object>(value);
-				else
-					dataSource = LoopScrollSendIndexSource.Instance;
-			}
-		}
+        [HideInInspector]
+        [NonSerialized]
+        public LoopScrollDataSource dataSource = LoopScrollSendIndexSource.Instance;
+        public object[] objectsToFill
+        {
+            // wrapper for forward compatbility
+            set
+            {
+                if(value != null)
+                    dataSource = new LoopScrollArraySource<object>(value);
+                else
+                    dataSource = LoopScrollSendIndexSource.Instance;
+            }
+        }
 
         [Tooltip("Threshold for preloading")]
         public float threshold = 100;
@@ -278,7 +278,7 @@ namespace UnityEngine.UI
         private void ReturnObjectAndSendMessage(Transform go)
         {
             go.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
-            ResourceManager.Instance.ReturnObjectToPool(go.gameObject);
+            SG.ResourceManager.Instance.ReturnObjectToPool(go.gameObject);
         }
 
         public void ClearCells()
@@ -306,7 +306,7 @@ namespace UnityEngine.UI
                 {
                     if (itemTypeEnd < totalCount)
                     {
-						dataSource.ProvideData(content.GetChild(i), itemTypeEnd);
+                        dataSource.ProvideData(content.GetChild(i), itemTypeEnd);
                         itemTypeEnd++;
                     }
                     else
@@ -318,84 +318,84 @@ namespace UnityEngine.UI
             }
         }
 
-		public void RefillCellsFromEnd(int offset = 0)
-		{
-			//TODO: unsupported for Infinity or Grid yet
-			if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1 || prefabSource == null)
-				return;
+        public void RefillCellsFromEnd(int offset = 0)
+        {
+            //TODO: unsupported for Infinity or Grid yet
+            if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1 || prefabSource == null)
+                return;
 
-			prefabSource.InitPool();
+            prefabSource.InitPool();
 
-			StopMovement();
-			itemTypeEnd = reverseDirection ? offset : totalCount - offset;
-			itemTypeStart = itemTypeEnd;
+            StopMovement();
+            itemTypeEnd = reverseDirection ? offset : totalCount - offset;
+            itemTypeStart = itemTypeEnd;
 
-			for (int i = m_Content.childCount - 1; i >= 0; i--)
-			{
-				ReturnObjectAndSendMessage(m_Content.GetChild(i));
-			}
+            for (int i = m_Content.childCount - 1; i >= 0; i--)
+            {
+                ReturnObjectAndSendMessage(m_Content.GetChild(i));
+            }
 
-			float sizeToFill = 0, sizeFilled = 0;
-			if (directionSign == -1)
-				sizeToFill = viewRect.rect.size.y;
-			else
-				sizeToFill = viewRect.rect.size.x;
-			
-			while(sizeToFill > sizeFilled)
-			{
-				float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
-				if(size <= 0) break;
-				sizeFilled += size;
-			}
+            float sizeToFill = 0, sizeFilled = 0;
+            if (directionSign == -1)
+                sizeToFill = viewRect.rect.size.y;
+            else
+                sizeToFill = viewRect.rect.size.x;
+            
+            while(sizeToFill > sizeFilled)
+            {
+                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+                if(size <= 0) break;
+                sizeFilled += size;
+            }
 
-			Vector2 pos = m_Content.anchoredPosition;
+            Vector2 pos = m_Content.anchoredPosition;
             float dist = Mathf.Max(0, sizeFilled - sizeToFill);
             if (reverseDirection)
                 dist = -dist;
-			if (directionSign == -1)
-				pos.y = dist;
-			else if (directionSign == 1)
-				pos.x = dist;
-			m_Content.anchoredPosition = pos;
-		}
+            if (directionSign == -1)
+                pos.y = dist;
+            else if (directionSign == 1)
+                pos.x = dist;
+            m_Content.anchoredPosition = pos;
+        }
 
         public void RefillCells(int offset = 0)
         {
-			if (!Application.isPlaying || prefabSource == null)
-				return;
+            if (!Application.isPlaying || prefabSource == null)
+                return;
 
-			prefabSource.InitPool();
+            prefabSource.InitPool();
 
             StopMovement();
-			itemTypeStart = reverseDirection ? totalCount - offset : offset;
+            itemTypeStart = reverseDirection ? totalCount - offset : offset;
             itemTypeEnd = itemTypeStart;
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
-			for (int i = m_Content.childCount - 1; i >= 0; i--)
-			{
-				ReturnObjectAndSendMessage(m_Content.GetChild(i));
-			}
+            for (int i = m_Content.childCount - 1; i >= 0; i--)
+            {
+                ReturnObjectAndSendMessage(m_Content.GetChild(i));
+            }
 
-			float sizeToFill = 0, sizeFilled = 0;
-			// m_ViewBounds may be not ready when RefillCells on Start
-			if (directionSign == -1)
-				sizeToFill = viewRect.rect.size.y;
-			else
-				sizeToFill = viewRect.rect.size.x;
-			
-			while(sizeToFill > sizeFilled)
-			{
-				float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
-				if(size <= 0) break;
-				sizeFilled += size;
-			}
+            float sizeToFill = 0, sizeFilled = 0;
+            // m_ViewBounds may be not ready when RefillCells on Start
+            if (directionSign == -1)
+                sizeToFill = viewRect.rect.size.y;
+            else
+                sizeToFill = viewRect.rect.size.x;
+            
+            while(sizeToFill > sizeFilled)
+            {
+                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                if(size <= 0) break;
+                sizeFilled += size;
+            }
 
-			Vector2 pos = m_Content.anchoredPosition;
-			if (directionSign == -1)
-				pos.y = 0;
-			else if (directionSign == 1)
-				pos.x = 0;
-			m_Content.anchoredPosition = pos;
+            Vector2 pos = m_Content.anchoredPosition;
+            if (directionSign == -1)
+                pos.y = 0;
+            else if (directionSign == 1)
+                pos.x = 0;
+            m_Content.anchoredPosition = pos;
         }
 
         protected float NewItemAtStart()
@@ -518,11 +518,11 @@ namespace UnityEngine.UI
         }
 
         private RectTransform InstantiateNextItem(int itemIdx)
-		{			
-			RectTransform nextItem = prefabSource.GetObject().GetComponent<RectTransform>();
+        {            
+            RectTransform nextItem = prefabSource.GetObject().GetComponent<RectTransform>();
             nextItem.transform.SetParent(content, false);
             nextItem.gameObject.SetActive(true);
-			dataSource.ProvideData(nextItem, itemIdx);
+            dataSource.ProvideData(nextItem, itemIdx);
             return nextItem;
         }
         //==========LoopScrollRect==========
@@ -800,13 +800,13 @@ namespace UnityEngine.UI
         private void UpdateScrollbars(Vector2 offset)
         {
             if (m_HorizontalScrollbar)
-			{
-				//==========LoopScrollRect==========
+            {
+                //==========LoopScrollRect==========
                 if (m_ContentBounds.size.x > 0 && totalCount > 0)
-				{
-					m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x * (itemTypeEnd - itemTypeStart) / totalCount);
-				}
-				//==========LoopScrollRect==========
+                {
+                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x * (itemTypeEnd - itemTypeStart) / totalCount);
+                }
+                //==========LoopScrollRect==========
                 else
                     m_HorizontalScrollbar.size = 1;
 
@@ -814,13 +814,13 @@ namespace UnityEngine.UI
             }
 
             if (m_VerticalScrollbar)
-			{
-				//==========LoopScrollRect==========
-				if (m_ContentBounds.size.y > 0 && totalCount > 0)
-				{
-					m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y * (itemTypeEnd - itemTypeStart) / totalCount);
-				}
-				//==========LoopScrollRect==========
+            {
+                //==========LoopScrollRect==========
+                if (m_ContentBounds.size.y > 0 && totalCount > 0)
+                {
+                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y * (itemTypeEnd - itemTypeStart) / totalCount);
+                }
+                //==========LoopScrollRect==========
                 else
                     m_VerticalScrollbar.size = 1;
 
@@ -845,11 +845,11 @@ namespace UnityEngine.UI
         {
             get
             {
-				UpdateBounds();
-				//==========LoopScrollRect==========
-				if(totalCount > 0 && itemTypeEnd > itemTypeStart)
+                UpdateBounds();
+                //==========LoopScrollRect==========
+                if(totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
-					//TODO: consider contentSpacing
+                    //TODO: consider contentSpacing
                     float elementSize = m_ContentBounds.size.x / (itemTypeEnd - itemTypeStart);
                     float totalSize = elementSize * totalCount;
                     float offset = m_ContentBounds.min.x - elementSize * itemTypeStart;
@@ -857,10 +857,10 @@ namespace UnityEngine.UI
                     if (totalSize <= m_ViewBounds.size.x)
                         return (m_ViewBounds.min.x > offset) ? 1 : 0;
                     return (m_ViewBounds.min.x - offset) / (totalSize - m_ViewBounds.size.x);
-				}
-				else
-					return 0.5f;
-				//==========LoopScrollRect==========
+                }
+                else
+                    return 0.5f;
+                //==========LoopScrollRect==========
             }
             set
             {
@@ -872,11 +872,11 @@ namespace UnityEngine.UI
         {
             get
             {
-				UpdateBounds();
-				//==========LoopScrollRect==========
-				if(totalCount > 0 && itemTypeEnd > itemTypeStart)
-				{
-					//TODO: consider contentSpacinge
+                UpdateBounds();
+                //==========LoopScrollRect==========
+                if(totalCount > 0 && itemTypeEnd > itemTypeStart)
+                {
+                    //TODO: consider contentSpacinge
                     float elementSize = m_ContentBounds.size.y / (itemTypeEnd - itemTypeStart);
                     float totalSize = elementSize * totalCount;
                     float offset = m_ContentBounds.max.y + elementSize * itemTypeStart;
@@ -884,10 +884,10 @@ namespace UnityEngine.UI
                     if (totalSize <= m_ViewBounds.size.y)
                         return (offset > m_ViewBounds.max.y) ? 1 : 0;
                     return (offset - m_ViewBounds.max.y) / (totalSize - m_ViewBounds.size.y);
-				}
-				else
-					return 0.5f;
-				//==========LoopScrollRect==========
+                }
+                else
+                    return 0.5f;
+                //==========LoopScrollRect==========
             }
             set
             {
