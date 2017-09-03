@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 namespace SG
 {
@@ -9,7 +10,7 @@ namespace SG
     {
         void Start()
         {
-            GetComponent<UnityEngine.UI.LoopScrollRect>().RefillCells();
+            GetComponent<LoopScrollRect>().RefillCells();
         }
     }
 }

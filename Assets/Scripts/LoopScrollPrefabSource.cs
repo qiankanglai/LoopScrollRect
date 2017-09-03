@@ -9,22 +9,14 @@ namespace UnityEngine.UI
         public string prefabName;
         public int poolSize = 5;
 
-        public LoopScrollPrefabSource()
-        {}
-
-        public LoopScrollPrefabSource(string prefabName, int poolSize = 5)
-        {
-            this.prefabName = prefabName;
-            this.poolSize = poolSize;
-        }
-
-        public virtual void InitPool()
-        {
-            SG.ResourceManager.Instance.InitPool(prefabName, poolSize);
-        }
-            
+        private bool inited = false;
         public virtual GameObject GetObject()
         {
+            if(!inited)
+            {
+                SG.ResourceManager.Instance.InitPool(prefabName, poolSize);
+                inited = true;
+            }
             return SG.ResourceManager.Instance.GetObjectFromPool(prefabName);
         }
     }

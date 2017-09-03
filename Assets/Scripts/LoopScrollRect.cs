@@ -323,9 +323,7 @@ namespace UnityEngine.UI
             //TODO: unsupported for Infinity or Grid yet
             if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1 || prefabSource == null)
                 return;
-
-            prefabSource.InitPool();
-
+            
             StopMovement();
             itemTypeEnd = reverseDirection ? offset : totalCount - offset;
             itemTypeStart = itemTypeEnd;
@@ -363,8 +361,6 @@ namespace UnityEngine.UI
         {
             if (!Application.isPlaying || prefabSource == null)
                 return;
-
-            prefabSource.InitPool();
 
             StopMovement();
             itemTypeStart = reverseDirection ? totalCount - offset : offset;
