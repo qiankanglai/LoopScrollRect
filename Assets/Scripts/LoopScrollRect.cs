@@ -421,7 +421,9 @@ namespace UnityEngine.UI
 
         protected float DeleteItemAtStart()
         {
-            if ((totalCount >= 0 && itemTypeEnd >= totalCount - 1) || content.childCount == 0)
+            // special case: when moving or dragging, we cannot simply delete start when we've reached the end
+            if (((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeEnd >= totalCount - 1) 
+                || content.childCount == 0)
             {
                 return 0;
             }
@@ -484,7 +486,8 @@ namespace UnityEngine.UI
 
         protected float DeleteItemAtEnd()
         {
-            if ((totalCount >= 0 && itemTypeStart < contentConstraintCount) || content.childCount == 0)
+            if (((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeStart < contentConstraintCount) 
+                || content.childCount == 0)
             {
                 return 0;
             }
