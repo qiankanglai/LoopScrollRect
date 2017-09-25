@@ -416,6 +416,9 @@ namespace UnityEngine.UI
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
+            // protection
+            if(size > 0 && threshold < size)
+                threshold = size * 1.1f;
             return size;
         }
 
@@ -481,6 +484,9 @@ namespace UnityEngine.UI
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
+            // protection
+            if (size > 0 && threshold < size)
+                threshold = size * 1.1f;
             return size;
         }
 
