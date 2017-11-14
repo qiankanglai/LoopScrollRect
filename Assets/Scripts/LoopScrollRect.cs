@@ -353,7 +353,7 @@ namespace UnityEngine.UI
             if (directionSign == -1)
                 pos.y = dist;
             else if (directionSign == 1)
-                pos.x = dist;
+                pos.x = -dist;
             m_Content.anchoredPosition = pos;
         }
 
