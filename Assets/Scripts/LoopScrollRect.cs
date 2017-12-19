@@ -541,7 +541,7 @@ namespace UnityEngine.UI
 
             if (executing == CanvasUpdate.PostLayout)
             {
-                UpdateBounds(false);
+                UpdateBounds();
                 UpdateScrollbars(Vector2.zero);
                 UpdatePrevData();
 
@@ -725,7 +725,7 @@ namespace UnityEngine.UI
             if (position != m_Content.anchoredPosition)
             {
                 m_Content.anchoredPosition = position;
-                UpdateBounds();
+                UpdateBounds(true);
             }
         }
 
@@ -939,7 +939,7 @@ namespace UnityEngine.UI
                 localPosition[axis] = newLocalPosition;
                 m_Content.localPosition = localPosition;
                 m_Velocity[axis] = 0;
-                UpdateBounds();
+                UpdateBounds(true);
             }
         }
 
@@ -1088,7 +1088,7 @@ namespace UnityEngine.UI
             }
         }
 
-        private void UpdateBounds(bool updateItems = true)
+        private void UpdateBounds(bool updateItems = false)
         {
             m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
             m_ContentBounds = GetBounds();
