@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
+using System.Collections;
 
 namespace UnityEngine.UI
 {
@@ -68,7 +69,7 @@ namespace UnityEngine.UI
                     m_GridLayout = content.GetComponent<GridLayoutGroup>();
                     if (m_GridLayout != null)
                     {
-                        m_ContentSpacing = GetDimension(m_GridLayout.spacing);
+                        m_ContentSpacing = Mathf.Abs(GetDimension(m_GridLayout.spacing));
                     }
                 }
                 return m_ContentSpacing;
@@ -294,6 +295,69 @@ namespace UnityEngine.UI
                     ReturnObjectAndSendMessage(content.GetChild(i));
                 }
             }
+        }
+
+        public void SrollToCell(int index, float speed)
+        {
+            if(totalCount >= 0 && (index < 0 || index >= totalCount))
+            {
+                Debug.LogWarningFormat("invalid index {0}", index);
+                return;
+            }
+            if(speed <= 0)
+            {
+                Debug.LogWarningFormat("invalid speed {0}", speed);
+                return;
+            }
+            StopAllCoroutines();
+            StartCoroutine(ScrollToCellCoroutine(index, speed));
+        }
+
+        IEnumerator ScrollToCellCoroutine(int index, float speed)
+        {
+            bool needMoving = true;
+            while(needMoving)
+            {
+                yield return null;
+                if(!m_Dragging)
+                {
+                    float move = 0;
+                    if(index < itemTypeStart)
+                    {
+                        move = -Time.deltaTime * speed;
+                    }
+                    else if(index >= itemTypeEnd)
+                    {
+                        move = Time.deltaTime * speed;
+                    }
+                    else
+                    {
+                        m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
+                        var m_ItemBounds = GetBounds4Item(index);
+                        var offset = 0.0f;
+                        if (directionSign == -1)
+                            offset = reverseDirection ? (m_ViewBounds.min.y - m_ItemBounds.min.y) : (m_ViewBounds.max.y - m_ItemBounds.max.y);
+                        else if (directionSign == 1)
+                            offset = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
+                        float maxMove = Time.deltaTime * speed;
+                        if(Mathf.Abs(offset) < maxMove)
+                        {
+                            needMoving = false;
+                            move = offset;
+                         }
+                         else
+                            move = Mathf.Sign(offset) * maxMove;
+                    }
+                    if (move != 0)
+                    {
+                        Vector2 offset = GetVector(move);
+                        content.anchoredPosition += offset;
+                        m_PrevPosition += offset;
+                        m_ContentStartPosition += offset;
+                    }
+                }
+            }
+            StopMovement();
         }
 
         public void RefreshCells()
@@ -1141,6 +1205,34 @@ namespace UnityEngine.UI
 
             var toLocal = viewRect.worldToLocalMatrix;
             m_Content.GetWorldCorners(m_Corners);
+            for (int j = 0; j < 4; j++)
+            {
+                Vector3 v = toLocal.MultiplyPoint3x4(m_Corners[j]);
+                vMin = Vector3.Min(v, vMin);
+                vMax = Vector3.Max(v, vMax);
+            }
+
+            var bounds = new Bounds(vMin, Vector3.zero);
+            bounds.Encapsulate(vMax);
+            return bounds;
+        }
+
+        private Bounds GetBounds4Item(int index)
+        {
+            if (m_Content == null)
+                return new Bounds();
+
+            var vMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            var vMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+            var toLocal = viewRect.worldToLocalMatrix;
+            int offset = index - itemTypeStart;
+            if (offset < 0 || offset >= m_Content.childCount)
+                return new Bounds();
+            var rt = m_Content.GetChild(offset) as RectTransform;
+            if (rt == null)
+                return new Bounds();
+            rt.GetWorldCorners(m_Corners);
             for (int j = 0; j < 4; j++)
             {
                 Vector3 v = toLocal.MultiplyPoint3x4(m_Corners[j]);

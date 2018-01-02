@@ -7,7 +7,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-
 namespace SG
 {
     [DisallowMultipleComponent]
@@ -33,15 +32,12 @@ namespace SG
 
         //the root obj for unused obj
         private GameObject rootObj;
-        private float lastUsedTime = -1;
         private PoolInflationType inflationType;
         private string poolName;
         private int objectsInUse = 0;
 
         public Pool(string poolName, GameObject poolObjectPrefab, GameObject rootPoolObj, int initialCount, PoolInflationType type)
         {
-            lastUsedTime = Time.time;
-
             if (poolObjectPrefab == null)
             {
 #if UNITY_EDITOR
@@ -92,8 +88,6 @@ namespace SG
         //o(1)
         public GameObject NextAvailableObject(bool autoActive)
         {
-            lastUsedTime = Time.time;
-
             PoolObject po = null;
             if (availableObjStack.Count > 1)
             {

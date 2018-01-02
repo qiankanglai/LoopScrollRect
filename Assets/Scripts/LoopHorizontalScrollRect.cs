@@ -23,7 +23,7 @@ namespace UnityEngine.UI
 
         protected override float GetDimension(Vector2 vector)
         {
-            return vector.x;
+            return -vector.x;
         }
 
         protected override Vector2 GetVector(float value)
