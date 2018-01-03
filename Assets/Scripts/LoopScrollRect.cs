@@ -358,6 +358,7 @@ namespace UnityEngine.UI
                 }
             }
             StopMovement();
+            UpdatePrevData();
         }
 
         public void RefreshCells()

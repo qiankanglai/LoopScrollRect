@@ -1,6 +1,6 @@
 # Loop Scroll Rect
 
-## v1.03
+## v1.04
 
 __This project works for Unity 5.2 or newer.__ I havn't tested older versions and any Pull Requests are welcomed.
 
@@ -21,6 +21,10 @@ Also ScrollBar is supported now! It supports both vertical & horizontal directio
 Demo without mask. As you can see, the cells are only instantiated when needed and recycled.
 
 ![Demo3](Images/demo3.gif)
+
+**New**: Scroll to Index
+
+![ScrollToIndex](Images/ScrollToIndex.gif)
 
 ## Introduction
 
@@ -43,10 +47,11 @@ If you need scroll infinitely, you can simply set `totalCount` to a negative num
 
 ### Quick Jump
 
-As some people having the same issue here: how to jump to a specified cell directly:
+I've implemented a simple version with `Coroutine`. You can use the following API:
 
-- Add a `Coroutine` for tween. As you can check the children by yourself, it is easy to find the right time to stop. However this is not elegant.
-- I've already provided a method called `RefillCells(int offset = 0)`. For example `RefillCells(3)` means a LoopScroll with `idx=3` as the first cell. But your lose the animation now.
+    public void SrollToCell(int index, float speed)
+
+Here is a corner case unsolved yet: You can't jump to the last cells which cannot be pulled to the start.
 
 ## Example: Loop Vertical Scroll Rect
 
