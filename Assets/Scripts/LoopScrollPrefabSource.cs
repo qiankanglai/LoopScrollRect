@@ -19,5 +19,11 @@ namespace UnityEngine.UI
             }
             return SG.ResourceManager.Instance.GetObjectFromPool(prefabName);
         }
+
+        public virtual void ReturnObject(Transform go)
+        {
+            go.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
+            SG.ResourceManager.Instance.ReturnObjectToPool(go.gameObject);
+        }
     }
 }

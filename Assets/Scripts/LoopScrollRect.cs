@@ -276,11 +276,6 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
-        private void ReturnObjectAndSendMessage(Transform go)
-        {
-            go.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
-            SG.ResourceManager.Instance.ReturnObjectToPool(go.gameObject);
-        }
 
         public void ClearCells()
         {
@@ -292,7 +287,7 @@ namespace UnityEngine.UI
                 objectsToFill = null;
                 for (int i = content.childCount - 1; i >= 0; i--)
                 {
-                    ReturnObjectAndSendMessage(content.GetChild(i));
+                    prefabSource.ReturnObject(content.GetChild(i));
                 }
             }
         }
@@ -376,7 +371,7 @@ namespace UnityEngine.UI
                     }
                     else
                     {
-                        ReturnObjectAndSendMessage(content.GetChild(i));
+                        prefabSource.ReturnObject(content.GetChild(i));
                         i--;
                     }
                 }
@@ -395,7 +390,7 @@ namespace UnityEngine.UI
 
             for (int i = m_Content.childCount - 1; i >= 0; i--)
             {
-                ReturnObjectAndSendMessage(m_Content.GetChild(i));
+                prefabSource.ReturnObject(m_Content.GetChild(i));
             }
 
             float sizeToFill = 0, sizeFilled = 0;
@@ -434,7 +429,7 @@ namespace UnityEngine.UI
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             for (int i = m_Content.childCount - 1; i >= 0; i--)
             {
-                ReturnObjectAndSendMessage(m_Content.GetChild(i));
+                prefabSource.ReturnObject(m_Content.GetChild(i));
             }
 
             float sizeToFill = 0, sizeFilled = 0;
@@ -501,7 +496,7 @@ namespace UnityEngine.UI
             {
                 RectTransform oldItem = content.GetChild(0) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                ReturnObjectAndSendMessage(oldItem);
+                prefabSource.ReturnObject(oldItem);
 
                 itemTypeStart++;
 
@@ -568,7 +563,7 @@ namespace UnityEngine.UI
             {
                 RectTransform oldItem = content.GetChild(content.childCount - 1) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                ReturnObjectAndSendMessage(oldItem);
+                prefabSource.ReturnObject(oldItem);
 
                 itemTypeEnd--;
                 if (itemTypeEnd % contentConstraintCount == 0 || content.childCount == 0)
