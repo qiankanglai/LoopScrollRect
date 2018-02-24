@@ -33,8 +33,7 @@ namespace UnityEngine.UI
             }
         }
 
-        [Tooltip("Threshold for preloading")]
-        public float threshold = 100;
+        protected float threshold = 0;
         [Tooltip("Reverse direction for dragging")]
         public bool reverseDirection = false;
         [Tooltip("Rubber scale for outside")]
@@ -468,6 +467,7 @@ namespace UnityEngine.UI
                 newItem.SetAsFirstSibling();
                 size = Mathf.Max(GetSize(newItem), size);
             }
+            threshold = Mathf.Max(threshold, size * 1.5f);
 
             if (!reverseDirection)
             {
@@ -476,9 +476,7 @@ namespace UnityEngine.UI
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
-            // protection
-            if(size > 0 && threshold < size)
-                threshold = size * 1.1f;
+            
             return size;
         }
 
@@ -536,6 +534,7 @@ namespace UnityEngine.UI
                     break;
                 }
             }
+            threshold = Mathf.Max(threshold, size * 1.5f);
 
             if (reverseDirection)
             {
@@ -544,9 +543,7 @@ namespace UnityEngine.UI
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
-            // protection
-            if (size > 0 && threshold < size)
-                threshold = size * 1.1f;
+            
             return size;
         }
 
