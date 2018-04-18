@@ -8,9 +8,12 @@ namespace SG
     [DisallowMultipleComponent]
     public class InitOnStart : MonoBehaviour
     {
+        public int totalCount = -1;
         void Start()
         {
-            GetComponent<LoopScrollRect>().RefillCells();
+            var ls = GetComponent<LoopScrollRect>();
+            ls.totalCount = totalCount;
+            ls.RefillCells();
         }
     }
 }

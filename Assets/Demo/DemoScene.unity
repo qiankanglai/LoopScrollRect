@@ -77,15 +77,17 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
-    m_PVRFiltering: 0
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
     m_PVRFilteringMode: 1
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
     m_PVRFilteringGaussRadiusAO: 2
-    m_PVRFilteringAtrousColorSigma: 1
-    m_PVRFilteringAtrousNormalSigma: 1
-    m_PVRFilteringAtrousPositionSigma: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
   m_LightingDataAsset: {fileID: 0}
   m_ShadowMaskMode: 2
 --- !u!196 &5
@@ -571,7 +573,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 131335056}
   m_Direction: 0
   m_Value: 0.5
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -698,8 +700,7 @@ MonoBehaviour:
   prefabSource:
     prefabName: ScrollCell2
     poolSize: 5
-  totalCount: 30
-  threshold: 100
+  totalCount: 0
   reverseDirection: 0
   rubberScale: 1
   m_Content: {fileID: 289570324}
@@ -744,6 +745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalCount: 30
 --- !u!222 &410871726
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1124,8 +1126,7 @@ MonoBehaviour:
   prefabSource:
     prefabName: ScrollCell1
     poolSize: 5
-  totalCount: 50
-  threshold: 100
+  totalCount: 0
   reverseDirection: 1
   rubberScale: 1
   m_Content: {fileID: 575004231}
@@ -1170,6 +1171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalCount: 50
 --- !u!222 &771261322
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1228,8 +1230,7 @@ MonoBehaviour:
   prefabSource:
     prefabName: ScrollCell2
     poolSize: 5
-  totalCount: -1
-  threshold: 100
+  totalCount: 0
   reverseDirection: 0
   rubberScale: 1
   m_Content: {fileID: 517917757}
@@ -1280,6 +1281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalCount: -1
 --- !u!1 &1064479010
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,7 +1358,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1226725999}
   m_Direction: 3
   m_Value: 0.5
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1594,8 +1596,7 @@ MonoBehaviour:
   prefabSource:
     prefabName: ScrollCell1
     poolSize: 5
-  totalCount: 50
-  threshold: 100
+  totalCount: 0
   reverseDirection: 0
   rubberScale: 1
   m_Content: {fileID: 1193905515}
@@ -1640,6 +1641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalCount: 50
 --- !u!222 &1320192880
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1722,7 +1724,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2026796153}
   m_Direction: 0
   m_Value: 0.5
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1950,7 +1952,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2085172119}
   m_Direction: 3
   m_Value: 0.5
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2043,8 +2045,7 @@ MonoBehaviour:
   prefabSource:
     prefabName: ScrollCell2
     poolSize: 5
-  totalCount: 30
-  threshold: 100
+  totalCount: 0
   reverseDirection: 0
   rubberScale: 1
   m_Content: {fileID: 231447585}
@@ -2095,6 +2096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalCount: 30
 --- !u!1 &2026796152
 GameObject:
   m_ObjectHideFlags: 0
@@ -2215,8 +2217,7 @@ MonoBehaviour:
   prefabSource:
     prefabName: ScrollCell3
     poolSize: 5
-  totalCount: 54
-  threshold: 100
+  totalCount: 0
   reverseDirection: 0
   rubberScale: 1
   m_Content: {fileID: 1483812047}
@@ -2261,6 +2262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41ca759a5d70b448b991ca2699766ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  totalCount: 60
 --- !u!222 &2033834691
 CanvasRenderer:
   m_ObjectHideFlags: 0
