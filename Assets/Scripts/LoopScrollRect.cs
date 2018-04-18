@@ -379,13 +379,15 @@ namespace UnityEngine.UI
 
         public void RefillCellsFromEnd(int offset = 0)
         {
-            //TODO: unsupported for Infinity or Grid yet
-            if (!Application.isPlaying || totalCount < 0 || contentConstraintCount > 1 || prefabSource == null)
+            if (!Application.isPlaying || prefabSource == null)
                 return;
             
             StopMovement();
             itemTypeEnd = reverseDirection ? offset : totalCount - offset;
             itemTypeStart = itemTypeEnd;
+
+            if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
+                Debug.LogWarning("Grid will become strange since we can't fill items in the last line");
 
             for (int i = m_Content.childCount - 1; i >= 0; i--)
             {
@@ -424,6 +426,9 @@ namespace UnityEngine.UI
             StopMovement();
             itemTypeStart = reverseDirection ? totalCount - offset : offset;
             itemTypeEnd = itemTypeStart;
+
+            if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
+                Debug.LogWarning("Grid will become strange since we can't fill items in the first line");
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             for (int i = m_Content.childCount - 1; i >= 0; i--)
