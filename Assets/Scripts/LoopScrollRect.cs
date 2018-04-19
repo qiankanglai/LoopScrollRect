@@ -333,6 +333,32 @@ namespace UnityEngine.UI
                             offset = reverseDirection ? (m_ViewBounds.min.y - m_ItemBounds.min.y) : (m_ViewBounds.max.y - m_ItemBounds.max.y);
                         else if (directionSign == 1)
                             offset = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
+                        // check if we cannot move on
+                        if (totalCount >= 0)
+                        {
+                            if (offset > 0 && itemTypeEnd == totalCount && !reverseDirection)
+                            {
+                                m_ItemBounds = GetBounds4Item(totalCount - 1);
+                                // reach bottom
+                                if ((directionSign == -1 && m_ItemBounds.min.y > m_ViewBounds.min.y) ||
+                                    (directionSign == 1 && m_ItemBounds.max.x < m_ViewBounds.max.x))
+                                {
+                                    needMoving = false;
+                                    break;
+                                }
+                            }
+                            else if (offset < 0 && itemTypeStart == 0 && reverseDirection)
+                            {
+                                m_ItemBounds = GetBounds4Item(0);
+                                if ((directionSign == -1 && m_ItemBounds.max.y < m_ViewBounds.max.y) ||
+                                    (directionSign == 1 && m_ItemBounds.min.x > m_ViewBounds.min.x))
+                                {
+                                    needMoving = false;
+                                    break;
+                                }
+                            }
+                        }
+
                         float maxMove = Time.deltaTime * speed;
                         if(Mathf.Abs(offset) < maxMove)
                         {
