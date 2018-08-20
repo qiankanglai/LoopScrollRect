@@ -20,10 +20,12 @@ namespace SG
             {
                 if (mInstance == null)
                 {
-                    GameObject GO = new GameObject("ResourceManager", typeof(ResourceManager));
+                    GameObject go = new GameObject("ResourceManager", typeof(ResourceManager));
+                    go.transform.localPosition = new Vector3(9999999, 9999999, 9999999);
                     // Kanglai: if we have `GO.hideFlags |= HideFlags.DontSave;`, we will encounter Destroy problem when exit playing
                     // However we should keep using this in Play mode only!
-                    mInstance = GO.GetComponent<ResourceManager>();
+                    mInstance = go.GetComponent<ResourceManager>();
+
                     if (Application.isPlaying)
                     {
                         DontDestroyOnLoad(mInstance.gameObject);
@@ -133,9 +135,6 @@ namespace SG
 #endif
                 return;
             }
-            //set gameobject active flase to avoid a onEnable call when set parent
-            t.gameObject.SetActive(false);
-            t.SetParent(null, false);
             ReturnObjectToPool(t.gameObject);
         }
     }
