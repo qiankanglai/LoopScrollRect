@@ -101,6 +101,33 @@ namespace UnityEngine.UI
             }
         }
 
+        // the first line
+        int StartLine
+        {
+            get
+            {
+                return Mathf.CeilToInt((float)(itemTypeStart) / contentConstraintCount);
+            }
+        }
+
+        // how many lines we have for now
+        int CurrentLines
+        {
+            get
+            {
+                return Mathf.CeilToInt((float)(itemTypeEnd - itemTypeStart) / contentConstraintCount);
+            }
+        }
+
+        // how many lines we have in total
+        int TotalLines
+        {
+            get
+            {
+                return Mathf.CeilToInt((float)(totalCount) / contentConstraintCount);
+            }
+        }
+
         protected virtual bool UpdateItems(Bounds viewBounds, Bounds contentBounds) { return false; }
         //==========LoopScrollRect==========
 
@@ -613,7 +640,7 @@ namespace UnityEngine.UI
         private RectTransform InstantiateNextItem(int itemIdx)
         {            
             RectTransform nextItem = prefabSource.GetObject().transform as RectTransform;
-			nextItem.transform.SetParent(content, false);
+            nextItem.transform.SetParent(content, false);
             nextItem.gameObject.SetActive(true);
             dataSource.ProvideData(nextItem, itemIdx);
             return nextItem;
@@ -897,7 +924,7 @@ namespace UnityEngine.UI
                 //==========LoopScrollRect==========
                 if (m_ContentBounds.size.x > 0 && totalCount > 0)
                 {
-                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x * (itemTypeEnd - itemTypeStart) / totalCount);
+                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x * CurrentLines / TotalLines);
                 }
                 //==========LoopScrollRect==========
                 else
@@ -911,7 +938,7 @@ namespace UnityEngine.UI
                 //==========LoopScrollRect==========
                 if (m_ContentBounds.size.y > 0 && totalCount > 0)
                 {
-                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y * (itemTypeEnd - itemTypeStart) / totalCount);
+                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y * CurrentLines / TotalLines);
                 }
                 //==========LoopScrollRect==========
                 else
@@ -943,10 +970,10 @@ namespace UnityEngine.UI
                 if(totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
                     //TODO: consider contentSpacing
-                    float elementSize = m_ContentBounds.size.x / (itemTypeEnd - itemTypeStart);
-                    float totalSize = elementSize * totalCount;
-                    float offset = m_ContentBounds.min.x - elementSize * itemTypeStart;
-
+                    float elementSize = m_ContentBounds.size.x / CurrentLines;
+                    float totalSize = elementSize * TotalLines;
+                    float offset = m_ContentBounds.min.x - elementSize * StartLine;
+                    
                     if (totalSize <= m_ViewBounds.size.x)
                         return (m_ViewBounds.min.x > offset) ? 1 : 0;
                     return (m_ViewBounds.min.x - offset) / (totalSize - m_ViewBounds.size.x);
@@ -970,9 +997,9 @@ namespace UnityEngine.UI
                 if(totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
                     //TODO: consider contentSpacinge
-                    float elementSize = m_ContentBounds.size.y / (itemTypeEnd - itemTypeStart);
-                    float totalSize = elementSize * totalCount;
-                    float offset = m_ContentBounds.max.y + elementSize * itemTypeStart;
+                    float elementSize = m_ContentBounds.size.y / CurrentLines;
+                    float totalSize = elementSize * TotalLines;
+                    float offset = m_ContentBounds.max.y + elementSize * StartLine;
 
                     if (totalSize <= m_ViewBounds.size.y)
                         return (offset > m_ViewBounds.max.y) ? 1 : 0;
@@ -1006,18 +1033,18 @@ namespace UnityEngine.UI
             float newLocalPosition = localPosition[axis];
             if (axis == 0)
             {
-                float elementSize = m_ContentBounds.size.x / (itemTypeEnd - itemTypeStart);
-                float totalSize = elementSize * totalCount;
-                float offset = m_ContentBounds.min.x - elementSize * itemTypeStart;
-                
+                float elementSize = m_ContentBounds.size.x / CurrentLines;
+                float totalSize = elementSize * TotalLines;
+                float offset = m_ContentBounds.min.x - elementSize * StartLine;
+
                 newLocalPosition += m_ViewBounds.min.x - value * (totalSize - m_ViewBounds.size[axis]) - offset;
             }
             else if(axis == 1)
             {
-                float elementSize = m_ContentBounds.size.y / (itemTypeEnd - itemTypeStart);
-                float totalSize = elementSize * totalCount;
-                float offset = m_ContentBounds.max.y + elementSize * itemTypeStart;
-                
+                float elementSize = m_ContentBounds.size.y / CurrentLines;
+                float totalSize = elementSize * TotalLines;
+                float offset = m_ContentBounds.max.y + elementSize * StartLine;
+
                 newLocalPosition -= offset - value * (totalSize - m_ViewBounds.size.y) - m_ViewBounds.max.y;
             }
             //==========LoopScrollRect==========
