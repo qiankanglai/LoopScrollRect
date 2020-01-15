@@ -1301,6 +1301,15 @@ namespace UnityEngine.UI
             Vector2 offset = Vector2.zero;
             if (m_MovementType == MovementType.Unrestricted)
                 return offset;
+            if (m_MovementType == MovementType.Clamped)
+            {
+                if (totalCount < 0)
+                    return offset;
+                if (GetDimension(delta) < 0 && itemTypeStart > 0)
+                    return offset;
+                if (GetDimension(delta) > 0 && itemTypeEnd < totalCount)
+                    return offset;
+            }
 
             Vector2 min = m_ContentBounds.min;
             Vector2 max = m_ContentBounds.max;
