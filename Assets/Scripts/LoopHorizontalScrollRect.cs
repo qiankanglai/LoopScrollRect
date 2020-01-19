@@ -46,23 +46,36 @@ namespace UnityEngine.UI
         protected override bool UpdateItems(Bounds viewBounds, Bounds contentBounds)
         {
             bool changed = false;
+            if (viewBounds.max.x < contentBounds.max.x - threshold)
+            {
+                float size = DeleteItemAtEnd(), totalSize = size;
+                while (size > 0 && viewBounds.max.x < contentBounds.max.x - threshold - totalSize)
+                {
+                    size = DeleteItemAtEnd();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
+            if (viewBounds.min.x > contentBounds.min.x + threshold)
+            {
+                float size = DeleteItemAtStart(), totalSize = size;
+                while (size > 0 && viewBounds.min.x > contentBounds.min.x + threshold + totalSize)
+                {
+                    size = DeleteItemAtStart();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
             if (viewBounds.max.x > contentBounds.max.x)
             {
                 float size = NewItemAtEnd(), totalSize = size;
                 while (size > 0 && viewBounds.max.x > contentBounds.max.x + totalSize)
                 {
                     size = NewItemAtEnd();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
-            }
-            else if (viewBounds.max.x < contentBounds.max.x - threshold)
-            {
-                float size = DeleteItemAtEnd(), totalSize = size;
-                while (size > 0 && viewBounds.max.x < contentBounds.max.x - threshold - totalSize)
-                {
-                    size = DeleteItemAtEnd();
                     totalSize += size;
                 }
                 if (totalSize > 0)
@@ -80,17 +93,7 @@ namespace UnityEngine.UI
                 if (totalSize > 0)
                     changed = true;
             }
-            else if (viewBounds.min.x > contentBounds.min.x + threshold)
-            {
-                float size = DeleteItemAtStart(), totalSize = size;
-                while (size > 0 && viewBounds.min.x > contentBounds.min.x + threshold + totalSize)
-                {
-                    size = DeleteItemAtStart();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
-            }
+
             return changed;
         }
     }
