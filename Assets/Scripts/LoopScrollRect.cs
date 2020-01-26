@@ -471,7 +471,7 @@ namespace UnityEngine.UI
             m_Content.anchoredPosition = pos;
         }
 
-        public void RefillCells(int offset = 0)
+        public void RefillCells(int offset = 0, bool fillViewRect = false)
         {
             if (!Application.isPlaying || prefabSource == null)
                 return;
@@ -495,12 +495,23 @@ namespace UnityEngine.UI
                 sizeToFill = viewRect.rect.size.y;
             else
                 sizeToFill = viewRect.rect.size.x;
-            
-            while(sizeToFill > sizeFilled)
+
+            float itemSize = 0;
+
+            while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
                 if(size <= 0) break;
+                else itemSize = size;
                 sizeFilled += size;
+            }
+
+            if (fillViewRect && itemSize > 0 && sizeFilled < sizeToFill)
+            {
+                int itemsToAddCount = (int)((sizeToFill - sizeFilled) / itemSize);        //calculate how many items can be added above the offset, so it still is visible in the view
+                int newOffset = offset - itemsToAddCount;
+                if (newOffset < 0) newOffset = 0;
+                if (newOffset != offset) RefillCells(newOffset);                 //refill again, with the new offset value, and now with fillViewRect disabled.
             }
 
             Vector2 pos = m_Content.anchoredPosition;
