@@ -18,6 +18,8 @@ namespace UnityEngine.UI
         [Tooltip("Total count, negative means INFINITE mode")]
         public int totalCount;
 
+        private bool stopMovementFlag = false;
+
         [HideInInspector]
         [NonSerialized]
         public LoopScrollDataSource dataSource = LoopScrollSendIndexSource.Instance;
@@ -740,6 +742,9 @@ namespace UnityEngine.UI
 
         public virtual void StopMovement()
         {
+            if (m_Velocity != Vector2.one)
+                m_stopMovementFlag = true;
+
             m_Velocity = Vector2.zero;
         }
 
@@ -859,6 +864,12 @@ namespace UnityEngine.UI
         {
             if (!m_Content)
                 return;
+
+            if (m_stopMovementFlag)
+            {
+                m_stopMovementFlag = false;
+                return;
+            }
 
             EnsureLayoutHasRebuilt();
             UpdateScrollbarVisibility();
