@@ -479,6 +479,7 @@ namespace UnityEngine.UI
             else if (directionSign == 1)
                 pos.x = -dist;
             m_Content.anchoredPosition = pos;
+            m_ContentStartPosition = pos;
 
             ClearTempPool();
             UpdateScrollbars(Vector2.zero);
@@ -542,6 +543,7 @@ namespace UnityEngine.UI
             else if (directionSign == 1)
                 pos.x = 0;
             m_Content.anchoredPosition = pos;
+            m_ContentStartPosition = pos;
 
             ClearTempPool();
             UpdateScrollbars(Vector2.zero);
