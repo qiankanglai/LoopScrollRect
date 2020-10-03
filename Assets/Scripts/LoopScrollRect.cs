@@ -431,7 +431,7 @@ namespace UnityEngine.UI
             }
         }
 
-        public void RefillCellsFromEnd(int offset = 0)
+        public void RefillCellsFromEnd(int offset = 0, bool alignStart = false)
         {
             if (!Application.isPlaying || prefabSource == null)
                 return;
@@ -462,7 +462,7 @@ namespace UnityEngine.UI
             }
 
             Vector2 pos = m_Content.anchoredPosition;
-            float dist = Mathf.Max(0, sizeFilled - sizeToFill);
+            float dist = alignStart ? 0 : Mathf.Max(0, sizeFilled - sizeToFill);
             if (reverseDirection)
                 dist = -dist;
             if (directionSign == -1)
