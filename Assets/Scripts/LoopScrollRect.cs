@@ -441,7 +441,9 @@ namespace UnityEngine.UI
             itemTypeStart = itemTypeEnd;
 
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
-                Debug.LogWarning("Grid will become strange since we can't fill items in the last line");
+			{
+                itemTypeStart = (itemTypeStart / contentConstraintCount) * contentConstraintCount;
+            }
 
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
@@ -482,7 +484,9 @@ namespace UnityEngine.UI
             itemTypeEnd = itemTypeStart;
 
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
-                Debug.LogWarning("Grid will become strange since we can't fill items in the first line");
+            {
+                itemTypeStart = (itemTypeStart / contentConstraintCount) * itemTypeStart;
+            }
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
