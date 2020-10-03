@@ -27,7 +27,7 @@ namespace UnityEngine.UI
             // wrapper for forward compatbility
             set
             {
-                if(value != null)
+                if (value != null)
                     dataSource = new LoopScrollArraySource<object>(value);
                 else
                     dataSource = LoopScrollSendIndexSource.Instance;
@@ -321,12 +321,12 @@ namespace UnityEngine.UI
 
         public void SrollToCell(int index, float speed)
         {
-            if(totalCount >= 0 && (index < 0 || index >= totalCount))
+            if (totalCount >= 0 && (index < 0 || index >= totalCount))
             {
                 Debug.LogWarningFormat("invalid index {0}", index);
                 return;
             }
-            if(speed <= 0)
+            if (speed <= 0)
             {
                 Debug.LogWarningFormat("invalid speed {0}", speed);
                 return;
@@ -338,17 +338,17 @@ namespace UnityEngine.UI
         IEnumerator ScrollToCellCoroutine(int index, float speed)
         {
             bool needMoving = true;
-            while(needMoving)
+            while (needMoving)
             {
                 yield return null;
-                if(!m_Dragging)
+                if (!m_Dragging)
                 {
                     float move = 0;
-                    if(index < itemTypeStart)
+                    if (index < itemTypeStart)
                     {
                         move = -Time.deltaTime * speed;
                     }
-                    else if(index >= itemTypeEnd)
+                    else if (index >= itemTypeEnd)
                     {
                         move = Time.deltaTime * speed;
                     }
@@ -388,12 +388,12 @@ namespace UnityEngine.UI
                         }
 
                         float maxMove = Time.deltaTime * speed;
-                        if(Mathf.Abs(offset) < maxMove)
+                        if (Mathf.Abs(offset) < maxMove)
                         {
                             needMoving = false;
                             move = offset;
-                         }
-                         else
+                        }
+                        else
                             move = Mathf.Sign(offset) * maxMove;
                     }
                     if (move != 0)
@@ -435,13 +435,13 @@ namespace UnityEngine.UI
         {
             if (!Application.isPlaying || prefabSource == null)
                 return;
-            
+
             StopMovement();
             itemTypeEnd = reverseDirection ? offset : totalCount - offset;
             itemTypeStart = itemTypeEnd;
 
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
-			{
+            {
                 itemTypeStart = (itemTypeStart / contentConstraintCount) * contentConstraintCount;
             }
 
@@ -452,11 +452,11 @@ namespace UnityEngine.UI
                 sizeToFill = viewRect.rect.size.y;
             else
                 sizeToFill = viewRect.rect.size.x;
-            
-            while(sizeToFill > sizeFilled)
+
+            while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
-                if(size <= 0)
+                if (size <= 0)
                     break;
                 sizeFilled += size;
             }
@@ -514,7 +514,7 @@ namespace UnityEngine.UI
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
-                if(size <= 0)
+                if (size <= 0)
                     break;
                 itemSize = size;
                 sizeFilled += size;
@@ -572,7 +572,7 @@ namespace UnityEngine.UI
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
-            
+
             return size;
         }
 
@@ -586,9 +586,9 @@ namespace UnityEngine.UI
             int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
             Debug.Assert(availableChilds >= 0);
             if (availableChilds == 0)
-			{
+            {
                 return 0;
-			}
+            }
 
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
@@ -646,7 +646,7 @@ namespace UnityEngine.UI
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
-            
+
             return size;
         }
 
@@ -699,7 +699,7 @@ namespace UnityEngine.UI
                 nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
             }
             else if (deletedItemTypeEnd > 0)
-			{
+            {
                 deletedItemTypeEnd--;
                 nextItem = content.GetChild(content.childCount - 1) as RectTransform;
                 nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
@@ -1055,13 +1055,13 @@ namespace UnityEngine.UI
             {
                 UpdateBounds();
                 //==========LoopScrollRect==========
-                if(totalCount > 0 && itemTypeEnd > itemTypeStart)
+                if (totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
                     //TODO: consider contentSpacing
                     float elementSize = m_ContentBounds.size.x / CurrentLines;
                     float totalSize = elementSize * TotalLines;
                     float offset = m_ContentBounds.min.x - elementSize * StartLine;
-                    
+
                     if (totalSize <= m_ViewBounds.size.x)
                         return (m_ViewBounds.min.x > offset) ? 1 : 0;
                     return (m_ViewBounds.min.x - offset) / (totalSize - m_ViewBounds.size.x);
@@ -1082,7 +1082,7 @@ namespace UnityEngine.UI
             {
                 UpdateBounds();
                 //==========LoopScrollRect==========
-                if(totalCount > 0 && itemTypeEnd > itemTypeStart)
+                if (totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
                     //TODO: consider contentSpacinge
                     float elementSize = m_ContentBounds.size.y / CurrentLines;
@@ -1102,7 +1102,7 @@ namespace UnityEngine.UI
                 SetNormalizedPosition(value, 1);
             }
         }
-        
+
         private void SetHorizontalNormalizedPosition(float value) { SetNormalizedPosition(value, 0); }
         private void SetVerticalNormalizedPosition(float value) { SetNormalizedPosition(value, 1); }
 
@@ -1127,7 +1127,7 @@ namespace UnityEngine.UI
 
                 newLocalPosition += m_ViewBounds.min.x - value * (totalSize - m_ViewBounds.size[axis]) - offset;
             }
-            else if(axis == 1)
+            else if (axis == 1)
             {
                 float elementSize = m_ContentBounds.size.y / CurrentLines;
                 float totalSize = elementSize * TotalLines;

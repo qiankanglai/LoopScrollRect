@@ -97,7 +97,7 @@ namespace UnityEngine.UI
             }
 
             if (changed)
-			{
+            {
                 ClearTempPool();
             }
 

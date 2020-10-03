@@ -8,11 +8,11 @@ namespace UnityEngine.UI
         public abstract void ProvideData(Transform transform, int idx);
     }
 
-	public class LoopScrollSendIndexSource : LoopScrollDataSource
+    public class LoopScrollSendIndexSource : LoopScrollDataSource
     {
-		public static readonly LoopScrollSendIndexSource Instance = new LoopScrollSendIndexSource();
+        public static readonly LoopScrollSendIndexSource Instance = new LoopScrollSendIndexSource();
 
-		LoopScrollSendIndexSource(){}
+        LoopScrollSendIndexSource() { }
 
         public override void ProvideData(Transform transform, int idx)
         {
@@ -20,11 +20,11 @@ namespace UnityEngine.UI
         }
     }
 
-	public class LoopScrollArraySource<T> : LoopScrollDataSource
+    public class LoopScrollArraySource<T> : LoopScrollDataSource
     {
         T[] objectsToFill;
 
-		public LoopScrollArraySource(T[] objectsToFill)
+        public LoopScrollArraySource(T[] objectsToFill)
         {
             this.objectsToFill = objectsToFill;
         }

@@ -4,7 +4,7 @@ using System.Collections;
 namespace UnityEngine.UI
 {
     [System.Serializable]
-    public class LoopScrollPrefabSource 
+    public class LoopScrollPrefabSource
     {
         public string prefabName;
         public int poolSize = 5;
@@ -12,7 +12,7 @@ namespace UnityEngine.UI
         private bool inited = false;
         public virtual GameObject GetObject()
         {
-            if(!inited)
+            if (!inited)
             {
                 SG.ResourceManager.Instance.InitPool(prefabName, poolSize);
                 inited = true;
