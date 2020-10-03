@@ -443,10 +443,7 @@ namespace UnityEngine.UI
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
                 Debug.LogWarning("Grid will become strange since we can't fill items in the last line");
 
-            for (int i = m_Content.childCount - 1; i >= 0; i--)
-            {
-                ReturnToTempPool(m_Content.GetChild(i) as RectTransform);
-            }
+            ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
             float sizeToFill = 0, sizeFilled = 0;
             if (directionSign == -1)
@@ -457,7 +454,8 @@ namespace UnityEngine.UI
             while(sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
-                if(size <= 0) break;
+                if(size <= 0)
+                    break;
                 sizeFilled += size;
             }
 
@@ -487,10 +485,7 @@ namespace UnityEngine.UI
                 Debug.LogWarning("Grid will become strange since we can't fill items in the first line");
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
-            for (int i = m_Content.childCount - 1; i >= 0; i--)
-            {
-                ReturnToTempPool(m_Content.GetChild(i) as RectTransform);
-            }
+            ReturnToTempPool(reverseDirection, m_Content.childCount);
 
             float sizeToFill = 0, sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
@@ -504,8 +499,9 @@ namespace UnityEngine.UI
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
-                if(size <= 0) break;
-                else itemSize = size;
+                if(size <= 0)
+                    break;
+                itemSize = size;
                 sizeFilled += size;
             }
 
@@ -538,7 +534,7 @@ namespace UnityEngine.UI
             {
                 itemTypeStart--;
                 RectTransform newItem = GetFromTempPool(itemTypeStart);
-                newItem.SetAsFirstSibling();
+                newItem.SetSiblingIndex(deletedItemTypeStart);
                 size = Mathf.Max(GetSize(newItem), size);
             }
             threshold = Mathf.Max(threshold, size * 1.5f);
@@ -557,22 +553,27 @@ namespace UnityEngine.UI
         protected float DeleteItemAtStart()
         {
             // special case: when moving or dragging, we cannot simply delete start when we've reached the end
-            if (((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeEnd >= totalCount - 1) 
-                || content.childCount == 0)
+            if ((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeEnd >= totalCount - 1)
             {
                 return 0;
             }
+            int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
+            Debug.Assert(availableChilds >= 0);
+            if (availableChilds == 0)
+			{
+                return 0;
+			}
 
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
-                RectTransform oldItem = content.GetChild(0) as RectTransform;
+                RectTransform oldItem = content.GetChild(deletedItemTypeStart) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                ReturnToTempPool(oldItem);
-
+                ReturnToTempPool(true);
+                availableChilds--;
                 itemTypeStart++;
 
-                if (content.childCount == 0)
+                if (availableChilds == 0)
                 {
                     break;
                 }
@@ -597,10 +598,12 @@ namespace UnityEngine.UI
             }
             float size = 0;
             // issue 4: fill lines to end first
-            int count = contentConstraintCount - (content.childCount % contentConstraintCount);
+            int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
+            int count = contentConstraintCount - (availableChilds % contentConstraintCount);
             for (int i = 0; i < count; i++)
             {
                 RectTransform newItem = GetFromTempPool(itemTypeEnd);
+                newItem.SetSiblingIndex(content.childCount - deletedItemTypeEnd - 1);
                 size = Mathf.Max(GetSize(newItem), size);
                 itemTypeEnd++;
                 if (totalCount >= 0 && itemTypeEnd >= totalCount)
@@ -623,8 +626,13 @@ namespace UnityEngine.UI
 
         protected float DeleteItemAtEnd()
         {
-            if (((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeStart < contentConstraintCount) 
-                || content.childCount == 0)
+            if ((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeStart < contentConstraintCount)
+            {
+                return 0;
+            }
+            int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
+            Debug.Assert(availableChilds >= 0);
+            if (availableChilds == 0)
             {
                 return 0;
             }
@@ -632,12 +640,12 @@ namespace UnityEngine.UI
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
-                RectTransform oldItem = content.GetChild(content.childCount - 1) as RectTransform;
+                RectTransform oldItem = content.GetChild(content.childCount - deletedItemTypeEnd - 1) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                ReturnToTempPool(oldItem);
-
+                ReturnToTempPool(false);
+                availableChilds--;
                 itemTypeEnd--;
-                if (itemTypeEnd % contentConstraintCount == 0 || content.childCount == 0)
+                if (itemTypeEnd % contentConstraintCount == 0 || availableChilds == 0)
                 {
                     break;  //just delete the whole row
                 }
@@ -653,14 +661,22 @@ namespace UnityEngine.UI
             return size;
         }
 
-        Queue<RectTransform> tempPool = new Queue<RectTransform>();
+        int deletedItemTypeStart = 0;
+        int deletedItemTypeEnd = 0;
         protected RectTransform GetFromTempPool(int itemIdx)
         {
             RectTransform nextItem = null;
-            if (tempPool.Count > 0)
+            if (deletedItemTypeStart > 0)
             {
-                nextItem = tempPool.Dequeue();
-                nextItem.transform.SetParent(content, false);
+                deletedItemTypeStart--;
+                nextItem = content.GetChild(0) as RectTransform;
+                nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
+            }
+            else if (deletedItemTypeEnd > 0)
+			{
+                deletedItemTypeEnd--;
+                nextItem = content.GetChild(content.childCount - 1) as RectTransform;
+                nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
             }
             else
             {
@@ -671,19 +687,25 @@ namespace UnityEngine.UI
             dataSource.ProvideData(nextItem, itemIdx);
             return nextItem;
         }
-        protected void ReturnToTempPool(RectTransform item)
+        protected void ReturnToTempPool(bool fromStart, int count = 1)
         {
-            // TODO: if we remove all code relying on childnode, we could skip this line
-            item.transform.SetParent(null, false);
-            tempPool.Enqueue(item);
+            if (fromStart)
+                deletedItemTypeStart += count;
+            else
+                deletedItemTypeEnd += count;
         }
         protected void ClearTempPool()
         {
-            while (tempPool.Count > 0)
+            while (deletedItemTypeStart > 0)
             {
-                prefabSource.ReturnObject(tempPool.Dequeue());
+                deletedItemTypeStart--;
+                prefabSource.ReturnObject(content.GetChild(0));
             }
-
+            while (deletedItemTypeEnd > 0)
+            {
+                deletedItemTypeEnd--;
+                prefabSource.ReturnObject(content.GetChild(content.childCount - 1));
+            }
         }
         //==========LoopScrollRect==========
 
