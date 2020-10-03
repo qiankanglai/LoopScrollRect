@@ -461,6 +461,15 @@ namespace UnityEngine.UI
                 sizeFilled += size;
             }
 
+            // refill from start in case not full yet
+            while (sizeToFill > sizeFilled)
+            {
+                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                if (size <= 0)
+                    break;
+                sizeFilled += size;
+            }
+
             Vector2 pos = m_Content.anchoredPosition;
             float dist = alignStart ? 0 : Mathf.Max(0, sizeFilled - sizeToFill);
             if (reverseDirection)
@@ -472,6 +481,7 @@ namespace UnityEngine.UI
             m_Content.anchoredPosition = pos;
 
             ClearTempPool();
+            UpdateScrollbars(Vector2.zero);
         }
 
         public void RefillCells(int offset = 0, bool fillViewRect = false)
@@ -509,6 +519,15 @@ namespace UnityEngine.UI
                 sizeFilled += size;
             }
 
+            // refill from start in case not full yet
+            while (sizeToFill > sizeFilled)
+            {
+                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+                if (size <= 0)
+                    break;
+                sizeFilled += size;
+            }
+
             if (fillViewRect && itemSize > 0 && sizeFilled < sizeToFill)
             {
                 int itemsToAddCount = (int)((sizeToFill - sizeFilled) / itemSize);        //calculate how many items can be added above the offset, so it still is visible in the view
@@ -525,6 +544,7 @@ namespace UnityEngine.UI
             m_Content.anchoredPosition = pos;
 
             ClearTempPool();
+            UpdateScrollbars(Vector2.zero);
         }
 
         protected float NewItemAtStart()
