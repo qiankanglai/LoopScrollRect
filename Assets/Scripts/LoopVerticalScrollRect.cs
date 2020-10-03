@@ -48,6 +48,30 @@ namespace UnityEngine.UI
         {
             bool changed = false;
 
+            if (viewBounds.min.y > contentBounds.min.y + threshold)
+            {
+                float size = DeleteItemAtEnd(), totalSize = size;
+                while (size > 0 && viewBounds.min.y > contentBounds.min.y + threshold + totalSize)
+                {
+                    size = DeleteItemAtEnd();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
+            if (viewBounds.max.y < contentBounds.max.y - threshold)
+            {
+                float size = DeleteItemAtStart(), totalSize = size;
+                while (size > 0 && viewBounds.max.y < contentBounds.max.y - threshold - totalSize)
+                {
+                    size = DeleteItemAtStart();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
             if (viewBounds.min.y < contentBounds.min.y)
             {
                 float size = NewItemAtEnd(), totalSize = size;
@@ -72,28 +96,9 @@ namespace UnityEngine.UI
                     changed = true;
             }
 
-            if (viewBounds.min.y > contentBounds.min.y + threshold)
-            {
-                float size = DeleteItemAtEnd(), totalSize = size;
-                while (size > 0 && viewBounds.min.y > contentBounds.min.y + threshold + totalSize)
-                {
-                    size = DeleteItemAtEnd();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
-            }
-
-            if (viewBounds.max.y < contentBounds.max.y - threshold)
-            {
-                float size = DeleteItemAtStart(), totalSize = size;
-                while (size > 0 && viewBounds.max.y < contentBounds.max.y - threshold - totalSize)
-                {
-                    size = DeleteItemAtStart();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
+            if (changed)
+			{
+                ClearTempPool();
             }
 
             return changed;

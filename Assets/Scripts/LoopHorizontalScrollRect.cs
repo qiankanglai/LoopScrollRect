@@ -47,6 +47,30 @@ namespace UnityEngine.UI
         {
             bool changed = false;
 
+            if (viewBounds.max.x < contentBounds.max.x - threshold)
+            {
+                float size = DeleteItemAtEnd(), totalSize = size;
+                while (size > 0 && viewBounds.max.x < contentBounds.max.x - threshold - totalSize)
+                {
+                    size = DeleteItemAtEnd();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
+            if (viewBounds.min.x > contentBounds.min.x + threshold)
+            {
+                float size = DeleteItemAtStart(), totalSize = size;
+                while (size > 0 && viewBounds.min.x > contentBounds.min.x + threshold + totalSize)
+                {
+                    size = DeleteItemAtStart();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
             if (viewBounds.max.x > contentBounds.max.x)
             {
                 float size = NewItemAtEnd(), totalSize = size;
@@ -71,28 +95,9 @@ namespace UnityEngine.UI
                     changed = true;
             }
 
-            if (viewBounds.max.x < contentBounds.max.x - threshold)
+            if (changed)
             {
-                float size = DeleteItemAtEnd(), totalSize = size;
-                while (size > 0 && viewBounds.max.x < contentBounds.max.x - threshold - totalSize)
-                {
-                    size = DeleteItemAtEnd();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
-            }
-
-            if (viewBounds.min.x > contentBounds.min.x + threshold)
-            {
-                float size = DeleteItemAtStart(), totalSize = size;
-                while (size > 0 && viewBounds.min.x > contentBounds.min.x + threshold + totalSize)
-                {
-                    size = DeleteItemAtStart();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
+                ClearTempPool();
             }
 
             return changed;

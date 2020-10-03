@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace UnityEngine.UI
 {
@@ -444,7 +445,7 @@ namespace UnityEngine.UI
 
             for (int i = m_Content.childCount - 1; i >= 0; i--)
             {
-                prefabSource.ReturnObject(m_Content.GetChild(i));
+                ReturnToTempPool(m_Content.GetChild(i) as RectTransform);
             }
 
             float sizeToFill = 0, sizeFilled = 0;
@@ -469,6 +470,8 @@ namespace UnityEngine.UI
             else if (directionSign == 1)
                 pos.x = -dist;
             m_Content.anchoredPosition = pos;
+
+            ClearTempPool();
         }
 
         public void RefillCells(int offset = 0, bool fillViewRect = false)
@@ -486,7 +489,7 @@ namespace UnityEngine.UI
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             for (int i = m_Content.childCount - 1; i >= 0; i--)
             {
-                prefabSource.ReturnObject(m_Content.GetChild(i));
+                ReturnToTempPool(m_Content.GetChild(i) as RectTransform);
             }
 
             float sizeToFill = 0, sizeFilled = 0;
@@ -520,6 +523,8 @@ namespace UnityEngine.UI
             else if (directionSign == 1)
                 pos.x = 0;
             m_Content.anchoredPosition = pos;
+
+            ClearTempPool();
         }
 
         protected float NewItemAtStart()
@@ -532,7 +537,7 @@ namespace UnityEngine.UI
             for (int i = 0; i < contentConstraintCount; i++)
             {
                 itemTypeStart--;
-                RectTransform newItem = InstantiateNextItem(itemTypeStart);
+                RectTransform newItem = GetFromTempPool(itemTypeStart);
                 newItem.SetAsFirstSibling();
                 size = Mathf.Max(GetSize(newItem), size);
             }
@@ -563,7 +568,7 @@ namespace UnityEngine.UI
             {
                 RectTransform oldItem = content.GetChild(0) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                prefabSource.ReturnObject(oldItem);
+                ReturnToTempPool(oldItem);
 
                 itemTypeStart++;
 
@@ -595,7 +600,7 @@ namespace UnityEngine.UI
             int count = contentConstraintCount - (content.childCount % contentConstraintCount);
             for (int i = 0; i < count; i++)
             {
-                RectTransform newItem = InstantiateNextItem(itemTypeEnd);
+                RectTransform newItem = GetFromTempPool(itemTypeEnd);
                 size = Mathf.Max(GetSize(newItem), size);
                 itemTypeEnd++;
                 if (totalCount >= 0 && itemTypeEnd >= totalCount)
@@ -629,7 +634,7 @@ namespace UnityEngine.UI
             {
                 RectTransform oldItem = content.GetChild(content.childCount - 1) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
-                prefabSource.ReturnObject(oldItem);
+                ReturnToTempPool(oldItem);
 
                 itemTypeEnd--;
                 if (itemTypeEnd % contentConstraintCount == 0 || content.childCount == 0)
@@ -648,13 +653,37 @@ namespace UnityEngine.UI
             return size;
         }
 
-        private RectTransform InstantiateNextItem(int itemIdx)
-        {            
-            RectTransform nextItem = prefabSource.GetObject().transform as RectTransform;
-            nextItem.transform.SetParent(content, false);
-            nextItem.gameObject.SetActive(true);
+        Queue<RectTransform> tempPool = new Queue<RectTransform>();
+        protected RectTransform GetFromTempPool(int itemIdx)
+        {
+            RectTransform nextItem = null;
+            if (tempPool.Count > 0)
+            {
+                nextItem = tempPool.Dequeue();
+                nextItem.transform.SetParent(content, false);
+            }
+            else
+            {
+                nextItem = prefabSource.GetObject().transform as RectTransform;
+                nextItem.transform.SetParent(content, false);
+                nextItem.gameObject.SetActive(true);
+            }
             dataSource.ProvideData(nextItem, itemIdx);
             return nextItem;
+        }
+        protected void ReturnToTempPool(RectTransform item)
+        {
+            // TODO: if we remove all code relying on childnode, we could skip this line
+            item.transform.SetParent(null, false);
+            tempPool.Enqueue(item);
+        }
+        protected void ClearTempPool()
+        {
+            while (tempPool.Count > 0)
+            {
+                prefabSource.ReturnObject(tempPool.Dequeue());
+            }
+
         }
         //==========LoopScrollRect==========
 
