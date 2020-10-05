@@ -48,16 +48,18 @@ namespace UnityEngine.UI
         protected abstract Vector2 GetVector(float value);
         protected int directionSign = 0;
 
-        private float m_ContentSpacing = -1;
+        private bool m_ContentSpaceInit = false;
+        private float m_ContentSpacing = 0;
         protected GridLayoutGroup m_GridLayout = null;
         protected float contentSpacing
         {
             get
             {
-                if (m_ContentSpacing >= 0)
+                if (m_ContentSpaceInit)
                 {
                     return m_ContentSpacing;
                 }
+                m_ContentSpaceInit = true;
                 m_ContentSpacing = 0;
                 if (content != null)
                 {
@@ -76,15 +78,17 @@ namespace UnityEngine.UI
             }
         }
 
+        private bool m_ContentConstraintCountInit = false;
         private int m_ContentConstraintCount = 0;
         protected int contentConstraintCount
         {
             get
             {
-                if (m_ContentConstraintCount > 0)
+                if (m_ContentConstraintCountInit)
                 {
                     return m_ContentConstraintCount;
                 }
+                m_ContentConstraintCountInit = true;
                 m_ContentConstraintCount = 1;
                 if (content != null)
                 {
@@ -103,7 +107,7 @@ namespace UnityEngine.UI
         }
 
         // the first line
-        int StartLine
+        protected int StartLine
         {
             get
             {
@@ -112,7 +116,7 @@ namespace UnityEngine.UI
         }
 
         // how many lines we have for now
-        int CurrentLines
+        protected int CurrentLines
         {
             get
             {
@@ -121,7 +125,7 @@ namespace UnityEngine.UI
         }
 
         // how many lines we have in total
-        int TotalLines
+        protected int TotalLines
         {
             get
             {
@@ -579,7 +583,7 @@ namespace UnityEngine.UI
         protected float DeleteItemAtStart()
         {
             // special case: when moving or dragging, we cannot simply delete start when we've reached the end
-            if ((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeEnd >= totalCount - 1)
+            if ((m_Dragging || m_Velocity != Vector2.zero) && totalCount >= 0 && itemTypeEnd >= totalCount - contentConstraintCount)
             {
                 return 0;
             }
@@ -1012,7 +1016,9 @@ namespace UnityEngine.UI
                 //==========LoopScrollRect==========
                 if (m_ContentBounds.size.x > 0 && totalCount > 0)
                 {
-                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / m_ContentBounds.size.x * CurrentLines / TotalLines);
+                    float elementSize = (m_ContentBounds.size.x - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    float totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / totalSize);
                 }
                 //==========LoopScrollRect==========
                 else
@@ -1026,7 +1032,9 @@ namespace UnityEngine.UI
                 //==========LoopScrollRect==========
                 if (m_ContentBounds.size.y > 0 && totalCount > 0)
                 {
-                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / m_ContentBounds.size.y * CurrentLines / TotalLines);
+                    float elementSize = (m_ContentBounds.size.y - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    float totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / totalSize);
                 }
                 //==========LoopScrollRect==========
                 else
@@ -1057,10 +1065,9 @@ namespace UnityEngine.UI
                 //==========LoopScrollRect==========
                 if (totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
-                    //TODO: consider contentSpacing
-                    float elementSize = m_ContentBounds.size.x / CurrentLines;
-                    float totalSize = elementSize * TotalLines;
-                    float offset = m_ContentBounds.min.x - elementSize * StartLine;
+                    float elementSize = (m_ContentBounds.size.x - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    float totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                    float offset = m_ContentBounds.min.x - elementSize * StartLine - contentSpacing * StartLine;
 
                     if (totalSize <= m_ViewBounds.size.x)
                         return (m_ViewBounds.min.x > offset) ? 1 : 0;
@@ -1084,10 +1091,9 @@ namespace UnityEngine.UI
                 //==========LoopScrollRect==========
                 if (totalCount > 0 && itemTypeEnd > itemTypeStart)
                 {
-                    //TODO: consider contentSpacinge
-                    float elementSize = m_ContentBounds.size.y / CurrentLines;
-                    float totalSize = elementSize * TotalLines;
-                    float offset = m_ContentBounds.max.y + elementSize * StartLine;
+                    float elementSize = (m_ContentBounds.size.y - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    float totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                    float offset = m_ContentBounds.max.y + elementSize * StartLine + contentSpacing * StartLine;
 
                     if (totalSize <= m_ViewBounds.size.y)
                         return (offset > m_ViewBounds.max.y) ? 1 : 0;
@@ -1121,17 +1127,17 @@ namespace UnityEngine.UI
             float newLocalPosition = localPosition[axis];
             if (axis == 0)
             {
-                float elementSize = m_ContentBounds.size.x / CurrentLines;
-                float totalSize = elementSize * TotalLines;
-                float offset = m_ContentBounds.min.x - elementSize * StartLine;
+                float elementSize = (m_ContentBounds.size.x - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                float totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                float offset = m_ContentBounds.min.x - elementSize * StartLine - contentSpacing * StartLine;
 
                 newLocalPosition += m_ViewBounds.min.x - value * (totalSize - m_ViewBounds.size[axis]) - offset;
             }
             else if (axis == 1)
             {
-                float elementSize = m_ContentBounds.size.y / CurrentLines;
-                float totalSize = elementSize * TotalLines;
-                float offset = m_ContentBounds.max.y + elementSize * StartLine;
+                float elementSize = (m_ContentBounds.size.y - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                float totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                float offset = m_ContentBounds.max.y + elementSize * StartLine + contentSpacing * StartLine;
 
                 newLocalPosition -= offset - value * (totalSize - m_ViewBounds.size.y) - m_ViewBounds.max.y;
             }
