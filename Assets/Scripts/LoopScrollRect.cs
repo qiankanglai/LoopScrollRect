@@ -327,15 +327,15 @@ namespace UnityEngine.UI
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
             {
-                Debug.LogWarningFormat("invalid index {0}", index);
-                return;
-            }
-            if (speed <= 0)
-            {
-                Debug.LogWarningFormat("invalid speed {0}", speed);
+                Debug.LogErrorFormat("invalid index {0}", index);
                 return;
             }
             StopAllCoroutines();
+            if (speed <= 0)
+            {
+                RefillCells(index);
+                return;
+            }
             StartCoroutine(ScrollToCellCoroutine(index, speed));
         }
 
