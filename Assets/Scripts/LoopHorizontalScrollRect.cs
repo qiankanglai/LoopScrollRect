@@ -61,9 +61,9 @@ namespace UnityEngine.UI
                     offsetCount = Mathf.FloorToInt((float)(itemTypeStart) / contentConstraintCount);
                 }
                 itemTypeStart -= offsetCount * contentConstraintCount;
-                if (itemTypeStart < 0)
+                if (totalCount >= 0)
                 {
-                    itemTypeStart = 0;
+                    itemTypeStart = Mathf.Max(itemTypeStart, 0);
                 }
                 itemTypeEnd = itemTypeStart;
 
@@ -95,9 +95,9 @@ namespace UnityEngine.UI
                     offsetCount = Mathf.FloorToInt((float)(maxItemTypeStart - itemTypeStart) / contentConstraintCount);
                 }
                 itemTypeStart += offsetCount * contentConstraintCount;
-                if (itemTypeStart < 0)
+                if (totalCount >= 0)
                 {
-                    itemTypeStart = 0;
+                    itemTypeStart = Mathf.Max(itemTypeStart, 0);
                 }
                 itemTypeEnd = itemTypeStart;
 

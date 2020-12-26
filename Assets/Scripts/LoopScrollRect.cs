@@ -929,7 +929,7 @@ namespace UnityEngine.UI
             if (!m_Vertical)
                 position.y = m_Content.anchoredPosition.y;
 
-            if (Mathf.Abs((position - m_Content.anchoredPosition).sqrMagnitude) > 0.05f)
+            if ((position - m_Content.anchoredPosition).sqrMagnitude > 0.001f)
             {
                 m_Content.anchoredPosition = position;
                 UpdateBounds(true);
