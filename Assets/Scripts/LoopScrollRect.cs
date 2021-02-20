@@ -46,7 +46,12 @@ namespace UnityEngine.UI
         protected abstract float GetSize(RectTransform item);
         protected abstract float GetDimension(Vector2 vector);
         protected abstract Vector2 GetVector(float value);
-        protected int directionSign = 0;
+        protected enum LoopScrollRectDirection
+        {
+            Vertical,
+            Horizontal,
+        }
+        protected LoopScrollRectDirection direction = LoopScrollRectDirection.Horizontal;
 
         private bool m_ContentSpaceInit = false;
         private float m_ContentSpacing = 0;
@@ -307,6 +312,19 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
+#if UNITY_EDITOR
+        protected override void Awake()
+        {
+            base.Awake();
+            if (Application.isPlaying)
+            {
+                float value = (reverseDirection ^ (direction == LoopScrollRectDirection.Horizontal)) ? 0 : 1;
+                Debug.Assert(Mathf.Abs(GetDimension(content.pivot)) == value, this);
+                Debug.Assert(Mathf.Abs(GetDimension(content.anchorMin)) == value, this);
+                Debug.Assert(Mathf.Abs(GetDimension(content.anchorMax)) == value, this);
+            }
+        }
+#endif
 
         public void ClearCells()
         {
@@ -361,9 +379,9 @@ namespace UnityEngine.UI
                         m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
                         var m_ItemBounds = GetBounds4Item(index);
                         var offset = 0.0f;
-                        if (directionSign == -1)
+                        if (direction == LoopScrollRectDirection.Vertical)
                             offset = reverseDirection ? (m_ViewBounds.min.y - m_ItemBounds.min.y) : (m_ViewBounds.max.y - m_ItemBounds.max.y);
-                        else if (directionSign == 1)
+                        else
                             offset = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
                         // check if we cannot move on
                         if (totalCount >= 0)
@@ -372,8 +390,8 @@ namespace UnityEngine.UI
                             {
                                 m_ItemBounds = GetBounds4Item(totalCount - 1);
                                 // reach bottom
-                                if ((directionSign == -1 && m_ItemBounds.min.y > m_ViewBounds.min.y) ||
-                                    (directionSign == 1 && m_ItemBounds.max.x < m_ViewBounds.max.x))
+                                if ((direction == LoopScrollRectDirection.Vertical && m_ItemBounds.min.y > m_ViewBounds.min.y) ||
+                                    (direction == LoopScrollRectDirection.Horizontal && m_ItemBounds.max.x < m_ViewBounds.max.x))
                                 {
                                     needMoving = false;
                                     break;
@@ -382,8 +400,8 @@ namespace UnityEngine.UI
                             else if (offset < 0 && itemTypeStart == 0 && reverseDirection)
                             {
                                 m_ItemBounds = GetBounds4Item(0);
-                                if ((directionSign == -1 && m_ItemBounds.max.y < m_ViewBounds.max.y) ||
-                                    (directionSign == 1 && m_ItemBounds.min.x > m_ViewBounds.min.x))
+                                if ((direction == LoopScrollRectDirection.Vertical && m_ItemBounds.max.y < m_ViewBounds.max.y) ||
+                                    (direction == LoopScrollRectDirection.Horizontal && m_ItemBounds.min.x > m_ViewBounds.min.x))
                                 {
                                     needMoving = false;
                                     break;
@@ -451,11 +469,7 @@ namespace UnityEngine.UI
 
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
-            float sizeToFill = 0, sizeFilled = 0;
-            if (directionSign == -1)
-                sizeToFill = viewRect.rect.size.y;
-            else
-                sizeToFill = viewRect.rect.size.x;
+            float sizeToFill = Mathf.Abs(GetDimension(viewRect.rect.size)), sizeFilled = 0;
 
             while (sizeToFill > sizeFilled)
             {
@@ -478,9 +492,9 @@ namespace UnityEngine.UI
             float dist = alignStart ? 0 : Mathf.Max(0, sizeFilled - sizeToFill);
             if (reverseDirection)
                 dist = -dist;
-            if (directionSign == -1)
+            if (direction == LoopScrollRectDirection.Vertical)
                 pos.y = dist;
-            else if (directionSign == 1)
+            else
                 pos.x = -dist;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;
@@ -506,12 +520,8 @@ namespace UnityEngine.UI
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
 
-            float sizeToFill = 0, sizeFilled = 0;
+            float sizeToFill = Mathf.Abs(GetDimension(viewRect.rect.size)), sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
-            if (directionSign == -1)
-                sizeToFill = viewRect.rect.size.y;
-            else
-                sizeToFill = viewRect.rect.size.x;
 
             float itemSize = 0;
 
@@ -542,9 +552,9 @@ namespace UnityEngine.UI
             }
 
             Vector2 pos = m_Content.anchoredPosition;
-            if (directionSign == -1)
+            if (direction == LoopScrollRectDirection.Vertical)
                 pos.y = 0;
-            else if (directionSign == 1)
+            else
                 pos.x = 0;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;

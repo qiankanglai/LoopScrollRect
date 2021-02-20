@@ -33,8 +33,8 @@ namespace UnityEngine.UI
 
         protected override void Awake()
         {
+            direction = LoopScrollRectDirection.Horizontal;
             base.Awake();
-            directionSign = 1;
 
             GridLayoutGroup layout = content.GetComponent<GridLayoutGroup>();
             if (layout != null && layout.constraint != GridLayoutGroup.Constraint.FixedRowCount)
