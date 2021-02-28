@@ -510,12 +510,11 @@ namespace UnityEngine.UI
 
             StopMovement();
             itemTypeStart = reverseDirection ? totalCount - offset : offset;
-            itemTypeEnd = itemTypeStart;
-
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
             {
-                itemTypeStart = (itemTypeStart / contentConstraintCount) * itemTypeStart;
+                itemTypeStart = (itemTypeStart / contentConstraintCount) * contentConstraintCount;
             }
+            itemTypeEnd = itemTypeStart;
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
