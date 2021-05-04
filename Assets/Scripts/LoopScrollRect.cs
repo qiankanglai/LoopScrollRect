@@ -424,6 +424,7 @@ namespace UnityEngine.UI
                         content.anchoredPosition += offset;
                         m_PrevPosition += offset;
                         m_ContentStartPosition += offset;
+                        UpdateBounds(true);
                     }
                 }
             }
