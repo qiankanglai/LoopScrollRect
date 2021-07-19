@@ -55,6 +55,10 @@ namespace UnityEngine.UI
 
         private bool m_ContentSpaceInit = false;
         private float m_ContentSpacing = 0;
+        protected float m_ContentLeftPadding = 0;
+        protected float m_ContentRightPadding = 0;
+        protected float m_ContentTopPadding = 0;
+        protected float m_ContentBottomPadding = 0;
         protected GridLayoutGroup m_GridLayout = null;
         protected float contentSpacing
         {
@@ -72,11 +76,19 @@ namespace UnityEngine.UI
                     if (layout1 != null)
                     {
                         m_ContentSpacing = layout1.spacing;
+                        m_ContentLeftPadding = layout1.padding.left;
+                        m_ContentRightPadding = layout1.padding.right;
+                        m_ContentTopPadding = layout1.padding.top;
+                        m_ContentBottomPadding = layout1.padding.bottom;
                     }
                     m_GridLayout = content.GetComponent<GridLayoutGroup>();
                     if (m_GridLayout != null)
                     {
                         m_ContentSpacing = Mathf.Abs(GetDimension(m_GridLayout.spacing));
+                        m_ContentLeftPadding = m_GridLayout.padding.left;
+                        m_ContentRightPadding = m_GridLayout.padding.right;
+                        m_ContentTopPadding = m_GridLayout.padding.top;
+                        m_ContentBottomPadding = m_GridLayout.padding.bottom;
                     }
                 }
                 return m_ContentSpacing;
