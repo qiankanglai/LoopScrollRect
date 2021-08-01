@@ -5,6 +5,6 @@ namespace UnityEngine.UI
 {
     public interface LoopScrollDataSource
     {
-        public void ProvideData(Transform transform, int idx);
+        void ProvideData(Transform transform, int idx);
     }
 }
