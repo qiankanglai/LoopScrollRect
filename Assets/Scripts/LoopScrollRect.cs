@@ -13,26 +13,16 @@ namespace UnityEngine.UI
     public abstract class LoopScrollRect : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup
     {
         //==========LoopScrollRect==========
-        [Tooltip("Prefab Source")]
-        public LoopScrollPrefabSource prefabSource;
+        [HideInInspector]
+        [NonSerialized]
+        public LoopScrollPrefabSource prefabSource = null;
 
         [Tooltip("Total count, negative means INFINITE mode")]
         public int totalCount;
 
         [HideInInspector]
         [NonSerialized]
-        public LoopScrollDataSource dataSource = LoopScrollSendIndexSource.Instance;
-        public object[] objectsToFill
-        {
-            // wrapper for forward compatbility
-            set
-            {
-                if (value != null)
-                    dataSource = new LoopScrollArraySource<object>(value);
-                else
-                    dataSource = LoopScrollSendIndexSource.Instance;
-            }
-        }
+        public LoopScrollDataSource dataSource = null;
 
         protected float threshold = 0;
         [Tooltip("Reverse direction for dragging")]
@@ -345,7 +335,6 @@ namespace UnityEngine.UI
                 itemTypeStart = 0;
                 itemTypeEnd = 0;
                 totalCount = 0;
-                objectsToFill = null;
                 for (int i = content.childCount - 1; i >= 0; i--)
                 {
                     prefabSource.ReturnObject(content.GetChild(i));
@@ -468,7 +457,7 @@ namespace UnityEngine.UI
 
         public void RefillCellsFromEnd(int offset = 0, bool alignStart = false)
         {
-            if (!Application.isPlaying || prefabSource == null)
+            if (!Application.isPlaying)
                 return;
 
             StopMovement();
@@ -518,7 +507,7 @@ namespace UnityEngine.UI
 
         public void RefillCells(int offset = 0, bool fillViewRect = false)
         {
-            if (!Application.isPlaying || prefabSource == null)
+            if (!Application.isPlaying)
                 return;
 
             StopMovement();

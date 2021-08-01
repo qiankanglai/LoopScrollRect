@@ -1,6 +1,6 @@
 # Loop Scroll Rect
 
-## v1.05
+## v1.06
 
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
@@ -35,9 +35,11 @@ The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivo
 - Supports reverse direction
 - **Supports ScrollBar** (this doesn't work in Infinite mode, and may behavior strange for cells with different size)
 
-Also, I modified [Easy Object Pool](https://www.assetstore.unity3d.com/cn/#!/content/31928) for recycling the cells.
-
 My scripts copies `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) rather than inherit `ScrollRect` like InfinityScroll. I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a little easier.
+
+## Example
+
+Please refer to `InitOnStart.cs` for quick example implmentation. It's high recommended for implmentating your own cache pool.
 
 ### Infinite Version
 
