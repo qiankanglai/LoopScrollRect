@@ -8,9 +8,9 @@ namespace UnityEngine.UI
     [DisallowMultipleComponent]
     public class LoopVerticalScrollRect : LoopScrollRect
     {
-        protected override float GetSize(RectTransform item)
+        protected override float GetSize(RectTransform item, bool includeSpacing)
         {
-            float size = contentSpacing;
+            float size = includeSpacing ? contentSpacing : 0;
             if (m_GridLayout != null)
             {
                 size += m_GridLayout.cellSize.y;

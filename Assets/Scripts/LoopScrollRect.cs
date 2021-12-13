@@ -33,7 +33,7 @@ namespace UnityEngine.UI
         protected int itemTypeStart = 0;
         protected int itemTypeEnd = 0;
 
-        protected abstract float GetSize(RectTransform item);
+        protected abstract float GetSize(RectTransform item, bool includeSpacing = true);
         protected abstract float GetDimension(Vector2 vector);
         protected abstract float GetAbsDimension(Vector2 vector);
         protected abstract Vector2 GetVector(float value);
@@ -474,20 +474,23 @@ namespace UnityEngine.UI
 
             float sizeToFill = Mathf.Abs(GetDimension(viewRect.rect.size)), sizeFilled = 0;
 
+            bool first = true;
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+                float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
                 if (size <= 0)
                     break;
+                first = false;
                 sizeFilled += size;
             }
 
             // refill from start in case not full yet
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
                 if (size <= 0)
                     break;
+                first = false;
                 sizeFilled += size;
             }
 
@@ -503,6 +506,9 @@ namespace UnityEngine.UI
             m_ContentStartPosition = pos;
 
             ClearTempPool();
+            // force build bounds here so scrollbar can access newest bounds
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            m_ContentBounds = GetBounds();
             UpdateScrollbars(Vector2.zero);
         }
 
@@ -527,11 +533,13 @@ namespace UnityEngine.UI
 
             float itemSize = 0;
 
+            bool first = true;
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
                 if (size <= 0)
                     break;
+                first = false;
                 itemSize = size;
                 sizeFilled += size;
             }
@@ -539,9 +547,10 @@ namespace UnityEngine.UI
             // refill from start in case not full yet
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+                float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
                 if (size <= 0)
                     break;
+                first = false;
                 sizeFilled += size;
             }
 
@@ -562,10 +571,13 @@ namespace UnityEngine.UI
             m_ContentStartPosition = pos;
 
             ClearTempPool();
+            // force build bounds here so scrollbar can access newest bounds
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            m_ContentBounds = GetBounds();
             UpdateScrollbars(Vector2.zero);
         }
 
-        protected float NewItemAtStart()
+        protected float NewItemAtStart(bool includeSpacing = true)
         {
             if (totalCount >= 0 && itemTypeStart - contentConstraintCount < 0)
             {
@@ -577,7 +589,7 @@ namespace UnityEngine.UI
                 itemTypeStart--;
                 RectTransform newItem = GetFromTempPool(itemTypeStart);
                 newItem.SetSiblingIndex(deletedItemTypeStart);
-                size = Mathf.Max(GetSize(newItem), size);
+                size = Mathf.Max(GetSize(newItem, includeSpacing), size);
             }
             threshold = Mathf.Max(threshold, size * 1.5f);
 
@@ -632,7 +644,7 @@ namespace UnityEngine.UI
         }
 
 
-        protected float NewItemAtEnd()
+        protected float NewItemAtEnd(bool includeSpacing = true)
         {
             if (totalCount >= 0 && itemTypeEnd >= totalCount)
             {
@@ -646,7 +658,7 @@ namespace UnityEngine.UI
             {
                 RectTransform newItem = GetFromTempPool(itemTypeEnd);
                 newItem.SetSiblingIndex(content.childCount - deletedItemTypeEnd - 1);
-                size = Mathf.Max(GetSize(newItem), size);
+                size = Mathf.Max(GetSize(newItem, includeSpacing), size);
                 itemTypeEnd++;
                 if (totalCount >= 0 && itemTypeEnd >= totalCount)
                 {
