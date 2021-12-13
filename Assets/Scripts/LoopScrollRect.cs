@@ -161,7 +161,7 @@ namespace UnityEngine.UI
         public class ScrollRectEvent : UnityEvent<Vector2> { }
 
         [SerializeField]
-        private RectTransform m_Content;
+        protected RectTransform m_Content;
         public RectTransform content { get { return m_Content; } set { m_Content = value; } }
 
         [SerializeField]

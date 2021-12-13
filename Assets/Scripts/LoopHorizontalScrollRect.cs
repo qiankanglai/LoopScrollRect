@@ -18,6 +18,7 @@ namespace UnityEngine.UI
             {
                 size += LayoutUtility.GetPreferredWidth(item);
             }
+            size *= m_Content.localScale.x;
             return size;
         }
 
