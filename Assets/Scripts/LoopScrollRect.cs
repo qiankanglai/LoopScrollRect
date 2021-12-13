@@ -35,6 +35,7 @@ namespace UnityEngine.UI
 
         protected abstract float GetSize(RectTransform item);
         protected abstract float GetDimension(Vector2 vector);
+        protected abstract float GetAbsDimension(Vector2 vector);
         protected abstract Vector2 GetVector(float value);
         protected enum LoopScrollRectDirection
         {
@@ -74,7 +75,7 @@ namespace UnityEngine.UI
                     m_GridLayout = content.GetComponent<GridLayoutGroup>();
                     if (m_GridLayout != null)
                     {
-                        m_ContentSpacing = Mathf.Abs(GetDimension(m_GridLayout.spacing));
+                        m_ContentSpacing = GetAbsDimension(m_GridLayout.spacing);
                         m_ContentLeftPadding = m_GridLayout.padding.left;
                         m_ContentRightPadding = m_GridLayout.padding.right;
                         m_ContentTopPadding = m_GridLayout.padding.top;

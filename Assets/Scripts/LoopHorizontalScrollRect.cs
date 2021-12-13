@@ -26,6 +26,11 @@ namespace UnityEngine.UI
         {
             return -vector.x;
         }
+        
+        protected override float GetAbsDimension(Vector2 vector)
+        {
+            return vector.x;
+        }
 
         protected override Vector2 GetVector(float value)
         {
