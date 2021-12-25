@@ -26,6 +26,7 @@ namespace SG
 
         public void ReturnObject(Transform trans)
         {
+            // Use `DestroyImmediate` here if you don't need Pool
             trans.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
             trans.gameObject.SetActive(false);
             trans.SetParent(transform, false);
