@@ -479,7 +479,7 @@ namespace UnityEngine.UI
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
-                if (size <= 0)
+                if (size < 0)
                     break;
                 first = false;
                 sizeFilled += size;
@@ -489,7 +489,7 @@ namespace UnityEngine.UI
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
-                if (size <= 0)
+                if (size < 0)
                     break;
                 first = false;
                 sizeFilled += size;
@@ -538,7 +538,7 @@ namespace UnityEngine.UI
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
-                if (size <= 0)
+                if (size < 0)
                     break;
                 first = false;
                 itemSize = size;
@@ -549,7 +549,7 @@ namespace UnityEngine.UI
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
-                if (size <= 0)
+                if (size < 0)
                     break;
                 first = false;
                 sizeFilled += size;
@@ -582,7 +582,7 @@ namespace UnityEngine.UI
         {
             if (totalCount >= 0 && itemTypeStart - contentConstraintCount < 0)
             {
-                return 0;
+                return -1;
             }
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
@@ -649,7 +649,7 @@ namespace UnityEngine.UI
         {
             if (totalCount >= 0 && itemTypeEnd >= totalCount)
             {
-                return 0;
+                return -1;
             }
             float size = 0;
             // issue 4: fill lines to end first
