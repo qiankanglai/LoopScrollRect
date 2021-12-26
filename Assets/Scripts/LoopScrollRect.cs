@@ -453,6 +453,7 @@ namespace UnityEngine.UI
                         i--;
                     }
                 }
+                UpdateBounds(true);
             }
         }
 
