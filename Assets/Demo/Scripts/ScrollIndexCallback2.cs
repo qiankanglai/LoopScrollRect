@@ -6,7 +6,7 @@ public class ScrollIndexCallback2 : MonoBehaviour
 {
     public Text text;
     public LayoutElement element;
-    private static float[] randomWidths = new float[3] { 100, 150, 50 };
+    public static float[] randomWidths = new float[3] { 100, 150, 50 };
     void ScrollCellIndex(int idx)
     {
         string name = "Cell " + idx.ToString();
