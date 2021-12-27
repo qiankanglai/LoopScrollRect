@@ -56,7 +56,6 @@ public class UI_ControllData : MonoBehaviour
     private void OnButtonDelDataClick()
     {
         m_InitOnStart_Custom.m_CustomListBank.DelContentByIndex(0);
-
         m_InitOnStart_Custom.m_LoopScrollRect.ClearCells();
         m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
         m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();
@@ -65,7 +64,8 @@ public class UI_ControllData : MonoBehaviour
     private void OnButtonSortDataClick()
     {
         var TempContent = m_InitOnStart_Custom.m_CustomListBank.GetContents();
-        TempContent.Sort((x, y) => x.CompareTo(y)); //升冪:1,2,3
+        TempContent.Sort((x, y) => x.CompareTo(y));
+
         m_InitOnStart_Custom.m_LoopScrollRect.ClearCells();
         m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
         m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();
@@ -74,7 +74,8 @@ public class UI_ControllData : MonoBehaviour
     private void OnButtonReverseSortDataClick()
     {
         var TempContent = m_InitOnStart_Custom.m_CustomListBank.GetContents();
-        TempContent.Sort((x, y) => -x.CompareTo(y));//降冪:3,2,1
+        TempContent.Sort((x, y) => -x.CompareTo(y));
+
         m_InitOnStart_Custom.m_LoopScrollRect.ClearCells();
         m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
         m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();

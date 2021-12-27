@@ -22,17 +22,13 @@ namespace SG
         [HideInInspector]
         public CustomListBank m_CustomListBank;
 
-        private void Awake()
-        {
-
-        }
-
         void Start()
         {
             m_LoopScrollRect = GetComponent<LoopScrollRect>();
             m_LoopScrollRect.prefabSource = this;
             m_LoopScrollRect.dataSource = this;
             m_LoopScrollRect.totalCount = m_CustomListBank.GetListLength();
+            m_LoopScrollRect.EnableTempPool(!m_IsUseMultiPrefabs);
             m_LoopScrollRect.RefillCells();
 
             m_CustomListBank = GetComponent<CustomListBank>();
@@ -88,11 +84,17 @@ namespace SG
                 if (!m_Pool_Type.TryGetValue(TempPrefab.name, out TempStack))
                 {
                     TempStack = new Stack<Transform>();
+                    m_Pool_Type.Add(TempPrefab.name, TempStack);
                 }
 
                 if (TempStack.Count == 0)
                 {
                     candidate = Instantiate(TempPrefab).GetComponent<Transform>();
+                    ScrollIndexCallbackBase TempScrollIndexCallbackBase = candidate.GetComponent<ScrollIndexCallbackBase>();
+                    if (null != TempScrollIndexCallbackBase)
+                    {
+                        TempScrollIndexCallbackBase.SetPrefabName(TempPrefab.name);
+                    }
                 }
                 else
                 {
@@ -106,7 +108,6 @@ namespace SG
 
         public void ReturnObject(Transform trans)
         {
-            // Use `DestroyImmediate` here if you don't need Pool
             trans.SendMessage("ScrollCellReturn", SendMessageOptions.DontRequireReceiver);
             trans.gameObject.SetActive(false);
             trans.SetParent(transform, false);
@@ -121,7 +122,8 @@ namespace SG
                 ScrollIndexCallbackBase TempScrollIndexCallbackBase = trans.GetComponent<ScrollIndexCallbackBase>();
                 if (null == TempScrollIndexCallbackBase)
                 {
-                    Destroy(trans.gameObject);
+                    // Use `DestroyImmediate` here if you don't need Pool
+                    DestroyImmediate(trans.gameObject);
                     return;
                 }
 

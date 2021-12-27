@@ -9,15 +9,15 @@ namespace qiankanglai.LoopScrollRect
         private int m_IndexID = 0;
         private string m_PrefabName = "";
 
-        protected virtual void Awake()
-        {
-            m_PrefabName = gameObject.name;
-        }
-
         // Get IndexID
         public int GetIndexID()
         {
             return m_IndexID;
+        }
+        
+        public void SetPrefabName(string name)
+        {
+            m_PrefabName = name;
         }
 
         // Get PrefabName
