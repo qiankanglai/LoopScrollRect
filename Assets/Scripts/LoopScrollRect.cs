@@ -458,6 +458,7 @@ namespace UnityEngine.UI
                     }
                 }
                 UpdateBounds(true);
+                UpdateScrollbars(Vector2.zero);
             }
         }
 
