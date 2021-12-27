@@ -720,6 +720,14 @@ namespace UnityEngine.UI
             return size;
         }
 
+        bool enableTempPool = true;
+        public void EnableTempPool(bool v)
+        {
+            Debug.Assert(deletedItemTypeStart == 0);
+            Debug.Assert(deletedItemTypeEnd == 0);
+            enableTempPool = v;
+        }
+
         int deletedItemTypeStart = 0;
         int deletedItemTypeEnd = 0;
         protected RectTransform GetFromTempPool(int itemIdx)
@@ -752,6 +760,9 @@ namespace UnityEngine.UI
                 deletedItemTypeStart += count;
             else
                 deletedItemTypeEnd += count;
+            // multi type prefab source cannot have temp pool
+            if (!enableTempPool)
+                ClearTempPool();
         }
         protected void ClearTempPool()
         {
