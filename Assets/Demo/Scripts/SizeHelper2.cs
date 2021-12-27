@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,16 +12,16 @@ public class SizeHelper2 : MonoBehaviour, LoopScrollSizeHelper
         ls.sizeHelper = this;
     }
     
-    public float GetItemsSize(int itemsCount)
+    public Vector2 GetItemsSize(int itemsCount)
     {
-        if (itemsCount <= 0) return 0;
+        if (itemsCount <= 0) return new Vector2();
         int count = ScrollIndexCallback2.randomWidths.Length;
-        float sum = 0;
+        Vector2 sum = new Vector2();
         for (int i = 0; i < count; i++)
         {
             if (itemsCount <= i) break;
             int t = (itemsCount - 1 - i) / count + 1;
-            sum += t * ScrollIndexCallback2.randomWidths[i];
+            sum.x += t * ScrollIndexCallback2.randomWidths[i];
         }
         return sum;
     }
