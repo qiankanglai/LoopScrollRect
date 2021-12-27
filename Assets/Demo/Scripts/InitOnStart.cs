@@ -13,7 +13,7 @@ namespace SG
 
         // Implement your own Cache Pool here. The following is just for example.
         Stack<Transform> pool = new Stack<Transform>();
-        public GameObject GetObject()
+        public GameObject GetObject(int index)
         {
             if (pool.Count == 0)
             {

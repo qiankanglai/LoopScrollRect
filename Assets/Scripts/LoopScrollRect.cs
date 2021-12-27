@@ -739,7 +739,7 @@ namespace UnityEngine.UI
             }
             else
             {
-                nextItem = prefabSource.GetObject().transform as RectTransform;
+                nextItem = prefabSource.GetObject(itemIdx).transform as RectTransform;
                 nextItem.transform.SetParent(content, false);
                 nextItem.gameObject.SetActive(true);
             }
@@ -1043,8 +1043,8 @@ namespace UnityEngine.UI
         {
             if (sizeHelper != null)
             {
-                totalSize = sizeHelper.GetItemsSize(TotalLines);
-                offset = m_ContentBounds.min.x - sizeHelper.GetItemsSize(StartLine) - contentSpacing * StartLine;
+                totalSize = sizeHelper.GetItemsSize(TotalLines).x;
+                offset = m_ContentBounds.min.x - sizeHelper.GetItemsSize(StartLine).x - contentSpacing * StartLine;
             }
             else
             {
@@ -1058,8 +1058,8 @@ namespace UnityEngine.UI
         {
             if (sizeHelper != null)
             {
-                totalSize = sizeHelper.GetItemsSize(TotalLines);
-                offset = m_ContentBounds.max.y + sizeHelper.GetItemsSize(StartLine) + contentSpacing * StartLine;
+                totalSize = sizeHelper.GetItemsSize(TotalLines).y;
+                offset = m_ContentBounds.max.y + sizeHelper.GetItemsSize(StartLine).y + contentSpacing * StartLine;
             }
             else
             {

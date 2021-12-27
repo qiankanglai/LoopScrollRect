@@ -5,6 +5,6 @@ namespace UnityEngine.UI
 {
     public interface LoopScrollSizeHelper
     {
-        float GetItemsSize(int itemsCount);
+        Vector2 GetItemsSize(int itemsCount);
     }
 }
