@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace qiankanglai.LoopScrollRect
+namespace Qiankanglai.LoopScrollRectManager
 {
     public class ScrollIndexCallbackBase : MonoBehaviour
     {

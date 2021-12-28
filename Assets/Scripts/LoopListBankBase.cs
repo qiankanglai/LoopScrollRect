@@ -1,14 +1,14 @@
-﻿/* Store the contents for ListBoxes to display.
+﻿/* Store the contents for ScrollIndexCallback to display.
  */
 using UnityEngine;
 
-namespace qiankanglai.LoopScrollRect
+namespace Qiankanglai.LoopScrollRectManager
 {
     /* The base class of the list content container
      *
      * Create the individual ListBank by inheriting this class
      */
-    public abstract class BaseListBank : MonoBehaviour
+    public abstract class LoopListBankBase : MonoBehaviour
     {
         // Get content in list by index
         public abstract object GetListContent(int index);
@@ -23,7 +23,7 @@ namespace qiankanglai.LoopScrollRect
 
     /* The example of the ListBank
      */
-    public class ListBank : BaseListBank
+    public class LoopListBank : LoopListBankBase
     {
         private int[] contents = {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10

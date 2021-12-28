@@ -347,6 +347,11 @@ namespace UnityEngine.UI
             }
         }
 
+        public int GetItemTypeStart()
+        {
+            return itemTypeStart;
+        }
+
         public void SrollToCell(int index, float speed)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
