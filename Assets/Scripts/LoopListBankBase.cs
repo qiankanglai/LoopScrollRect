@@ -2,7 +2,7 @@
  */
 using UnityEngine;
 
-namespace Qiankanglai.LoopScrollRectManager
+namespace qiankanglai.LoopScrollRectManager
 {
     /* The base class of the list content container
      *

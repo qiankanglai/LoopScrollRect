@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Qiankanglai.LoopScrollRectManager
+namespace qiankanglai.LoopScrollRectManager
 {
     [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
     [DisallowMultipleComponent]

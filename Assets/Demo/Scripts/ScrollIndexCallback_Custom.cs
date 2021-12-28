@@ -1,4 +1,4 @@
-﻿using Qiankanglai.LoopScrollRectManager;
+﻿using qiankanglai.LoopScrollRectManager;
 using UnityEngine.UI;
 
 namespace SG

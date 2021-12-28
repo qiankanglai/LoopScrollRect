@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Qiankanglai.LoopScrollRectManager
+namespace qiankanglai.LoopScrollRectManager
 {
     public class SizeHelper : MonoBehaviour, LoopScrollSizeHelper
     {

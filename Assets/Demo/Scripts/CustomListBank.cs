@@ -1,4 +1,4 @@
-﻿using Qiankanglai.LoopScrollRectManager;
+﻿using qiankanglai.LoopScrollRectManager;
 using System.Collections.Generic;
 using UnityEngine;
 
