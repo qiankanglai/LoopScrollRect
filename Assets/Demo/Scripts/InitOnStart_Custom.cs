@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using qiankanglai.LoopScrollRect;
 
-namespace SG
+namespace Demo
 {
     [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
     [DisallowMultipleComponent]

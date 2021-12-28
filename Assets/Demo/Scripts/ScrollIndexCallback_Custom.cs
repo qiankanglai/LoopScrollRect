@@ -1,26 +1,28 @@
-﻿using qiankanglai.LoopScrollRect;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 
-public class ScrollIndexCallback_Custom : ScrollIndexCallbackBase
+namespace Demo
 {
-    public Text m_CellText;
-    public Text m_ValueText;
-
-    public override void ScrollCellIndex(int idx, object content)
+    public class ScrollIndexCallback_Custom : ScrollIndexCallbackBase
     {
-        base.ScrollCellIndex(idx, content);
+        public Text m_CellText;
+        public Text m_ValueText;
 
-        var Tempcontent = (int)content;
-
-        string name = "Cell " + idx.ToString();
-        if (m_CellText != null)
+        public override void ScrollCellIndex(int idx, object content)
         {
-            m_CellText.text = name;
-        }
+            base.ScrollCellIndex(idx, content);
 
-        if(m_ValueText != null)
-        {
-            m_ValueText.text = string.Format("Value: {0}", Tempcontent);
+            var Tempcontent = (int)content;
+
+            string name = "Cell " + idx.ToString();
+            if (m_CellText != null)
+            {
+                m_CellText.text = name;
+            }
+
+            if(m_ValueText != null)
+            {
+                m_ValueText.text = string.Format("Value: {0}", Tempcontent);
+            }
         }
     }
 }

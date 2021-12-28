@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-namespace SG
+namespace Demo
 {
     [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
     [DisallowMultipleComponent]
