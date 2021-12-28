@@ -6,10 +6,10 @@ namespace Demo
 {
     [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
     [DisallowMultipleComponent]
-    public class InitOnStart_Custom : MonoBehaviour, LoopScrollPrefabSource, LoopScrollDataSource
+    public class InitOnStart_Custom : MonoBehaviour, LoopScrollPrefabSource, LoopScrollMultiDataSource
     {
         [HideInInspector]
-        public LoopScrollRect m_LoopScrollRect;
+        public LoopScrollRectMulti m_LoopScrollRect;
 
         // Is Use Muliti-Prefab
         public bool m_IsUseMultiPrefabs = false;
@@ -23,11 +23,10 @@ namespace Demo
 
         void Start()
         {
-            m_LoopScrollRect = GetComponent<LoopScrollRect>();
+            m_LoopScrollRect = GetComponent<LoopScrollRectMulti>();
             m_LoopScrollRect.prefabSource = this;
             m_LoopScrollRect.dataSource = this;
             m_LoopScrollRect.totalCount = m_CustomListBank.GetListLength();
-            m_LoopScrollRect.EnableTempPool(!m_IsUseMultiPrefabs);
             m_LoopScrollRect.RefillCells();
 
             m_CustomListBank = GetComponent<CustomListBank>();

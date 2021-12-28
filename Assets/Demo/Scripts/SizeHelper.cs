@@ -6,7 +6,7 @@ namespace Demo
     public class SizeHelper : MonoBehaviour, LoopScrollSizeHelper
     {
         [HideInInspector]
-        public LoopScrollRect m_LoopScrollRect;
+        public LoopScrollRectMulti m_LoopScrollRect;
 
         [HideInInspector]
         public BaseListBank m_BaseListBank;
@@ -14,7 +14,7 @@ namespace Demo
         // Start is called before the first frame update
         void Start()
         {
-            m_LoopScrollRect = GetComponent<LoopScrollRect>();
+            m_LoopScrollRect = GetComponent<LoopScrollRectMulti>();
             m_LoopScrollRect.sizeHelper = this;
 
             m_BaseListBank = GetComponent<BaseListBank>();
