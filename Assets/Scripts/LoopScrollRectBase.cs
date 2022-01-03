@@ -321,9 +321,9 @@ namespace UnityEngine.UI
             if (Application.isPlaying)
             {
                 float value = (reverseDirection ^ (direction == LoopScrollRectDirection.Horizontal)) ? 0 : 1;
-                Debug.Assert(Mathf.Abs(GetDimension(content.pivot)) == value, this);
-                Debug.Assert(Mathf.Abs(GetDimension(content.anchorMin)) == value, this);
-                Debug.Assert(Mathf.Abs(GetDimension(content.anchorMax)) == value, this);
+                Debug.Assert(GetAbsDimension(content.pivot) == value, this);
+                Debug.Assert(GetAbsDimension(content.anchorMin) == value, this);
+                Debug.Assert(GetAbsDimension(content.anchorMax) == value, this);
             }
         }
 #endif
@@ -342,11 +342,26 @@ namespace UnityEngine.UI
             }
         }
 
-        public int GetItemTypeStart()
+        public int GetFirstItem(out float offset)
         {
-            return itemTypeStart;
+            if (direction == LoopScrollRectDirection.Vertical)
+                offset = m_ViewBounds.max.y - m_ContentBounds.max.y;
+            else
+                offset = m_ContentBounds.min.x - m_ViewBounds.min.x;
+            int idx = 0;
+            if (itemTypeEnd > itemTypeStart)
+            {
+                float size = GetSize(content.GetChild(0) as RectTransform, false);
+                while (size + offset <= 0 && itemTypeStart + idx + contentConstraintCount < itemTypeEnd)
+                {
+                    offset += size;
+                    idx += contentConstraintCount;
+                    size = GetSize(content.GetChild(idx) as RectTransform);
+                }
+            }
+            return idx + itemTypeStart;
         }
-
+        
         public void SrollToCell(int index, float speed)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
@@ -464,13 +479,12 @@ namespace UnityEngine.UI
             }
         }
 
-        public void RefillCellsFromEnd(int offset = 0, bool alignStart = false)
+        public void RefillCellsFromEnd(int endItem = 0, bool alignStart = false)
         {
             if (!Application.isPlaying)
                 return;
 
-            StopMovement();
-            itemTypeEnd = reverseDirection ? offset : totalCount - offset;
+            itemTypeEnd = reverseDirection ? endItem : totalCount - endItem;
             itemTypeStart = itemTypeEnd;
 
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
@@ -480,7 +494,7 @@ namespace UnityEngine.UI
 
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
-            float sizeToFill = Mathf.Abs(GetDimension(viewRect.rect.size)), sizeFilled = 0;
+            float sizeToFill = GetAbsDimension(viewRect.rect.size), sizeFilled = 0;
 
             bool first = true;
             while (sizeToFill > sizeFilled)
@@ -518,15 +532,16 @@ namespace UnityEngine.UI
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
             m_ContentBounds = GetBounds();
             UpdateScrollbars(Vector2.zero);
+            StopMovement();
+            UpdatePrevData();
         }
 
-        public void RefillCells(int offset = 0, bool fillViewRect = false)
+        public void RefillCells(int startItem = 0, bool fillViewRect = false, float contentOffset = 0)
         {
             if (!Application.isPlaying)
                 return;
 
-            StopMovement();
-            itemTypeStart = reverseDirection ? totalCount - offset : offset;
+            itemTypeStart = reverseDirection ? totalCount - startItem : startItem;
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
             {
                 itemTypeStart = (itemTypeStart / contentConstraintCount) * contentConstraintCount;
@@ -536,7 +551,8 @@ namespace UnityEngine.UI
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
 
-            float sizeToFill = Mathf.Abs(GetDimension(viewRect.rect.size)), sizeFilled = 0;
+            float sizeToFill = GetAbsDimension(viewRect.rect.size) + Mathf.Abs(contentOffset);
+            float sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
 
             float itemSize = 0;
@@ -565,16 +581,16 @@ namespace UnityEngine.UI
             if (fillViewRect && itemSize > 0 && sizeFilled < sizeToFill)
             {
                 int itemsToAddCount = (int)((sizeToFill - sizeFilled) / itemSize);        //calculate how many items can be added above the offset, so it still is visible in the view
-                int newOffset = offset - itemsToAddCount;
+                int newOffset = startItem - itemsToAddCount;
                 if (newOffset < 0) newOffset = 0;
-                if (newOffset != offset) RefillCells(newOffset);                 //refill again, with the new offset value, and now with fillViewRect disabled.
+                if (newOffset != startItem) RefillCells(newOffset);                 //refill again, with the new offset value, and now with fillViewRect disabled.
             }
 
             Vector2 pos = m_Content.anchoredPosition;
             if (direction == LoopScrollRectDirection.Vertical)
-                pos.y = 0;
+                pos.y = -contentOffset;
             else
-                pos.x = 0;
+                pos.x = contentOffset;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;
 
@@ -583,6 +599,8 @@ namespace UnityEngine.UI
             LayoutRebuilder.ForceRebuildLayoutImmediate(content);
             m_ContentBounds = GetBounds();
             UpdateScrollbars(Vector2.zero);
+            StopMovement();
+            UpdatePrevData();
         }
 
         protected float NewItemAtStart(bool includeSpacing = true)

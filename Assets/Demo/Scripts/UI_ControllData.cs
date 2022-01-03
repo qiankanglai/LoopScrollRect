@@ -67,13 +67,16 @@ namespace Demo
         {
             m_ListBank.DelContentByIndex(0);
 
-            int LeftIndex = m_InitOnStart.m_LoopScrollRect.GetItemTypeStart();
+            float offset;
+            int LeftIndex = m_InitOnStart.m_LoopScrollRect.GetFirstItem(out offset);
 
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
-            m_InitOnStart.m_LoopScrollRect.RefillCells();
-
-            m_InitOnStart.m_LoopScrollRect.SrollToCell(LeftIndex, -1);
+            if (LeftIndex > 0)
+                // try keep the same position
+                m_InitOnStart.m_LoopScrollRect.RefillCells(LeftIndex - 1, false, offset);
+            else
+                m_InitOnStart.m_LoopScrollRect.RefillCells();
         }
 
         private void OnButtonSortDataClick()
