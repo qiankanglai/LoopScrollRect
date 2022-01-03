@@ -31,18 +31,20 @@ namespace UnityEngine.UI
 
         protected override void ReturnToTempPool(bool fromStart, int count)
         {
+            Debug.Assert(content.childCount >= count);
             if (fromStart)
             {
-                for (int i = 0; i < count; i++)
+                for (int i = count - 1; i >= 0; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(0));
+                    prefabSource.ReturnObject(content.GetChild(i));
                 }
             }
             else
             {
-                for (int i = 0; i < count; i++)
+                int t = content.childCount - count;
+                for (int i = content.childCount - 1; i >= t; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(content.childCount - 1));
+                    prefabSource.ReturnObject(content.GetChild(i));
                 }
             }
         }

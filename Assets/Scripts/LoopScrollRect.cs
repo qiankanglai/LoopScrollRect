@@ -53,15 +53,23 @@ namespace UnityEngine.UI
 
         protected override void ClearTempPool()
         {
-            while (deletedItemTypeStart > 0)
+            Debug.Assert(content.childCount >= deletedItemTypeStart + deletedItemTypeEnd);
+            if (deletedItemTypeStart > 0)
             {
-                deletedItemTypeStart--;
-                prefabSource.ReturnObject(content.GetChild(0));
+                for (int i = deletedItemTypeStart - 1; i >= 0; i--)
+                {
+                    prefabSource.ReturnObject(content.GetChild(i));
+                }
+                deletedItemTypeStart = 0;
             }
-            while (deletedItemTypeEnd > 0)
+            if (deletedItemTypeEnd > 0)
             {
-                deletedItemTypeEnd--;
-                prefabSource.ReturnObject(content.GetChild(content.childCount - 1));
+                int t = content.childCount - deletedItemTypeEnd;
+                for (int i = content.childCount - 1; i >= t; i--)
+                {
+                    prefabSource.ReturnObject(content.GetChild(i));
+                }
+                deletedItemTypeEnd = 0;
             }
         }
     }
