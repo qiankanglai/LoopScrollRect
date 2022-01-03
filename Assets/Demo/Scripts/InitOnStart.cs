@@ -6,7 +6,7 @@ namespace Demo
 {
     [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
     [DisallowMultipleComponent]
-    public class InitOnStart : MonoBehaviour, LoopScrollPrefabSource, LoopScrollMultiDataSource
+    public class InitOnStart : MonoBehaviour, LoopScrollPrefabSource, LoopScrollDataSource
     {
         public GameObject item;
         public int totalCount = -1;
@@ -40,7 +40,7 @@ namespace Demo
 
         void Start()
         {
-            var ls = GetComponent<LoopScrollRectMulti>();
+            var ls = GetComponent<LoopScrollRect>();
             ls.prefabSource = this;
             ls.dataSource = this;
             ls.totalCount = totalCount;

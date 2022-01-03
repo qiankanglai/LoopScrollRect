@@ -12,17 +12,26 @@ namespace Demo
         public Button m_ButtonDelData;
         public Button m_ButtonSortData;
         public Button m_ButtonReverseSortData;
+        public Button m_ButtonSrollToCell;
 
-        public InitOnStart_Custom m_InitOnStart_Custom;
+        public InputField m_InputFieldSrollToCell_CellIndex;
+        public InputField m_InputButtonSrollToCell_MoveSpeed;
+
+        public InitOnStart_Custom m_InitOnStart;
+
+        private CustomListBank m_ListBank;
 
         // Start is called before the first frame update
         void Start()
         {
+            m_ListBank = m_InitOnStart.m_LoopListBank as CustomListBank;
+
             m_ButtonAddData.onClick.AddListener(OnButtonAddDataClick);
             m_ButtonSetData.onClick.AddListener(OnButtonSetDataClick);
             m_ButtonDelData.onClick.AddListener(OnButtonDelDataClick);
             m_ButtonSortData.onClick.AddListener(OnButtonSortDataClick);
             m_ButtonReverseSortData.onClick.AddListener(OnButtonReverseSortDataClick);
+            m_ButtonSrollToCell.onClick.AddListener(OnButtonSrollToCellClick);
         }
 
         private void OnDestroy()
@@ -32,15 +41,15 @@ namespace Demo
             m_ButtonDelData.onClick.RemoveListener(OnButtonDelDataClick);
             m_ButtonSortData.onClick.RemoveListener(OnButtonSortDataClick);
             m_ButtonReverseSortData.onClick.RemoveListener(OnButtonReverseSortDataClick);
+            m_ButtonSrollToCell.onClick.RemoveListener(OnButtonSrollToCellClick);
         }
 
         private void OnButtonAddDataClick()
         {
             int RandomResult = Random.Range(0, 10);
-            m_InitOnStart_Custom.m_CustomListBank.AddContent(RandomResult);
-
-            m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
-            m_InitOnStart_Custom.m_LoopScrollRect.RefreshCells();
+            m_ListBank.AddContent(RandomResult);
+            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+            m_InitOnStart.m_LoopScrollRect.RefreshCells();
         }
 
         private void OnButtonSetDataClick()
@@ -49,37 +58,53 @@ namespace Demo
                 3, 4, 5, 6, 7
             };
 
-            m_InitOnStart_Custom.m_CustomListBank.SetContents(contents);
-            m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
-            m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();
+            m_ListBank.SetContents(contents);
+            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+            m_InitOnStart.m_LoopScrollRect.RefillCells();
         }
 
         private void OnButtonDelDataClick()
         {
-            m_InitOnStart_Custom.m_CustomListBank.DelContentByIndex(0);
-            m_InitOnStart_Custom.m_LoopScrollRect.ClearCells();
-            m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
-            m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();
+            m_ListBank.DelContentByIndex(0);
+
+            int LeftIndex = m_InitOnStart.m_LoopScrollRect.GetItemTypeStart();
+
+            m_InitOnStart.m_LoopScrollRect.ClearCells();
+            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+            m_InitOnStart.m_LoopScrollRect.RefillCells();
+
+            m_InitOnStart.m_LoopScrollRect.SrollToCell(LeftIndex, -1);
         }
 
         private void OnButtonSortDataClick()
         {
-            var TempContent = m_InitOnStart_Custom.m_CustomListBank.GetContents();
+            var TempContent = m_ListBank.GetContents();
             TempContent.Sort((x, y) => x.CompareTo(y));
 
-            m_InitOnStart_Custom.m_LoopScrollRect.ClearCells();
-            m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
-            m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();
+            m_InitOnStart.m_LoopScrollRect.ClearCells();
+            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+            m_InitOnStart.m_LoopScrollRect.RefillCells();
         }
 
         private void OnButtonReverseSortDataClick()
         {
-            var TempContent = m_InitOnStart_Custom.m_CustomListBank.GetContents();
+            var TempContent = m_ListBank.GetContents();
             TempContent.Sort((x, y) => -x.CompareTo(y));
 
-            m_InitOnStart_Custom.m_LoopScrollRect.ClearCells();
-            m_InitOnStart_Custom.m_LoopScrollRect.totalCount = m_InitOnStart_Custom.m_CustomListBank.GetListLength();
-            m_InitOnStart_Custom.m_LoopScrollRect.RefillCells();
+            m_InitOnStart.m_LoopScrollRect.ClearCells();
+            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+            m_InitOnStart.m_LoopScrollRect.RefillCells();
+        }
+
+        private void OnButtonSrollToCellClick()
+        {
+            int Index = 0;
+            int.TryParse(m_InputFieldSrollToCell_CellIndex.text, out Index);
+
+            int MoveSpeed = 0;
+            int.TryParse(m_InputButtonSrollToCell_MoveSpeed.text, out MoveSpeed);
+
+            m_InitOnStart.m_LoopScrollRect.SrollToCell(Index, MoveSpeed);
         }
     }
 }

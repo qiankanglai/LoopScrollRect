@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
@@ -15,7 +15,7 @@ namespace UnityEngine.UI
         
         protected override void ProvideData(Transform transform, int index)
         {
-            dataSource.ProvideData(transform);
+            dataSource.ProvideData(transform, index);
         }
         
         protected override RectTransform GetFromTempPool(int itemIdx)
