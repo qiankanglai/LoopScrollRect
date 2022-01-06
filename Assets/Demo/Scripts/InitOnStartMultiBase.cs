@@ -8,10 +8,8 @@ namespace Demo
     [DisallowMultipleComponent]
     public class InitOnStartMultiBase : MonoBehaviour, LoopScrollPrefabSource, LoopScrollMultiDataSource
     {
-        [HideInInspector]
         public LoopScrollRectMulti m_LoopScrollRect;
 
-        [HideInInspector]
         public LoopListBankBase m_LoopListBank;
 
         // Is Use MulitiPrefab
@@ -23,9 +21,6 @@ namespace Demo
 
         protected virtual void Awake()
         {
-            m_LoopListBank = GetComponent<LoopListBankBase>();
-
-            m_LoopScrollRect = GetComponent<LoopScrollRectMulti>();
             m_LoopScrollRect.prefabSource = this;
             m_LoopScrollRect.dataSource = this;
             m_LoopScrollRect.totalCount = m_LoopListBank.GetListLength();

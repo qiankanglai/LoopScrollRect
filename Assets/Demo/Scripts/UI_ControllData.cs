@@ -17,12 +17,11 @@ namespace Demo
         public InputField m_InputFieldSrollToCell_CellIndex;
         public InputField m_InputButtonSrollToCell_MoveSpeed;
 
-        public InitOnStart_Custom m_InitOnStart;
+        public InitOnStartMultiBase m_InitOnStart;
 
         private CustomListBank m_ListBank;
 
-        // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
             m_ListBank = m_InitOnStart.m_LoopListBank as CustomListBank;
 

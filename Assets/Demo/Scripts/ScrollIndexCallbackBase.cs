@@ -55,8 +55,7 @@ namespace Demo
             m_IndexID = idx;
             m_Content = content;
 
-            string name = "Cell " + idx.ToString();
-            gameObject.name = m_PrefabName + name;
+            gameObject.name = string.Format("{0} Cell {1}", m_PrefabName, idx.ToString());
         }
     }
 }
