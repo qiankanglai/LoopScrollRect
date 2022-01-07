@@ -147,5 +147,17 @@ namespace Demo
             // Use direct call for better performance
             transform.GetComponent<ScrollIndexCallbackBase>()?.ScrollCellIndex(idx, m_LoopListBank.GetListContent(idx));
         }
+
+        public virtual ScrollIndexCallbackBase GetScrollIndexCallbackByIndex(int idx)
+        {
+            foreach (var TempScrollIndexCallback in m_LoopScrollRect.content.GetComponentsInChildren<ScrollIndexCallbackBase>())
+            {
+                if (TempScrollIndexCallback.GetIndexID() == idx)
+                {
+                    return TempScrollIndexCallback;
+                }
+            }
+            return null;
+        }
     }
 }

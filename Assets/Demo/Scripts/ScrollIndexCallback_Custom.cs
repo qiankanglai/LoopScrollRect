@@ -12,8 +12,8 @@ namespace Demo
         {
             base.ScrollCellIndex(idx, content);
 
-            m_Button.onClick.RemoveListener(() => ScrollIndexCallback_Custom.OnButtonScrollIndexCallbackClick(idx, content));
-            m_Button.onClick.AddListener(() => ScrollIndexCallback_Custom.OnButtonScrollIndexCallbackClick(idx, content));
+            this.onClick.RemoveListener(() => ScrollIndexCallback_Custom.OnButtonScrollIndexCallbackClick(idx, content));
+            this.onClick.AddListener(() => ScrollIndexCallback_Custom.OnButtonScrollIndexCallbackClick(idx, content));
 
             var Tempcontent = (int)content;
 

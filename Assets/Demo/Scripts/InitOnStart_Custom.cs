@@ -11,8 +11,8 @@ namespace Demo
             var TempScrollIndexCallbackBase = TempGameObject.GetComponent<ScrollIndexCallbackBase>();
             if(null != TempScrollIndexCallbackBase)
             {
-                TempScrollIndexCallbackBase.m_Button.onClick.RemoveListener(() => OnButtonScrollIndexCallbackClick(index, TempScrollIndexCallbackBase.GetContent()));
-                TempScrollIndexCallbackBase.m_Button.onClick.AddListener(()=> OnButtonScrollIndexCallbackClick(index, TempScrollIndexCallbackBase.GetContent()));
+                TempScrollIndexCallbackBase.onClick.RemoveListener(() => OnButtonScrollIndexCallbackClick(index, TempScrollIndexCallbackBase.GetContent()));
+                TempScrollIndexCallbackBase.onClick.AddListener(()=> OnButtonScrollIndexCallbackClick(index, TempScrollIndexCallbackBase.GetContent()));
             }
 
             return TempGameObject;

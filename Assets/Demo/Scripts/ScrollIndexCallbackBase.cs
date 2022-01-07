@@ -3,18 +3,12 @@ using UnityEngine.UI;
 
 namespace Demo
 {
-    public class ScrollIndexCallbackBase : MonoBehaviour
+    public class ScrollIndexCallbackBase : Button
     {
         public LayoutElement m_Element;
-        public Button m_Button;
         private int m_IndexID = 0;
         private string m_PrefabName = "";
         private object m_Content;
-
-        protected virtual void Awake()
-        {
-            m_Button = GetComponent<Button>();
-        }
 
         // Get IndexID
         public int GetIndexID()
