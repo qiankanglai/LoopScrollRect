@@ -6,7 +6,7 @@ namespace Demo
 {
     [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
     [DisallowMultipleComponent]
-    public class InitOnStartMultiBase : MonoBehaviour, LoopScrollPrefabSource, LoopScrollMultiDataSource
+    public class InitOnStartMulti : MonoBehaviour, LoopScrollPrefabSource, LoopScrollMultiDataSource
     {
         public LoopScrollRectMulti m_LoopScrollRect;
 

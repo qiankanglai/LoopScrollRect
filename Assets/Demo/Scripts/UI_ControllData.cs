@@ -17,7 +17,7 @@ namespace Demo
         public InputField m_InputFieldSrollToCell_CellIndex;
         public InputField m_InputButtonSrollToCell_MoveSpeed;
 
-        public InitOnStartMultiBase m_InitOnStart;
+        public InitOnStartMulti m_InitOnStart;
 
         private CustomListBank m_ListBank;
 
