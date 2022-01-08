@@ -362,6 +362,28 @@ namespace UnityEngine.UI
             return idx + itemTypeStart;
         }
         
+        public int GetLastItem(out float offset)
+        {
+            if (direction == LoopScrollRectDirection.Vertical)
+                offset = m_ContentBounds.min.y - m_ViewBounds.min.y;
+            else
+                offset = m_ViewBounds.max.x - m_ContentBounds.max.x;
+            int idx = 0;
+            if (itemTypeEnd > itemTypeStart)
+            {
+                int totalChildCount = content.childCount;
+                float size = GetSize(content.GetChild(totalChildCount - idx - 1) as RectTransform, false);
+                while (size + offset <= 0 && itemTypeStart < itemTypeEnd - idx - contentConstraintCount)
+                {
+                    offset += size;
+                    idx += contentConstraintCount;
+                    size = GetSize(content.GetChild(totalChildCount - idx - 1) as RectTransform);
+                }
+            }
+            offset = -offset;
+            return itemTypeEnd - idx - 1;
+        }
+        
         public void SrollToCell(int index, float speed)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
@@ -376,6 +398,47 @@ namespace UnityEngine.UI
                 return;
             }
             StartCoroutine(ScrollToCellCoroutine(index, speed));
+        }
+        
+        public void SrollToCellWithinTime(int index, float time)
+        {
+            if (totalCount >= 0 && (index < 0 || index >= totalCount))
+            {
+                Debug.LogErrorFormat("invalid index {0}", index);
+                return;
+            }
+            StopAllCoroutines();
+            if (time <= 0)
+            {
+                RefillCells(index);
+                return;
+            }
+            float dist = 0;
+            float offset = 0;
+            int currentFirst = reverseDirection ? GetLastItem(out offset) : GetFirstItem(out offset);
+
+            int TargetLine = (index / contentConstraintCount);
+            int CurrentLine = (currentFirst / contentConstraintCount);
+
+            if (TargetLine == CurrentLine)
+            {
+                dist = offset;
+            }
+            else
+            {
+                if (sizeHelper != null)
+                {
+                    dist = GetDimension(sizeHelper.GetItemsSize(currentFirst) - sizeHelper.GetItemsSize(index));
+                    dist += offset;
+                }
+                else
+                {
+                    float elementSize = (GetAbsDimension(m_ContentBounds.size) - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    dist = elementSize * (CurrentLine - TargetLine) + contentSpacing * (CurrentLine - TargetLine - 1);
+                    dist -= offset;
+                }
+            }
+            StartCoroutine(ScrollToCellCoroutine(index, Mathf.Abs(dist) / time));
         }
 
         IEnumerator ScrollToCellCoroutine(int index, float speed)
