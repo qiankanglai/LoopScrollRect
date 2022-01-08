@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.UI;
 
 namespace Demo
 {
@@ -22,7 +20,7 @@ namespace Demo
 
         private void OnButtonScrollIndexCallbackClick(int index, object content)
         {
-            Debug.LogWarningFormat("Click index: {0}, content: {1}", index, content);
+            //Debug.LogWarningFormat("InitOnStart_Custom => Click index: {0}, content: {1}", index, content);
         }
     }
 }

@@ -126,9 +126,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 164f10a1e02bdf44e85a4621d32c3b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LoopScrollRect: {fileID: 0}
-  m_LoopListBank: {fileID: 0}
-  m_IsUseMultiPrefabs: 0
+  m_LoopScrollRect: {fileID: 247244785384440297}
+  m_LoopListBank: {fileID: 1290043048897204352}
+  m_IsUseMultiPrefabs: 1
   m_Item: {fileID: 3687556073943788811, guid: 82144dfcec1bf354397b698bf49a9b6c, type: 3}
   m_ItemList:
   - {fileID: 3687556073943788811, guid: ed87a35389a7dcc4db44e39574f1d340, type: 3}

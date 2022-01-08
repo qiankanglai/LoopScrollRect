@@ -11,11 +11,6 @@ namespace Demo
         private string m_PrefabName = "";
         private object m_Content;
 
-        protected virtual void Awake()
-        {
-            m_Button = GetComponent<Button>();
-        }
-
         // Get IndexID
         public int GetIndexID()
         {
@@ -55,8 +50,7 @@ namespace Demo
             m_IndexID = idx;
             m_Content = content;
 
-            string name = "Cell " + idx.ToString();
-            gameObject.name = m_PrefabName + name;
+            gameObject.name = string.Format("{0} Cell {1}", m_PrefabName, idx.ToString());
         }
     }
 }

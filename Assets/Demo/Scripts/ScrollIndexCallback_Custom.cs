@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace Demo
 {
@@ -10,6 +11,9 @@ namespace Demo
         public override void ScrollCellIndex(int idx, object content)
         {
             base.ScrollCellIndex(idx, content);
+
+            m_Button.onClick.RemoveListener(() => ScrollIndexCallback_Custom.OnButtonScrollIndexCallbackClick(idx, content));
+            m_Button.onClick.AddListener(() => ScrollIndexCallback_Custom.OnButtonScrollIndexCallbackClick(idx, content));
 
             var Tempcontent = (int)content;
 
@@ -23,6 +27,11 @@ namespace Demo
             {
                 m_ValueText.text = string.Format("Value: {0}", Tempcontent);
             }
+        }
+
+        public static void OnButtonScrollIndexCallbackClick(int index, object content)
+        {
+            Debug.LogWarningFormat("ScrollIndexCallback_Custom => Click index: {0}, content: {1}", index, content);
         }
     }
 }
