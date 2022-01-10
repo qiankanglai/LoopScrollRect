@@ -13,9 +13,13 @@ namespace Demo
         public Button m_ButtonSortData;
         public Button m_ButtonReverseSortData;
         public Button m_ButtonSrollToCell;
+        public Button m_ButtonSrollToCellWithTime;
 
         public InputField m_InputFieldSrollToCell_CellIndex;
         public InputField m_InputButtonSrollToCell_MoveSpeed;
+
+        public InputField m_InputFieldSrollToCellWithTime_CellIndex;
+        public InputField m_InputButtonSrollToCellWithTime_MoveSpeed;
 
         public InitOnStartMulti m_InitOnStart;
 
@@ -31,6 +35,7 @@ namespace Demo
             m_ButtonSortData.onClick.AddListener(OnButtonSortDataClick);
             m_ButtonReverseSortData.onClick.AddListener(OnButtonReverseSortDataClick);
             m_ButtonSrollToCell.onClick.AddListener(OnButtonSrollToCellClick);
+            m_ButtonSrollToCellWithTime.onClick.AddListener(OnButtonSrollToCellWithTimeClick);
         }
 
         private void OnDestroy()
@@ -41,6 +46,7 @@ namespace Demo
             m_ButtonSortData.onClick.RemoveListener(OnButtonSortDataClick);
             m_ButtonReverseSortData.onClick.RemoveListener(OnButtonReverseSortDataClick);
             m_ButtonSrollToCell.onClick.RemoveListener(OnButtonSrollToCellClick);
+            m_ButtonSrollToCellWithTime.onClick.RemoveListener(OnButtonSrollToCellWithTimeClick);
         }
 
         private void OnButtonAddDataClick()
@@ -103,10 +109,21 @@ namespace Demo
             int Index = 0;
             int.TryParse(m_InputFieldSrollToCell_CellIndex.text, out Index);
 
-            int MoveSpeed = 0;
-            int.TryParse(m_InputButtonSrollToCell_MoveSpeed.text, out MoveSpeed);
+            float MoveSpeed = 0;
+            float.TryParse(m_InputButtonSrollToCell_MoveSpeed.text, out MoveSpeed);
 
             m_InitOnStart.m_LoopScrollRect.SrollToCell(Index, MoveSpeed);
+        }
+
+        private void OnButtonSrollToCellWithTimeClick()
+        {
+            int Index = 0;
+            int.TryParse(m_InputFieldSrollToCellWithTime_CellIndex.text, out Index);
+
+            float MoveTime = 0;
+            float.TryParse(m_InputButtonSrollToCellWithTime_MoveSpeed.text, out MoveTime);
+
+            m_InitOnStart.m_LoopScrollRect.SrollToCellWithinTime(Index, MoveTime);
         }
     }
 }
