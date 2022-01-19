@@ -54,6 +54,7 @@ namespace Demo
                 ScrollIndexCallbackBase TempScrollIndexCallbackBase = candidate.GetComponent<ScrollIndexCallbackBase>();
                 if (null != TempScrollIndexCallbackBase)
                 {
+                    TempScrollIndexCallbackBase.SetPrefabName(m_Item.name);
                     if (m_LoopScrollRect.horizontal)
                     {
                         float RandomWidth = m_LoopListBank.GetCellPreferredSize(index).x;
