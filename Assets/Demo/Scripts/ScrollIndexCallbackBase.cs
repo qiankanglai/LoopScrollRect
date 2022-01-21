@@ -10,6 +10,7 @@ namespace Demo
         private int m_IndexID = 0;
         private string m_PrefabName = "";
         private object m_Content;
+        private bool m_IsUpdateGameObjectName = true;
 
         // Get IndexID
         public int GetIndexID()
@@ -26,6 +27,11 @@ namespace Demo
         public string GetPrefabName()
         {
             return m_PrefabName;
+        }
+
+        public void SetIsUpdateGameObjectName(bool value)
+        {
+            m_IsUpdateGameObjectName = value;
         }
 
         public object GetContent()
@@ -50,7 +56,10 @@ namespace Demo
             m_IndexID = idx;
             m_Content = content;
 
-            gameObject.name = string.Format("{0} Cell {1}", m_PrefabName, idx.ToString());
+            if (m_IsUpdateGameObjectName)
+            {
+                gameObject.name = string.Format("{0} Cell {1}", m_PrefabName, idx.ToString());
+            }
         }
     }
 }
