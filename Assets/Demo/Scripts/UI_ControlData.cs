@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Demo
 {
-    public class UI_ControllData : MonoBehaviour
+    public class UI_ControlData : MonoBehaviour
     {
         public Button m_ButtonAddData;
         public Button m_ButtonSetData;
@@ -14,6 +14,8 @@ namespace Demo
         public Button m_ButtonReverseSortData;
         public Button m_ButtonSrollToCell;
         public Button m_ButtonSrollToCellWithTime;
+
+        public InputField m_InputFieldSrollToCell_AddCount;
 
         public InputField m_InputFieldSrollToCell_CellIndex;
         public InputField m_InputButtonSrollToCell_MoveSpeed;
@@ -51,10 +53,17 @@ namespace Demo
 
         private void OnButtonAddDataClick()
         {
-            int RandomResult = Random.Range(0, 10);
-            m_ListBank.AddContent(RandomResult);
-            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
-            m_InitOnStart.m_LoopScrollRect.RefreshCells();
+            int AddCount = 0;
+            int.TryParse(m_InputFieldSrollToCell_AddCount.text, out AddCount);
+
+            int TargetCount = Mathf.Max(1, AddCount);
+            for (int i = 0; i < TargetCount; ++i)
+            {
+                int RandomResult = Random.Range(0, 10);
+                m_ListBank.AddContent(RandomResult);
+                m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+                m_InitOnStart.m_LoopScrollRect.RefreshCells();
+            }
         }
 
         private void OnButtonSetDataClick()
