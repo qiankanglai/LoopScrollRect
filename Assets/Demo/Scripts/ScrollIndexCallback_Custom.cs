@@ -8,12 +8,12 @@ namespace Demo
         public Text m_CellText;
         public Text m_ValueText;
 
-        public override void ScrollCellIndex(int idx, object content)
+        public override void ScrollCellIndex(int idx, object content, string ClickUniqueID = "", object ClickObject = null)
         {
-            base.ScrollCellIndex(idx, content);
+            base.ScrollCellIndex(idx, content, ClickUniqueID, ClickObject);
 
-            m_Button.onClick.RemoveAllListeners();
-            m_Button.onClick.AddListener(() => OnButtonScrollIndexCallbackClick(idx, content));
+            onClick_Custom.RemoveAllListeners();
+            onClick_Custom.AddListener(() => OnButtonScrollIndexCallbackClick(this, idx, content));
 
             var Tempcontent = (int)content;
 
@@ -27,11 +27,46 @@ namespace Demo
             {
                 m_ValueText.text = string.Format("Value: {0}", Tempcontent);
             }
+
+            if (GetUniqueID() == ClickUniqueID)
+            {
+                SetClickedColor(true);
+            }
+            else
+            {
+                SetClickedColor(false);
+            }
         }
 
-        public static void OnButtonScrollIndexCallbackClick(int index, object content)
+        public static void OnButtonScrollIndexCallbackClick(ScrollIndexCallback_Custom ScrollIndexCallback, int index, object content)
         {
-            Debug.LogWarningFormat("ScrollIndexCallback_Custom => Click index: {0}, content: {1}", index, content);
+            //Debug.LogWarningFormat("ScrollIndexCallback_Custom => Click index: {0}, content: {1}, ClickUniqueID: {2}", index, content, ScrollIndexCallback.GetUniqueID());
+        }
+
+        public override void RefeashUI(string ClickUniqueID, object ClickContent)
+        {
+            base.RefeashUI(ClickUniqueID, ClickContent);
+
+            if(GetUniqueID() == ClickUniqueID)
+            {
+                SetClickedColor(true);
+            }
+            else
+            {
+                SetClickedColor(false);
+            }
+        }
+
+        public void SetClickedColor(bool IsClicked)
+        {
+            if (IsClicked)
+            {
+                m_Button.image.color = Color.cyan;
+            }
+            else
+            {
+                m_Button.image.color = Color.white;
+            }
         }
     }
 }

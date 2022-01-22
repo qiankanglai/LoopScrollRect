@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Demo
@@ -18,6 +18,9 @@ namespace Demo
         public GameObject m_Item;
         // Cell MulitiPrefab
         public List<GameObject> m_ItemList = new List<GameObject>();
+
+        public string m_ClickUniqueID = "";
+        public object m_ClickObject;
 
         protected virtual void Awake()
         {
@@ -38,6 +41,7 @@ namespace Demo
         public virtual GameObject GetObject(int index)
         {
             Transform candidate = null;
+            ScrollIndexCallbackBase TempScrollIndexCallbackBase = null;
             // Is Use MulitiPrefab
             if (!m_IsUseMultiPrefabs)
             {
@@ -51,7 +55,7 @@ namespace Demo
                 }
 
                 // One Cell Prefab, Set PreferredSize as runtime.
-                ScrollIndexCallbackBase TempScrollIndexCallbackBase = candidate.GetComponent<ScrollIndexCallbackBase>();
+                TempScrollIndexCallbackBase = candidate.GetComponent<ScrollIndexCallbackBase>();
                 if (null != TempScrollIndexCallbackBase)
                 {
                     TempScrollIndexCallbackBase.SetPrefabName(m_Item.name);
@@ -89,7 +93,7 @@ namespace Demo
                 if (TempStack.Count == 0)
                 {
                     candidate = Instantiate(TempPrefab).GetComponent<Transform>();
-                    ScrollIndexCallbackBase TempScrollIndexCallbackBase = candidate.GetComponent<ScrollIndexCallbackBase>();
+                    TempScrollIndexCallbackBase = candidate.GetComponent<ScrollIndexCallbackBase>();
                     if (null != TempScrollIndexCallbackBase)
                     {
                         TempScrollIndexCallbackBase.SetPrefabName(TempPrefab.name);
@@ -100,6 +104,14 @@ namespace Demo
                     candidate = TempStack.Pop();
                     candidate.gameObject.SetActive(true);
                 }
+            }
+
+            TempScrollIndexCallbackBase = candidate.gameObject.GetComponent<ScrollIndexCallbackBase>();
+            if (null != TempScrollIndexCallbackBase)
+            {
+                TempScrollIndexCallbackBase.SetUniqueID(m_LoopListBank.GetListUniqueID(index));
+                TempScrollIndexCallbackBase.onClick_InitOnStart.RemoveAllListeners();
+                TempScrollIndexCallbackBase.onClick_InitOnStart.AddListener(() => OnButtonScrollIndexCallbackClick(TempScrollIndexCallbackBase, index, TempScrollIndexCallbackBase.GetContent(), TempScrollIndexCallbackBase.GetUniqueID()));
             }
 
             return candidate.gameObject;
@@ -146,7 +158,20 @@ namespace Demo
             //transform.SendMessage("ScrollCellIndex", idx);
 
             // Use direct call for better performance
-            transform.GetComponent<ScrollIndexCallbackBase>()?.ScrollCellIndex(idx, m_LoopListBank.GetListContent(idx));
+            transform.GetComponent<ScrollIndexCallbackBase>()?.ScrollCellIndex(idx, m_LoopListBank.GetListContent(idx), m_ClickUniqueID, m_ClickObject);
+        }
+
+        private void OnButtonScrollIndexCallbackClick(ScrollIndexCallbackBase ScrollIndexCallback, int index, object content, string ClickUniqueID)
+        {
+            //Debug.LogWarningFormat("InitOnStartMulti => Click index: {0}, content: {1}, ClickUniqueID: {2}", index, content, ClickUniqueID);
+
+            m_ClickUniqueID = ClickUniqueID;
+            m_ClickObject = content;
+
+            foreach (var TempScrollIndexCallback in m_LoopScrollRect.content.GetComponentsInChildren<ScrollIndexCallbackBase>())
+            {
+                TempScrollIndexCallback.RefeashUI(ClickUniqueID, m_ClickObject);
+            }
         }
 
         public virtual ScrollIndexCallbackBase GetScrollIndexCallbackByIndex(int idx)

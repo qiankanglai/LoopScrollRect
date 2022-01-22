@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -79,6 +78,7 @@ namespace Demo
 
         private void OnButtonDelDataClick()
         {
+            string TempUniqueID = m_InitOnStart.m_LoopListBank.GetListUniqueID(0);
             m_ListBank.DelContentByIndex(0);
 
             float offset;
@@ -87,16 +87,48 @@ namespace Demo
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
             if (LeftIndex > 0)
+            {
                 // try keep the same position
                 m_InitOnStart.m_LoopScrollRect.RefillCells(LeftIndex - 1, false, offset);
+            }
             else
+            {
+                // Refresh m_ClickUniqueID, m_ClickObject
+                if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+                {
+                    // Check UniqueID is same
+                    if (m_InitOnStart.m_ClickUniqueID == TempUniqueID)
+                    {
+                        m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetListUniqueID(0);
+                        m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetListContent(0);
+                    }
+                }
+                else
+                {
+                    m_InitOnStart.m_ClickUniqueID = "";
+                    m_InitOnStart.m_ClickObject = null;
+                }
+                
                 m_InitOnStart.m_LoopScrollRect.RefillCells();
+            }
         }
 
         private void OnButtonSortDataClick()
         {
             var TempContent = m_ListBank.GetContents();
             TempContent.Sort((x, y) => x.CompareTo(y));
+
+            // Refresh m_ClickIndex, m_ClickObject
+            if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+            {
+                m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetListUniqueID(0);
+                m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetListContent(0);
+            }
+            else
+            {
+                m_InitOnStart.m_ClickUniqueID = "";
+                m_InitOnStart.m_ClickObject = null;
+            }
 
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
@@ -107,6 +139,18 @@ namespace Demo
         {
             var TempContent = m_ListBank.GetContents();
             TempContent.Sort((x, y) => -x.CompareTo(y));
+
+            // Refresh m_ClickIndex, m_ClickObject
+            if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+            {
+                m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetListUniqueID(0);
+                m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetListContent(0);
+            }
+            else
+            {
+                m_InitOnStart.m_ClickUniqueID = "";
+                m_InitOnStart.m_ClickObject = null;
+            }
 
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
