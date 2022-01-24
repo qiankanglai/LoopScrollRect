@@ -73,6 +73,19 @@ namespace Demo
             };
 
             m_ListBank.SetContents(contents);
+
+            // Refresh m_ClickIndex, m_ClickObject
+            if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+            {
+                m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).UniqueID;
+                m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).Content;
+            }
+            else
+            {
+                m_InitOnStart.m_ClickUniqueID = "";
+                m_InitOnStart.m_ClickObject = null;
+            }
+
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
             m_InitOnStart.m_LoopScrollRect.RefillCells();
         }
@@ -116,10 +129,6 @@ namespace Demo
 
         private void OnButtonSortDataClick()
         {
-            //var TempContent_Old = m_ListBank.GetContents();
-            //TempContent_Old.Sort((x, y) => x.CompareTo(y));
-            //TempContent_Old = TempContent_Old.OrderBy(x => x).ToList();
-
             var TempContent = m_ListBank.GetLoopListBankDatas();
             TempContent = TempContent.OrderBy(x => (int)x.Content).ToList();
             m_ListBank.SetLoopListBankDatas(TempContent);
@@ -143,10 +152,6 @@ namespace Demo
 
         private void OnButtonReverseSortDataClick()
         {
-            //var TempContent_Old = m_ListBank.GetContents();
-            //TempContent_Old.Sort((x, y) => -x.CompareTo(y));
-            //TempContent_Old = TempContent_Old.OrderByDescending(x => x).ToList();
-
             var TempContent = m_ListBank.GetLoopListBankDatas();
             TempContent = TempContent.OrderByDescending(x => (int)x.Content).ToList();
             m_ListBank.SetLoopListBankDatas(TempContent);

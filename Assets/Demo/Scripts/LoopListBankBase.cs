@@ -13,7 +13,8 @@ namespace Demo
 
         public bool IsEmpty()
         {
-            if(string.IsNullOrEmpty(UniqueID))
+            if(null == Content
+            || string.IsNullOrEmpty(UniqueID))
             {
                 return true;
             }
@@ -26,14 +27,20 @@ namespace Demo
      */
     public abstract class LoopListBankBase : MonoBehaviour
     {
-        // Get content in list by index
-        public abstract object GetListContent(int index);
-        // Get content count in list
-        public abstract int GetListLength();
-
+        // Init DataList
         public abstract List<LoopListBankData> InitLoopListBankDataList();
 
+        // Get Data count in list
+        public abstract int GetListLength();
+
+        // Get Data in list by index
         public abstract LoopListBankData GetLoopListBankData(int index);
+
+        // Get All Data in list
+        public abstract List<LoopListBankData> GetLoopListBankDatas();
+
+        // Set Data into list
+        public abstract void SetLoopListBankDatas(List<LoopListBankData> newDatas);
 
         // Get cell preferred type index by index
         public abstract int GetCellPreferredTypeIndex(int index);
@@ -45,7 +52,7 @@ namespace Demo
      */
     public class LoopListBank : LoopListBankBase
     {
-        private List<int> m_Contents = new List<int>
+        private List<int> m_ContentsForInitData = new List<int>
         {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
@@ -74,33 +81,24 @@ namespace Demo
             new Vector2(220, 120)
         };
 
-        public override object GetListContent(int index)
-        {
-            if (m_Contents.Count <= index)
-            {
-                return null;
-            }
-            return m_Contents[index];
-        }
-
-        public override int GetListLength()
-        {
-            return m_Contents.Count;
-        }
-
         public override List<LoopListBankData> InitLoopListBankDataList()
         {
             m_LoopListBankDataList.Clear();
             LoopListBankData TempCustomData = null;
-            for (int i = 0; i < m_Contents.Count; ++i)
+            for (int i = 0; i < m_ContentsForInitData.Count; ++i)
             {
                 TempCustomData = new LoopListBankData();
-                TempCustomData.Content = m_Contents[i];
+                TempCustomData.Content = m_ContentsForInitData[i];
                 TempCustomData.UniqueID = System.Guid.NewGuid().ToString();
                 m_LoopListBankDataList.Add(TempCustomData);
             }
 
             return m_LoopListBankDataList;
+        }
+
+        public override int GetListLength()
+        {
+            return m_LoopListBankDataList.Count;
         }
 
         public override LoopListBankData GetLoopListBankData(int index)
@@ -112,10 +110,18 @@ namespace Demo
             return m_LoopListBankDataList[index];
         }
 
-        public void AddContent(int newContent)
+        public override List<LoopListBankData> GetLoopListBankDatas()
         {
-            m_Contents.Add(newContent);
+            return m_LoopListBankDataList;
+        }
 
+        public override void SetLoopListBankDatas(List<LoopListBankData> newDatas)
+        {
+            m_LoopListBankDataList = newDatas;
+        }
+
+        public void AddContent(object newContent)
+        {
             LoopListBankData TempCustomData = new LoopListBankData();
             TempCustomData.Content = newContent;
             TempCustomData.UniqueID = System.Guid.NewGuid().ToString();
@@ -124,33 +130,17 @@ namespace Demo
 
         public void DelContentByIndex(int index)
         {
-            if (m_Contents.Count <= index)
+            if (m_LoopListBankDataList.Count <= index)
             {
                 return;
             }
-            m_Contents.RemoveAt(index);
             m_LoopListBankDataList.RemoveAt(index);
         }
 
         public void SetContents(List<int> newContents)
         {
-            m_Contents = newContents;
+            m_ContentsForInitData = newContents;
             InitLoopListBankDataList();
-        }
-
-        public void SetLoopListBankDatas(List<LoopListBankData> newDatas)
-        {
-            m_LoopListBankDataList = newDatas;
-        }
-
-        public List<int> GetContents()
-        {
-            return m_Contents;
-        }
-
-        public List<LoopListBankData> GetLoopListBankDatas()
-        {
-            return m_LoopListBankDataList;
         }
 
         public override int GetCellPreferredTypeIndex(int index)
