@@ -5,6 +5,21 @@ using UnityEngine;
 
 namespace Demo
 {
+    // LoopListBankData
+    public class LoopListBankData
+    {
+        public object Content;
+        public string UniqueID = "";
+
+        public bool IsEmpty()
+        {
+            if(string.IsNullOrEmpty(UniqueID))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
     /* The base class of the list content container
      *
      * Create the individual ListBank by inheriting this class
@@ -16,9 +31,9 @@ namespace Demo
         // Get content count in list
         public abstract int GetListLength();
 
-        public abstract List<string> InitUniqueIDList();
+        public abstract List<LoopListBankData> InitLoopListBankDataList();
 
-        public abstract string GetListUniqueID(int index);
+        public abstract LoopListBankData GetLoopListBankData(int index);
 
         // Get cell preferred type index by index
         public abstract int GetCellPreferredTypeIndex(int index);
@@ -35,20 +50,29 @@ namespace Demo
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
 
-        private List<string> _UniqueIDList;
-        private List<string> m_UniqueIDList
+        private List<LoopListBankData> _LoopListBankDataList;
+        private List<LoopListBankData> m_LoopListBankDataList
         {
             get
             {
-                if (_UniqueIDList == null)
+                if (_LoopListBankDataList == null)
                 {
-                    _UniqueIDList = new List<string>();
-                    _UniqueIDList = InitUniqueIDList();
+                    _LoopListBankDataList = new List<LoopListBankData>();
+                    _LoopListBankDataList = InitLoopListBankDataList();
                 }
 
-                return _UniqueIDList;
+                return _LoopListBankDataList;
             }
+            set { _LoopListBankDataList = value; }
         }
+
+        // Cell Sizes
+        public List<Vector2> m_CellSizes = new List<Vector2>
+        {
+            new Vector2(120, 120),
+            new Vector2(170, 120),
+            new Vector2(220, 120)
+        };
 
         public override object GetListContent(int index)
         {
@@ -64,40 +88,38 @@ namespace Demo
             return m_Contents.Count;
         }
 
-        public override List<string> InitUniqueIDList()
+        public override List<LoopListBankData> InitLoopListBankDataList()
         {
-            m_UniqueIDList.Clear();
+            m_LoopListBankDataList.Clear();
+            LoopListBankData TempCustomData = null;
             for (int i = 0; i < m_Contents.Count; ++i)
             {
-                m_UniqueIDList.Add(System.Guid.NewGuid().ToString());
+                TempCustomData = new LoopListBankData();
+                TempCustomData.Content = m_Contents[i];
+                TempCustomData.UniqueID = System.Guid.NewGuid().ToString();
+                m_LoopListBankDataList.Add(TempCustomData);
             }
 
-            return m_UniqueIDList;
+            return m_LoopListBankDataList;
         }
 
-        public override string GetListUniqueID(int index)
+        public override LoopListBankData GetLoopListBankData(int index)
         {
-            if (m_UniqueIDList.Count <= index)
+            if (m_LoopListBankDataList.Count <= index)
             {
-                return "";
+                return new LoopListBankData();
             }
-            return m_UniqueIDList[index];
-        }
-
-        public override int GetCellPreferredTypeIndex(int index)
-        {
-            return 0;
-        }
-
-        public override Vector2 GetCellPreferredSize(int index)
-        {
-            return new Vector2();
+            return m_LoopListBankDataList[index];
         }
 
         public void AddContent(int newContent)
         {
             m_Contents.Add(newContent);
-            m_UniqueIDList.Add(System.Guid.NewGuid().ToString());
+
+            LoopListBankData TempCustomData = new LoopListBankData();
+            TempCustomData.Content = newContent;
+            TempCustomData.UniqueID = System.Guid.NewGuid().ToString();
+            m_LoopListBankDataList.Add(TempCustomData);
         }
 
         public void DelContentByIndex(int index)
@@ -107,18 +129,42 @@ namespace Demo
                 return;
             }
             m_Contents.RemoveAt(index);
-            m_UniqueIDList.RemoveAt(index);
+            m_LoopListBankDataList.RemoveAt(index);
         }
 
         public void SetContents(List<int> newContents)
         {
             m_Contents = newContents;
-            InitUniqueIDList();
+            InitLoopListBankDataList();
+        }
+
+        public void SetLoopListBankDatas(List<LoopListBankData> newDatas)
+        {
+            m_LoopListBankDataList = newDatas;
         }
 
         public List<int> GetContents()
         {
             return m_Contents;
+        }
+
+        public List<LoopListBankData> GetLoopListBankDatas()
+        {
+            return m_LoopListBankDataList;
+        }
+
+        public override int GetCellPreferredTypeIndex(int index)
+        {
+            return 0;
+        }
+
+        public override Vector2 GetCellPreferredSize(int index)
+        {
+            int ResultIndex = GetCellPreferredTypeIndex(index);
+
+            Vector2 FinalValue = m_CellSizes[ResultIndex];
+
+            return FinalValue;
         }
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Demo
 {
+
     public class CustomListBank : LoopListBankBase
     {
         private List<int> m_Contents = new List<int>
@@ -11,19 +12,20 @@ namespace Demo
             11, 12, 13, 14, 15, 16, 17, 18, 19, 20
         };
 
-        private List<string> _UniqueIDList;
-        private List<string> m_UniqueIDList
+        private List<LoopListBankData> _LoopListBankDataList;
+        private List<LoopListBankData> m_LoopListBankDataList
         {
             get
             {
-                if (_UniqueIDList == null)
+                if (_LoopListBankDataList == null)
                 {
-                    _UniqueIDList = new List<string>();
-                    _UniqueIDList = InitUniqueIDList();
+                    _LoopListBankDataList = new List<LoopListBankData>();
+                    _LoopListBankDataList = InitLoopListBankDataList();
                 }
 
-                return _UniqueIDList;
+                return _LoopListBankDataList;
             }
+            set { _LoopListBankDataList = value; }
         }
 
         // Cell Sizes
@@ -48,24 +50,69 @@ namespace Demo
             return m_Contents.Count;
         }
 
-        public override List<string> InitUniqueIDList()
+        public override List<LoopListBankData> InitLoopListBankDataList()
         {
-            m_UniqueIDList.Clear();
+            m_LoopListBankDataList.Clear();
+            LoopListBankData TempCustomData = null;
             for (int i = 0; i < m_Contents.Count; ++i)
             {
-                m_UniqueIDList.Add(System.Guid.NewGuid().ToString());
+                TempCustomData = new LoopListBankData();
+                TempCustomData.Content = m_Contents[i];
+                TempCustomData.UniqueID = System.Guid.NewGuid().ToString();
+                m_LoopListBankDataList.Add(TempCustomData);
             }
 
-            return m_UniqueIDList;
+            return m_LoopListBankDataList;
         }
 
-        public override string GetListUniqueID(int index)
+        public override LoopListBankData GetLoopListBankData(int index)
         {
-            if(m_UniqueIDList.Count <= index)
+            if(m_LoopListBankDataList.Count <= index)
             {
-                return "";
+                return new LoopListBankData();
             }
-            return m_UniqueIDList[index];
+            return m_LoopListBankDataList[index];
+        }
+
+        public void AddContent(int newContent)
+        {
+            m_Contents.Add(newContent);
+
+            LoopListBankData TempCustomData = new LoopListBankData();
+            TempCustomData.Content = newContent;
+            TempCustomData.UniqueID = System.Guid.NewGuid().ToString();
+            m_LoopListBankDataList.Add(TempCustomData);
+        }
+
+        public void DelContentByIndex(int index)
+        {
+            if (m_Contents.Count <= index)
+            {
+                return;
+            }
+            m_Contents.RemoveAt(index);
+            m_LoopListBankDataList.RemoveAt(index);
+        }
+
+        public void SetContents(List<int> newContents)
+        {
+            m_Contents = newContents;
+            InitLoopListBankDataList();
+        }
+
+        public void SetLoopListBankDatas(List<LoopListBankData> newDatas)
+        {
+            m_LoopListBankDataList = newDatas;
+        }
+
+        public List<int> GetContents()
+        {
+            return m_Contents;
+        }
+
+        public List<LoopListBankData> GetLoopListBankDatas()
+        {
+            return m_LoopListBankDataList;
         }
 
         public override int GetCellPreferredTypeIndex(int index)
@@ -85,33 +132,6 @@ namespace Demo
             Vector2 FinalValue = m_CellSizes[ResultIndex];
 
             return FinalValue;
-        }
-
-        public void AddContent(int newContent)
-        {
-            m_Contents.Add(newContent);
-            m_UniqueIDList.Add(System.Guid.NewGuid().ToString());
-        }
-
-        public void DelContentByIndex(int index)
-        {
-            if (m_Contents.Count <= index)
-            {
-                return;
-            }
-            m_Contents.RemoveAt(index);
-            m_UniqueIDList.RemoveAt(index);
-        }
-
-        public void SetContents(List<int> newContents)
-        {
-            m_Contents = newContents;
-            InitUniqueIDList();
-        }
-
-        public List<int> GetContents()
-        {
-            return m_Contents;
         }
     }
 }

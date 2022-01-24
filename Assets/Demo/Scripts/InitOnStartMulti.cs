@@ -109,7 +109,7 @@ namespace Demo
             TempScrollIndexCallbackBase = candidate.gameObject.GetComponent<ScrollIndexCallbackBase>();
             if (null != TempScrollIndexCallbackBase)
             {
-                TempScrollIndexCallbackBase.SetUniqueID(m_LoopListBank.GetListUniqueID(index));
+                TempScrollIndexCallbackBase.SetUniqueID(m_LoopListBank.GetLoopListBankData(index).UniqueID);
                 TempScrollIndexCallbackBase.onClick_InitOnStart.RemoveAllListeners();
                 TempScrollIndexCallbackBase.onClick_InitOnStart.AddListener(() => OnButtonScrollIndexCallbackClick(TempScrollIndexCallbackBase, index, TempScrollIndexCallbackBase.GetContent(), TempScrollIndexCallbackBase.GetUniqueID()));
             }
@@ -158,7 +158,7 @@ namespace Demo
             //transform.SendMessage("ScrollCellIndex", idx);
 
             // Use direct call for better performance
-            transform.GetComponent<ScrollIndexCallbackBase>()?.ScrollCellIndex(idx, m_LoopListBank.GetListContent(idx), m_ClickUniqueID, m_ClickObject);
+            transform.GetComponent<ScrollIndexCallbackBase>()?.ScrollCellIndex(idx, m_LoopListBank.GetLoopListBankData(idx).Content, m_ClickUniqueID, m_ClickObject);
         }
 
         private void OnButtonScrollIndexCallbackClick(ScrollIndexCallbackBase ScrollIndexCallback, int index, object content, string ClickUniqueID)
