@@ -75,6 +75,24 @@ namespace Demo
             m_LoopListBankDataList = newDatas;
         }
 
+        public int FindUniqueID(string UniqueID)
+        {
+            if (string.IsNullOrEmpty(UniqueID))
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < m_LoopListBankDataList.Count; ++i)
+            {
+                if (m_LoopListBankDataList[i].UniqueID == UniqueID)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         public void AddContent(object newContent)
         {
             LoopListBankData TempCustomData = new LoopListBankData();
