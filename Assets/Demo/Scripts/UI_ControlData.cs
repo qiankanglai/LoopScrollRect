@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Demo
 {
-    public class UI_ControllData : MonoBehaviour
+    public class UI_ControlData : MonoBehaviour
     {
         public Button m_ButtonAddData;
         public Button m_ButtonSetData;
@@ -14,6 +14,8 @@ namespace Demo
         public Button m_ButtonReverseSortData;
         public Button m_ButtonSrollToCell;
         public Button m_ButtonSrollToCellWithTime;
+
+        public InputField m_InputFieldSrollToCell_AddCount;
 
         public InputField m_InputFieldSrollToCell_CellIndex;
         public InputField m_InputButtonSrollToCell_MoveSpeed;
@@ -51,10 +53,17 @@ namespace Demo
 
         private void OnButtonAddDataClick()
         {
-            int RandomResult = Random.Range(0, 10);
-            m_ListBank.AddContent(RandomResult);
-            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
-            m_InitOnStart.m_LoopScrollRect.RefreshCells();
+            int AddCount = 0;
+            int.TryParse(m_InputFieldSrollToCell_AddCount.text, out AddCount);
+
+            int TargetCount = Mathf.Max(1, AddCount);
+            for (int i = 0; i < TargetCount; ++i)
+            {
+                int RandomResult = Random.Range(0, 10);
+                m_ListBank.AddContent(RandomResult);
+                m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+                m_InitOnStart.m_LoopScrollRect.RefreshCells();
+            }
         }
 
         private void OnButtonSetDataClick()
@@ -64,12 +73,26 @@ namespace Demo
             };
 
             m_ListBank.SetContents(contents);
+
+            // Refresh m_ClickIndex, m_ClickObject
+            if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+            {
+                m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).UniqueID;
+                m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).Content;
+            }
+            else
+            {
+                m_InitOnStart.m_ClickUniqueID = "";
+                m_InitOnStart.m_ClickObject = null;
+            }
+
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
             m_InitOnStart.m_LoopScrollRect.RefillCells();
         }
 
         private void OnButtonDelDataClick()
         {
+            string TempUniqueID = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).UniqueID;
             m_ListBank.DelContentByIndex(0);
 
             float offset;
@@ -78,16 +101,49 @@ namespace Demo
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
             if (LeftIndex > 0)
+            {
                 // try keep the same position
                 m_InitOnStart.m_LoopScrollRect.RefillCells(LeftIndex - 1, false, offset);
+            }
             else
+            {
+                // Refresh m_ClickUniqueID, m_ClickObject
+                if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+                {
+                    // Check UniqueID is same
+                    if (m_InitOnStart.m_ClickUniqueID == TempUniqueID)
+                    {
+                        m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).UniqueID;
+                        m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).Content;
+                    }
+                }
+                else
+                {
+                    m_InitOnStart.m_ClickUniqueID = "";
+                    m_InitOnStart.m_ClickObject = null;
+                }
+                
                 m_InitOnStart.m_LoopScrollRect.RefillCells();
+            }
         }
 
         private void OnButtonSortDataClick()
         {
-            var TempContent = m_ListBank.GetContents();
-            TempContent.Sort((x, y) => x.CompareTo(y));
+            var TempContent = m_ListBank.GetLoopListBankDatas();
+            TempContent = TempContent.OrderBy(x => (int)x.Content).ToList();
+            m_ListBank.SetLoopListBankDatas(TempContent);
+
+            // Refresh m_ClickIndex, m_ClickObject
+            if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+            {
+                m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).UniqueID;
+                m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).Content;
+            }
+            else
+            {
+                m_InitOnStart.m_ClickUniqueID = "";
+                m_InitOnStart.m_ClickObject = null;
+            }
 
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
@@ -96,8 +152,21 @@ namespace Demo
 
         private void OnButtonReverseSortDataClick()
         {
-            var TempContent = m_ListBank.GetContents();
-            TempContent.Sort((x, y) => -x.CompareTo(y));
+            var TempContent = m_ListBank.GetLoopListBankDatas();
+            TempContent = TempContent.OrderByDescending(x => (int)x.Content).ToList();
+            m_ListBank.SetLoopListBankDatas(TempContent);
+
+            // Refresh m_ClickIndex, m_ClickObject
+            if (m_InitOnStart.m_LoopListBank.GetListLength() > 0)
+            {
+                m_InitOnStart.m_ClickUniqueID = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).UniqueID;
+                m_InitOnStart.m_ClickObject = m_InitOnStart.m_LoopListBank.GetLoopListBankData(0).Content;
+            }
+            else
+            {
+                m_InitOnStart.m_ClickUniqueID = "";
+                m_InitOnStart.m_ClickObject = null;
+            }
 
             m_InitOnStart.m_LoopScrollRect.ClearCells();
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
