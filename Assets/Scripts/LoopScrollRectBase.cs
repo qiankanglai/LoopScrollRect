@@ -1028,6 +1028,8 @@ namespace UnityEngine.UI
                     {
                         float speed = m_Velocity[axis];
                         position[axis] = Mathf.SmoothDamp(m_Content.anchoredPosition[axis], m_Content.anchoredPosition[axis] + offset[axis], ref speed, m_Elasticity, Mathf.Infinity, deltaTime);
+                        if (Mathf.Abs(speed) < 1)
+                            speed = 0;
                         m_Velocity[axis] = speed;
                     }
                     // Else move content according to velocity with deceleration applied.
@@ -1528,6 +1530,8 @@ namespace UnityEngine.UI
                     offset.y = m_ViewBounds.min.y - min.y;
             }
 
+            if (Mathf.Abs(offset.x) < 1 && Mathf.Abs(offset.y) < 1)
+                return Vector2.zero;
             return offset;
         }
 
