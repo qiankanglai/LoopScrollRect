@@ -33,8 +33,6 @@ namespace UnityEngine.UI
         protected float threshold = 0;
         [Tooltip("Reverse direction for dragging")]
         public bool reverseDirection = false;
-        [Tooltip("Rubber scale for outside")]
-        public float rubberScale = 1;
 
         protected int itemTypeStart = 0;
         protected int itemTypeEnd = 0;
@@ -147,7 +145,7 @@ namespace UnityEngine.UI
             }
         }
 
-        protected virtual bool UpdateItems(Bounds viewBounds, Bounds contentBounds) { return false; }
+        protected virtual bool UpdateItems(ref Bounds viewBounds, ref Bounds contentBounds) { return false; }
         //==========LoopScrollRect==========
 
         /// <summary>
@@ -573,7 +571,7 @@ namespace UnityEngine.UI
 
         // The offset from handle position to mouse down position
         private Vector2 m_PointerStartLocalCursor = Vector2.zero;
-        private Vector2 m_ContentStartPosition = Vector2.zero;
+        protected Vector2 m_ContentStartPosition = Vector2.zero;
 
         private RectTransform m_ViewRect;
 
@@ -589,7 +587,7 @@ namespace UnityEngine.UI
             }
         }
 
-        private Bounds m_ContentBounds;
+        protected Bounds m_ContentBounds;
         private Bounds m_ViewBounds;
 
         private Vector2 m_Velocity;
@@ -636,7 +634,7 @@ namespace UnityEngine.UI
         {}
 
         //==========LoopScrollRect==========
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         protected override void Awake()
         {
             base.Awake();
@@ -648,7 +646,7 @@ namespace UnityEngine.UI
                 Debug.Assert(GetAbsDimension(content.anchorMax) == value, this);
             }
         }
-#endif
+        #endif
 
         public void ClearCells()
         {
@@ -1398,12 +1396,10 @@ namespace UnityEngine.UI
             position += offset;
             if (m_MovementType == MovementType.Elastic)
             {
-                //==========LoopScrollRect==========
                 if (offset.x != 0)
-                    position.x = position.x - RubberDelta(offset.x, m_ViewBounds.size.x) * rubberScale;
+                    position.x = position.x - RubberDelta(offset.x, m_ViewBounds.size.x);
                 if (offset.y != 0)
-                    position.y = position.y - RubberDelta(offset.y, m_ViewBounds.size.y) * rubberScale;
-                //==========LoopScrollRect==========
+                    position.y = position.y - RubberDelta(offset.y, m_ViewBounds.size.y);
             }
 
             SetContentAnchoredPosition(position);
@@ -1469,16 +1465,13 @@ namespace UnityEngine.UI
                     }
                 }
 
-                if (m_Velocity != Vector2.zero)
+                if (m_MovementType == MovementType.Clamped)
                 {
-                    if (m_MovementType == MovementType.Clamped)
-                    {
-                        offset = CalculateOffset(position - m_Content.anchoredPosition);
-                        position += offset;
-                    }
-
-                    SetContentAnchoredPosition(position);
+                    offset = CalculateOffset(position - m_Content.anchoredPosition);
+                    position += offset;
                 }
+
+                SetContentAnchoredPosition(position);
             }
 
             if (m_Dragging && m_Inertia)
@@ -1490,6 +1483,9 @@ namespace UnityEngine.UI
             if (m_ViewBounds != m_PrevViewBounds || m_ContentBounds != m_PrevContentBounds || m_Content.anchoredPosition != m_PrevPosition)
             {
                 UpdateScrollbars(offset);
+                #if UNITY_2017_1_OR_NEWER
+                UISystemProfilerApi.AddMarker("ScrollRect.value", this);
+                #endif
                 m_OnValueChanged.Invoke(normalizedPosition);
                 UpdatePrevData();
             }
@@ -1953,13 +1949,23 @@ namespace UnityEngine.UI
 
             // ============LoopScrollRect============
             // Don't do this in Rebuild
-            if (Application.isPlaying && updateItems && UpdateItems(m_ViewBounds, m_ContentBounds))
+            if (Application.isPlaying && updateItems && UpdateItems(ref m_ViewBounds, ref m_ContentBounds))
             {
                 Canvas.ForceUpdateCanvases();
                 m_ContentBounds = GetBounds();
+
+                Vector3 contentSize = m_ContentBounds.size;
+                Vector3 contentPos = m_ContentBounds.center;
+                var contentPivot = m_Content.pivot;
+                AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
+                m_ContentBounds.size = contentSize;
+                m_ContentBounds.center = contentPos;
             }
             // ============LoopScrollRect============
+        }
 
+        internal static void AdjustBounds(ref Bounds viewBounds, ref Vector2 contentPivot, ref Vector3 contentSize, ref Vector3 contentPos)
+        {
             // Make sure content bounds are at least as large as view by adding padding if not.
             // One might think at first that if the content is smaller than the view, scrolling should be allowed.
             // However, that's not how scroll views normally work.
@@ -1967,22 +1973,17 @@ namespace UnityEngine.UI
             // We use the pivot of the content rect to decide in which directions the content bounds should be expanded.
             // E.g. if pivot is at top, bounds are expanded downwards.
             // This also works nicely when ContentSizeFitter is used on the content.
-            Vector3 contentSize = m_ContentBounds.size;
-            Vector3 contentPos = m_ContentBounds.center;
-            Vector3 excess = m_ViewBounds.size - contentSize;
+            Vector3 excess = viewBounds.size - contentSize;
             if (excess.x > 0)
             {
-                contentPos.x -= excess.x * (m_Content.pivot.x - 0.5f);
-                contentSize.x = m_ViewBounds.size.x;
+                contentPos.x -= excess.x * (contentPivot.x - 0.5f);
+                contentSize.x = viewBounds.size.x;
             }
             if (excess.y > 0)
             {
-                contentPos.y -= excess.y * (m_Content.pivot.y - 0.5f);
-                contentSize.y = m_ViewBounds.size.y;
+                contentPos.y -= excess.y * (contentPivot.y - 0.5f);
+                contentSize.y = viewBounds.size.y;
             }
-
-            m_ContentBounds.size = contentSize;
-            m_ContentBounds.center = contentPos;
         }
 
         private readonly Vector3[] m_Corners = new Vector3[4];
@@ -1990,15 +1991,19 @@ namespace UnityEngine.UI
         {
             if (m_Content == null)
                 return new Bounds();
+            m_Content.GetWorldCorners(m_Corners);
+            var viewWorldToLocalMatrix = viewRect.worldToLocalMatrix;
+            return InternalGetBounds(m_Corners, ref viewWorldToLocalMatrix);
+        }
 
+        internal static Bounds InternalGetBounds(Vector3[] corners, ref Matrix4x4 viewWorldToLocalMatrix)
+        {
             var vMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             var vMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
-            var toLocal = viewRect.worldToLocalMatrix;
-            m_Content.GetWorldCorners(m_Corners);
             for (int j = 0; j < 4; j++)
             {
-                Vector3 v = toLocal.MultiplyPoint3x4(m_Corners[j]);
+                Vector3 v = viewWorldToLocalMatrix.MultiplyPoint3x4(corners[j]);
                 vMin = Vector3.Min(v, vMin);
                 vMax = Vector3.Max(v, vMax);
             }
@@ -2007,72 +2012,83 @@ namespace UnityEngine.UI
             bounds.Encapsulate(vMax);
             return bounds;
         }
-
+        
+        //==========LoopScrollRect==========
         private Bounds GetBounds4Item(int index)
         {
             if (m_Content == null)
                 return new Bounds();
 
-            var vMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-            var vMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-
-            var toLocal = viewRect.worldToLocalMatrix;
             int offset = index - itemTypeStart;
             if (offset < 0 || offset >= m_Content.childCount)
                 return new Bounds();
+
             var rt = m_Content.GetChild(offset) as RectTransform;
             if (rt == null)
                 return new Bounds();
             rt.GetWorldCorners(m_Corners);
-            for (int j = 0; j < 4; j++)
-            {
-                Vector3 v = toLocal.MultiplyPoint3x4(m_Corners[j]);
-                vMin = Vector3.Min(v, vMin);
-                vMax = Vector3.Max(v, vMax);
-            }
 
-            var bounds = new Bounds(vMin, Vector3.zero);
-            bounds.Encapsulate(vMax);
-            return bounds;
+            var viewWorldToLocalMatrix = viewRect.worldToLocalMatrix;
+            return InternalGetBounds(m_Corners, ref viewWorldToLocalMatrix);
         }
         //==========LoopScrollRect==========
 
         private Vector2 CalculateOffset(Vector2 delta)
         {
+            return InternalCalculateOffset(ref m_ViewBounds, ref m_ContentBounds, m_Horizontal, m_Vertical, m_MovementType, ref delta,
+                GetDimension(delta), itemTypeStart, itemTypeEnd, totalCount);
+        }
+
+        internal static Vector2 InternalCalculateOffset(ref Bounds viewBounds, ref Bounds contentBounds, bool horizontal, bool vertical, MovementType movementType, ref Vector2 delta,
+            float deltaDimension, int itemTypeStart, int itemTypeEnd, int totalCount) //==========LoopScrollRect==========
+        {
             Vector2 offset = Vector2.zero;
-            if (m_MovementType == MovementType.Unrestricted)
+            if (movementType == MovementType.Unrestricted)
                 return offset;
-            if (m_MovementType == MovementType.Clamped)
+            
+        	//==========LoopScrollRect==========
+            if (movementType == MovementType.Clamped)
             {
                 if (totalCount < 0)
                     return offset;
-                if (GetDimension(delta) < 0 && itemTypeStart > 0)
+                if (deltaDimension < 0 && itemTypeStart > 0)
                     return offset;
-                if (GetDimension(delta) > 0 && itemTypeEnd < totalCount)
+                if (deltaDimension > 0 && itemTypeEnd < totalCount)
                     return offset;
             }
+        	//==========LoopScrollRect==========
 
-            Vector2 min = m_ContentBounds.min;
-            Vector2 max = m_ContentBounds.max;
+            Vector2 min = contentBounds.min;
+            Vector2 max = contentBounds.max;
 
-            if (m_Horizontal)
+            // min/max offset extracted to check if approximately 0 and avoid recalculating layout every frame (case 1010178)
+
+            if (horizontal)
             {
                 min.x += delta.x;
                 max.x += delta.x;
-                if (min.x > m_ViewBounds.min.x)
-                    offset.x = m_ViewBounds.min.x - min.x;
-                else if (max.x < m_ViewBounds.max.x)
-                    offset.x = m_ViewBounds.max.x - max.x;
+
+                float maxOffset = viewBounds.max.x - max.x;
+                float minOffset = viewBounds.min.x - min.x;
+
+                if (minOffset < -0.001f)
+                    offset.x = minOffset;
+                else if (maxOffset > 0.001f)
+                    offset.x = maxOffset;
             }
 
-            if (m_Vertical)
+            if (vertical)
             {
                 min.y += delta.y;
                 max.y += delta.y;
-                if (max.y < m_ViewBounds.max.y)
-                    offset.y = m_ViewBounds.max.y - max.y;
-                else if (min.y > m_ViewBounds.min.y)
-                    offset.y = m_ViewBounds.min.y - min.y;
+
+                float maxOffset = viewBounds.max.y - max.y;
+                float minOffset = viewBounds.min.y - min.y;
+
+                if (maxOffset > 0.001f)
+                    offset.y = maxOffset;
+                else if (minOffset < -0.001f)
+                    offset.y = minOffset;
             }
 
         	//==========LoopScrollRect==========

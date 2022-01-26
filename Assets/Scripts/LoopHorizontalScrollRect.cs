@@ -49,7 +49,7 @@ namespace UnityEngine.UI
             }
         }
 
-        protected override bool UpdateItems(Bounds viewBounds, Bounds contentBounds)
+        protected override bool UpdateItems(ref Bounds viewBounds, ref Bounds contentBounds)
         {
             bool changed = false;
 

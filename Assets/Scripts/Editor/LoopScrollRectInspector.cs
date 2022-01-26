@@ -7,7 +7,7 @@ public class LoopScrollRectInspector : Editor
 {
     int index = 0;
     float speed = 1000, time = 1;
-	public override void OnInspectorGUI ()
+    public override void OnInspectorGUI ()
     {
         base.OnInspectorGUI();
         EditorGUILayout.Space();
@@ -23,15 +23,15 @@ public class LoopScrollRectInspector : Editor
         if (GUILayout.Button("Refresh"))
         {
             scroll.RefreshCells();
-		}
-		if(GUILayout.Button("Refill"))
-		{
-			scroll.RefillCells();
-		}
-		if(GUILayout.Button("RefillFromEnd"))
-		{
-			scroll.RefillCellsFromEnd();
-		}
+        }
+        if(GUILayout.Button("Refill"))
+        {
+            scroll.RefillCells();
+        }
+        if(GUILayout.Button("RefillFromEnd"))
+        {
+            scroll.RefillCellsFromEnd();
+        }
         EditorGUILayout.EndHorizontal();
 
         EditorGUIUtility.labelWidth = 45;
@@ -54,5 +54,5 @@ public class LoopScrollRectInspector : Editor
             scroll.SrollToCellWithinTime(index, time);
         }
         EditorGUILayout.EndHorizontal();
-	}
+    }
 }
