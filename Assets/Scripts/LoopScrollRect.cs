@@ -24,19 +24,19 @@ namespace UnityEngine.UI
             if (deletedItemTypeStart > 0)
             {
                 deletedItemTypeStart--;
-                nextItem = content.GetChild(0) as RectTransform;
+                nextItem = m_Content.GetChild(0) as RectTransform;
                 nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
             }
             else if (deletedItemTypeEnd > 0)
             {
                 deletedItemTypeEnd--;
-                nextItem = content.GetChild(content.childCount - 1) as RectTransform;
+                nextItem = m_Content.GetChild(m_Content.childCount - 1) as RectTransform;
                 nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
             }
             else
             {
                 nextItem = prefabSource.GetObject(itemIdx).transform as RectTransform;
-                nextItem.transform.SetParent(content, false);
+                nextItem.transform.SetParent(m_Content, false);
                 nextItem.gameObject.SetActive(true);
             }
             ProvideData(nextItem, itemIdx);
@@ -53,21 +53,21 @@ namespace UnityEngine.UI
 
         protected override void ClearTempPool()
         {
-            Debug.Assert(content.childCount >= deletedItemTypeStart + deletedItemTypeEnd);
+            Debug.Assert(m_Content.childCount >= deletedItemTypeStart + deletedItemTypeEnd);
             if (deletedItemTypeStart > 0)
             {
                 for (int i = deletedItemTypeStart - 1; i >= 0; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(i));
+                    prefabSource.ReturnObject(m_Content.GetChild(i));
                 }
                 deletedItemTypeStart = 0;
             }
             if (deletedItemTypeEnd > 0)
             {
-                int t = content.childCount - deletedItemTypeEnd;
-                for (int i = content.childCount - 1; i >= t; i--)
+                int t = m_Content.childCount - deletedItemTypeEnd;
+                for (int i = m_Content.childCount - 1; i >= t; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(i));
+                    prefabSource.ReturnObject(m_Content.GetChild(i));
                 }
                 deletedItemTypeEnd = 0;
             }

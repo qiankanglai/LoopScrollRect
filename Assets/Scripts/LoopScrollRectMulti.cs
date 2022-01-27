@@ -22,7 +22,7 @@ namespace UnityEngine.UI
         protected override RectTransform GetFromTempPool(int itemIdx)
         {
             RectTransform nextItem = prefabSource.GetObject(itemIdx).transform as RectTransform;
-            nextItem.transform.SetParent(content, false);
+            nextItem.transform.SetParent(m_Content, false);
             nextItem.gameObject.SetActive(true);
 
             ProvideData(nextItem, itemIdx);
@@ -31,20 +31,20 @@ namespace UnityEngine.UI
 
         protected override void ReturnToTempPool(bool fromStart, int count)
         {
-            Debug.Assert(content.childCount >= count);
+            Debug.Assert(m_Content.childCount >= count);
             if (fromStart)
             {
                 for (int i = count - 1; i >= 0; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(i));
+                    prefabSource.ReturnObject(m_Content.GetChild(i));
                 }
             }
             else
             {
-                int t = content.childCount - count;
-                for (int i = content.childCount - 1; i >= t; i--)
+                int t = m_Content.childCount - count;
+                for (int i = m_Content.childCount - 1; i >= t; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(i));
+                    prefabSource.ReturnObject(m_Content.GetChild(i));
                 }
             }
         }

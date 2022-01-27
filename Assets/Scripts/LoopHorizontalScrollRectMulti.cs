@@ -42,7 +42,7 @@ namespace UnityEngine.UI
             direction = LoopScrollRectDirection.Horizontal;
             base.Awake();
 
-            GridLayoutGroup layout = content.GetComponent<GridLayoutGroup>();
+            GridLayoutGroup layout = m_Content.GetComponent<GridLayoutGroup>();
             if (layout != null && layout.constraint != GridLayoutGroup.Constraint.FixedRowCount)
             {
                 Debug.LogError("[LoopHorizontalScrollRect] unsupported GridLayoutGroup constraint");
@@ -74,7 +74,7 @@ namespace UnityEngine.UI
                 itemTypeEnd = itemTypeStart;
 
                 float offset = offsetCount * (elementSize + contentSpacing);
-                content.anchoredPosition -= new Vector2(offset + (reverseDirection ? currentSize : 0), 0);
+                m_Content.anchoredPosition -= new Vector2(offset + (reverseDirection ? currentSize : 0), 0);
                 contentBounds.center -= new Vector3(offset + currentSize / 2, 0, 0);
                 contentBounds.size = Vector3.zero;
 
@@ -108,7 +108,7 @@ namespace UnityEngine.UI
                 itemTypeEnd = itemTypeStart;
 
                 float offset = offsetCount * (elementSize + contentSpacing);
-                content.anchoredPosition += new Vector2(offset + (reverseDirection ? 0 : currentSize), 0);
+                m_Content.anchoredPosition += new Vector2(offset + (reverseDirection ? 0 : currentSize), 0);
                 contentBounds.center += new Vector3(offset + currentSize / 2, 0, 0);
                 contentBounds.size = Vector3.zero;
 

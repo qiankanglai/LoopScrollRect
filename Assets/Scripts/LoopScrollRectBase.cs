@@ -65,9 +65,9 @@ namespace UnityEngine.UI
                 }
                 m_ContentSpaceInit = true;
                 m_ContentSpacing = 0;
-                if (content != null)
+                if (m_Content != null)
                 {
-                    HorizontalOrVerticalLayoutGroup layout1 = content.GetComponent<HorizontalOrVerticalLayoutGroup>();
+                    HorizontalOrVerticalLayoutGroup layout1 = m_Content.GetComponent<HorizontalOrVerticalLayoutGroup>();
                     if (layout1 != null)
                     {
                         m_ContentSpacing = layout1.spacing;
@@ -76,7 +76,7 @@ namespace UnityEngine.UI
                         m_ContentTopPadding = layout1.padding.top;
                         m_ContentBottomPadding = layout1.padding.bottom;
                     }
-                    m_GridLayout = content.GetComponent<GridLayoutGroup>();
+                    m_GridLayout = m_Content.GetComponent<GridLayoutGroup>();
                     if (m_GridLayout != null)
                     {
                         m_ContentSpacing = GetAbsDimension(m_GridLayout.spacing);
@@ -102,9 +102,9 @@ namespace UnityEngine.UI
                 }
                 m_ContentConstraintCountInit = true;
                 m_ContentConstraintCount = 1;
-                if (content != null)
+                if (m_Content != null)
                 {
-                    GridLayoutGroup layout2 = content.GetComponent<GridLayoutGroup>();
+                    GridLayoutGroup layout2 = m_Content.GetComponent<GridLayoutGroup>();
                     if (layout2 != null)
                     {
                         if (layout2.constraint == GridLayoutGroup.Constraint.Flexible)
@@ -641,9 +641,9 @@ namespace UnityEngine.UI
             if (Application.isPlaying)
             {
                 float value = (reverseDirection ^ (direction == LoopScrollRectDirection.Horizontal)) ? 0 : 1;
-                Debug.Assert(GetAbsDimension(content.pivot) == value, this);
-                Debug.Assert(GetAbsDimension(content.anchorMin) == value, this);
-                Debug.Assert(GetAbsDimension(content.anchorMax) == value, this);
+                Debug.Assert(GetAbsDimension(m_Content.pivot) == value, this);
+                Debug.Assert(GetAbsDimension(m_Content.anchorMin) == value, this);
+                Debug.Assert(GetAbsDimension(m_Content.anchorMax) == value, this);
             }
         }
         #endif
@@ -655,9 +655,9 @@ namespace UnityEngine.UI
                 itemTypeStart = 0;
                 itemTypeEnd = 0;
                 totalCount = 0;
-                for (int i = content.childCount - 1; i >= 0; i--)
+                for (int i = m_Content.childCount - 1; i >= 0; i--)
                 {
-                    prefabSource.ReturnObject(content.GetChild(i));
+                    prefabSource.ReturnObject(m_Content.GetChild(i));
                 }
             }
         }
@@ -671,12 +671,12 @@ namespace UnityEngine.UI
             int idx = 0;
             if (itemTypeEnd > itemTypeStart)
             {
-                float size = GetSize(content.GetChild(0) as RectTransform, false);
+                float size = GetSize(m_Content.GetChild(0) as RectTransform, false);
                 while (size + offset <= 0 && itemTypeStart + idx + contentConstraintCount < itemTypeEnd)
                 {
                     offset += size;
                     idx += contentConstraintCount;
-                    size = GetSize(content.GetChild(idx) as RectTransform);
+                    size = GetSize(m_Content.GetChild(idx) as RectTransform);
                 }
             }
             return idx + itemTypeStart;
@@ -691,13 +691,13 @@ namespace UnityEngine.UI
             int idx = 0;
             if (itemTypeEnd > itemTypeStart)
             {
-                int totalChildCount = content.childCount;
-                float size = GetSize(content.GetChild(totalChildCount - idx - 1) as RectTransform, false);
+                int totalChildCount = m_Content.childCount;
+                float size = GetSize(m_Content.GetChild(totalChildCount - idx - 1) as RectTransform, false);
                 while (size + offset <= 0 && itemTypeStart < itemTypeEnd - idx - contentConstraintCount)
                 {
                     offset += size;
                     idx += contentConstraintCount;
-                    size = GetSize(content.GetChild(totalChildCount - idx - 1) as RectTransform);
+                    size = GetSize(m_Content.GetChild(totalChildCount - idx - 1) as RectTransform);
                 }
             }
             offset = -offset;
@@ -825,7 +825,7 @@ namespace UnityEngine.UI
                     if (move != 0)
                     {
                         Vector2 offset = GetVector(move);
-                        content.anchoredPosition += offset;
+                        m_Content.anchoredPosition += offset;
                         m_PrevPosition += offset;
                         m_ContentStartPosition += offset;
                         UpdateBounds(true);
@@ -844,16 +844,16 @@ namespace UnityEngine.UI
             {
                 itemTypeEnd = itemTypeStart;
                 // recycle items if we can
-                for (int i = 0; i < content.childCount; i++)
+                for (int i = 0; i < m_Content.childCount; i++)
                 {
                     if (itemTypeEnd < totalCount)
                     {
-                        ProvideData(content.GetChild(i), itemTypeEnd);
+                        ProvideData(m_Content.GetChild(i), itemTypeEnd);
                         itemTypeEnd++;
                     }
                     else
                     {
-                        prefabSource.ReturnObject(content.GetChild(i));
+                        prefabSource.ReturnObject(m_Content.GetChild(i));
                         i--;
                     }
                 }
@@ -912,7 +912,8 @@ namespace UnityEngine.UI
 
             ClearTempPool();
             // force build bounds here so scrollbar can access newest bounds
-            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
+            Canvas.ForceUpdateCanvases();
             m_ContentBounds = GetBounds();
             UpdateScrollbars(Vector2.zero);
             StopMovement();
@@ -979,7 +980,8 @@ namespace UnityEngine.UI
 
             ClearTempPool();
             // force build bounds here so scrollbar can access newest bounds
-            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
+            Canvas.ForceUpdateCanvases();
             m_ContentBounds = GetBounds();
             UpdateScrollbars(Vector2.zero);
             StopMovement();
@@ -1005,7 +1007,7 @@ namespace UnityEngine.UI
             if (!reverseDirection)
             {
                 Vector2 offset = GetVector(size);
-                content.anchoredPosition += offset;
+                m_Content.anchoredPosition += offset;
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
@@ -1020,7 +1022,7 @@ namespace UnityEngine.UI
             {
                 return 0;
             }
-            int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
+            int availableChilds = m_Content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
             Debug.Assert(availableChilds >= 0);
             if (availableChilds == 0)
             {
@@ -1030,7 +1032,7 @@ namespace UnityEngine.UI
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
-                RectTransform oldItem = content.GetChild(deletedItemTypeStart) as RectTransform;
+                RectTransform oldItem = m_Content.GetChild(deletedItemTypeStart) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
                 ReturnToTempPool(true);
                 availableChilds--;
@@ -1045,7 +1047,7 @@ namespace UnityEngine.UI
             if (!reverseDirection)
             {
                 Vector2 offset = GetVector(size);
-                content.anchoredPosition -= offset;
+                m_Content.anchoredPosition -= offset;
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
@@ -1061,12 +1063,12 @@ namespace UnityEngine.UI
             }
             float size = 0;
             // issue 4: fill lines to end first
-            int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
+            int availableChilds = m_Content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
             int count = contentConstraintCount - (availableChilds % contentConstraintCount);
             for (int i = 0; i < count; i++)
             {
                 RectTransform newItem = GetFromTempPool(itemTypeEnd);
-                newItem.SetSiblingIndex(content.childCount - deletedItemTypeEnd - 1);
+                newItem.SetSiblingIndex(m_Content.childCount - deletedItemTypeEnd - 1);
                 size = Mathf.Max(GetSize(newItem, includeSpacing), size);
                 itemTypeEnd++;
                 if (totalCount >= 0 && itemTypeEnd >= totalCount)
@@ -1079,7 +1081,7 @@ namespace UnityEngine.UI
             if (reverseDirection)
             {
                 Vector2 offset = GetVector(size);
-                content.anchoredPosition -= offset;
+                m_Content.anchoredPosition -= offset;
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
@@ -1093,7 +1095,7 @@ namespace UnityEngine.UI
             {
                 return 0;
             }
-            int availableChilds = content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
+            int availableChilds = m_Content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
             Debug.Assert(availableChilds >= 0);
             if (availableChilds == 0)
             {
@@ -1103,7 +1105,7 @@ namespace UnityEngine.UI
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
-                RectTransform oldItem = content.GetChild(content.childCount - deletedItemTypeEnd - 1) as RectTransform;
+                RectTransform oldItem = m_Content.GetChild(m_Content.childCount - deletedItemTypeEnd - 1) as RectTransform;
                 size = Mathf.Max(GetSize(oldItem), size);
                 ReturnToTempPool(false);
                 availableChilds--;
@@ -1117,7 +1119,7 @@ namespace UnityEngine.UI
             if (reverseDirection)
             {
                 Vector2 offset = GetVector(size);
-                content.anchoredPosition += offset;
+                m_Content.anchoredPosition += offset;
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
@@ -1837,7 +1839,7 @@ namespace UnityEngine.UI
                 viewRect.anchoredPosition = Vector2.zero;
 
                 // Recalculate content layout with this size to see if it fits when there are no scrollbars.
-                LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
                 m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
                 m_ContentBounds = GetBounds();
             }
@@ -1849,7 +1851,7 @@ namespace UnityEngine.UI
 
                 // Recalculate content layout with this size to see if it fits vertically
                 // when there is a vertical scrollbar (which may reflowed the content to make it taller).
-                LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
                 m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
                 m_ContentBounds = GetBounds();
             }
@@ -2047,7 +2049,7 @@ namespace UnityEngine.UI
                 return offset;
             
         	//==========LoopScrollRect==========
-            if (movementType == MovementType.Clamped)
+            if (movementType == MovementType.Clamped || movementType == MovementType.Elastic)
             {
                 if (totalCount < 0)
                     return offset;
