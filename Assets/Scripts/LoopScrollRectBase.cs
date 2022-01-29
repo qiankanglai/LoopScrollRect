@@ -1004,12 +1004,16 @@ namespace UnityEngine.UI
             }
             threshold = Mathf.Max(threshold, size * 1.5f);
 
-            if (!reverseDirection)
+            if (size > 0)
             {
-                Vector2 offset = GetVector(size);
-                m_Content.anchoredPosition += offset;
-                m_PrevPosition += offset;
-                m_ContentStartPosition += offset;
+                m_HasRebuiltLayout = false;
+                if (!reverseDirection)
+                {
+                    Vector2 offset = GetVector(size);
+                    m_Content.anchoredPosition += offset;
+                    m_PrevPosition += offset;
+                    m_ContentStartPosition += offset;
+                }
             }
 
             return size;
@@ -1044,13 +1048,18 @@ namespace UnityEngine.UI
                 }
             }
 
-            if (!reverseDirection)
+            if (size > 0)
             {
-                Vector2 offset = GetVector(size);
-                m_Content.anchoredPosition -= offset;
-                m_PrevPosition -= offset;
-                m_ContentStartPosition -= offset;
+                m_HasRebuiltLayout = false;
+                if (!reverseDirection)
+                {
+                    Vector2 offset = GetVector(size);
+                    m_Content.anchoredPosition -= offset;
+                    m_PrevPosition -= offset;
+                    m_ContentStartPosition -= offset;
+                }
             }
+
             return size;
         }
 
@@ -1078,12 +1087,16 @@ namespace UnityEngine.UI
             }
             threshold = Mathf.Max(threshold, size * 1.5f);
 
-            if (reverseDirection)
+            if (size > 0)
             {
-                Vector2 offset = GetVector(size);
-                m_Content.anchoredPosition -= offset;
-                m_PrevPosition -= offset;
-                m_ContentStartPosition -= offset;
+                m_HasRebuiltLayout = false;
+                if (reverseDirection)
+                {
+                    Vector2 offset = GetVector(size);
+                    m_Content.anchoredPosition -= offset;
+                    m_PrevPosition -= offset;
+                    m_ContentStartPosition -= offset;
+                }
             }
 
             return size;
@@ -1116,13 +1129,18 @@ namespace UnityEngine.UI
                 }
             }
 
-            if (reverseDirection)
+            if (size > 0)
             {
-                Vector2 offset = GetVector(size);
-                m_Content.anchoredPosition += offset;
-                m_PrevPosition += offset;
-                m_ContentStartPosition += offset;
+                m_HasRebuiltLayout = false;
+                if (reverseDirection)
+                {
+                    Vector2 offset = GetVector(size);
+                    m_Content.anchoredPosition += offset;
+                    m_PrevPosition += offset;
+                    m_ContentStartPosition += offset;
+                }
             }
+
             return size;
         }
 
@@ -1948,22 +1966,57 @@ namespace UnityEngine.UI
 
             if (m_Content == null)
                 return;
+            
+            Vector3 contentSize = m_ContentBounds.size;
+            Vector3 contentPos = m_ContentBounds.center;
+            var contentPivot = m_Content.pivot;
+            AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
+            m_ContentBounds.size = contentSize;
+            m_ContentBounds.center = contentPos;
 
             // ============LoopScrollRect============
             // Don't do this in Rebuild
             if (Application.isPlaying && updateItems && UpdateItems(ref m_ViewBounds, ref m_ContentBounds))
             {
-                Canvas.ForceUpdateCanvases();
+                EnsureLayoutHasRebuilt();
                 m_ContentBounds = GetBounds();
-
-                Vector3 contentSize = m_ContentBounds.size;
-                Vector3 contentPos = m_ContentBounds.center;
-                var contentPivot = m_Content.pivot;
-                AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
-                m_ContentBounds.size = contentSize;
-                m_ContentBounds.center = contentPos;
             }
             // ============LoopScrollRect============
+            
+            if (movementType == MovementType.Clamped)
+            {
+                // Adjust content so that content bounds bottom (right side) is never higher (to the left) than the view bounds bottom (right side).
+                // top (left side) is never lower (to the right) than the view bounds top (left side).
+                // All this can happen if content has shrunk.
+                // This works because content size is at least as big as view size (because of the call to InternalUpdateBounds above).
+                Vector2 delta = Vector2.zero;
+                if (m_ViewBounds.max.x > m_ContentBounds.max.x)
+                {
+                    delta.x = Math.Min(m_ViewBounds.min.x - m_ContentBounds.min.x, m_ViewBounds.max.x - m_ContentBounds.max.x);
+                }
+                else if (m_ViewBounds.min.x < m_ContentBounds.min.x)
+                {
+                    delta.x = Math.Max(m_ViewBounds.min.x - m_ContentBounds.min.x, m_ViewBounds.max.x - m_ContentBounds.max.x);
+                }
+
+                if (m_ViewBounds.min.y < m_ContentBounds.min.y)
+                {
+                    delta.y = Math.Max(m_ViewBounds.min.y - m_ContentBounds.min.y, m_ViewBounds.max.y - m_ContentBounds.max.y);
+                }
+                else if (m_ViewBounds.max.y > m_ContentBounds.max.y)
+                {
+                    delta.y = Math.Min(m_ViewBounds.min.y - m_ContentBounds.min.y, m_ViewBounds.max.y - m_ContentBounds.max.y);
+                }
+                if (delta.sqrMagnitude > float.Epsilon)
+                {
+                    contentPos = m_Content.anchoredPosition + delta;
+                    if (!m_Horizontal)
+                        contentPos.x = m_Content.anchoredPosition.x;
+                    if (!m_Vertical)
+                        contentPos.y = m_Content.anchoredPosition.y;
+                    AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
+                }
+            }
         }
 
         internal static void AdjustBounds(ref Bounds viewBounds, ref Vector2 contentPivot, ref Vector3 contentSize, ref Vector3 contentPos)
@@ -2093,10 +2146,6 @@ namespace UnityEngine.UI
                     offset.y = minOffset;
             }
 
-        	//==========LoopScrollRect==========
-            if (Mathf.Abs(offset.x) < 1 && Mathf.Abs(offset.y) < 1)
-                return Vector2.zero;
-        	//==========LoopScrollRect==========
             return offset;
         }
 
