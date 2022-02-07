@@ -914,7 +914,7 @@ namespace UnityEngine.UI
             // force build bounds here so scrollbar can access newest bounds
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
             Canvas.ForceUpdateCanvases();
-            m_ContentBounds = GetBounds();
+            UpdateBounds(false);
             UpdateScrollbars(Vector2.zero);
             StopMovement();
             UpdatePrevData();
@@ -982,7 +982,7 @@ namespace UnityEngine.UI
             // force build bounds here so scrollbar can access newest bounds
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
             Canvas.ForceUpdateCanvases();
-            m_ContentBounds = GetBounds();
+            UpdateBounds(false);
             UpdateScrollbars(Vector2.zero);
             StopMovement();
             UpdatePrevData();
@@ -1742,28 +1742,33 @@ namespace UnityEngine.UI
             UpdateBounds();
 
             //==========LoopScrollRect==========
-            Vector3 localPosition = m_Content.localPosition;
-            float newLocalPosition = localPosition[axis];
+            float totalSize, offset;
+            float newAnchoredPosition = m_Content.anchoredPosition[axis];
             if (axis == 0)
             {
-                float totalSize, offset;
                 GetHorizonalOffsetAndSize(out totalSize, out offset);
 
-                newLocalPosition += m_ViewBounds.min.x - value * (totalSize - m_ViewBounds.size[axis]) - offset;
+                if (totalSize >= m_ViewBounds.size.x)
+                {
+                    newAnchoredPosition += m_ViewBounds.min.x - value * (totalSize - m_ViewBounds.size.x) - offset;
+                }
             }
-            else if (axis == 1)
+            else
             {
-                float totalSize, offset;
                 GetVerticalOffsetAndSize(out totalSize, out offset);
-
-                newLocalPosition -= offset - value * (totalSize - m_ViewBounds.size.y) - m_ViewBounds.max.y;
+                
+                if (totalSize >= m_ViewBounds.size.y)
+                {
+                    newAnchoredPosition -= offset - value * (totalSize - m_ViewBounds.size.y) - m_ViewBounds.max.y;
+                }
             }
             //==========LoopScrollRect==========
-
-            if (Mathf.Abs(localPosition[axis] - newLocalPosition) > 0.01f)
+            
+            Vector3 anchoredPosition = m_Content.anchoredPosition;
+            if (Mathf.Abs(anchoredPosition[axis] - newAnchoredPosition) > 0.01f)
             {
-                localPosition[axis] = newLocalPosition;
-                m_Content.localPosition = localPosition;
+                anchoredPosition[axis] = newAnchoredPosition;
+                m_Content.anchoredPosition = anchoredPosition;
                 m_Velocity[axis] = 0;
                 UpdateBounds(true);	//==========LoopScrollRect==========
             }
@@ -1966,11 +1971,11 @@ namespace UnityEngine.UI
 
             if (m_Content == null)
                 return;
-            
+
             Vector3 contentSize = m_ContentBounds.size;
             Vector3 contentPos = m_ContentBounds.center;
             var contentPivot = m_Content.pivot;
-            AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
+            AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);  // ============LoopScrollRect============
             m_ContentBounds.size = contentSize;
             m_ContentBounds.center = contentPos;
 
@@ -1980,9 +1985,16 @@ namespace UnityEngine.UI
             {
                 EnsureLayoutHasRebuilt();
                 m_ContentBounds = GetBounds();
+                // adjust again
+                contentSize = m_ContentBounds.size;
+                contentPos = m_ContentBounds.center;
+                contentPivot = m_Content.pivot;
+                AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
+                m_ContentBounds.size = contentSize;
+                m_ContentBounds.center = contentPos;
             }
             // ============LoopScrollRect============
-            
+
             if (movementType == MovementType.Clamped)
             {
                 // Adjust content so that content bounds bottom (right side) is never higher (to the left) than the view bounds bottom (right side).
