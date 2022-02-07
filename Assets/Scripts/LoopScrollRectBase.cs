@@ -19,28 +19,54 @@ namespace UnityEngine.UI
     public abstract class LoopScrollRectBase : UIBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IScrollHandler, ICanvasElement, ILayoutElement, ILayoutGroup
     {
         //==========LoopScrollRect==========
+        /// <summary>
+        /// The scroll data source to fill items.
+        /// </summary>
         [HideInInspector]
         [NonSerialized]
         public LoopScrollPrefabSource prefabSource = null;
 
+        /// <summary>
+        /// The scroll's total count for items with id in [0, totalCount]. Negative value like -1 means infinite items.
+        /// </summary>
         [Tooltip("Total count, negative means INFINITE mode")]
         public int totalCount;
 
+        /// <summary>
+        /// [Optional] Helper for accurate size so we can achieve better scrolling.
+        /// </summary>
         [HideInInspector]
         [NonSerialized]
         public LoopScrollSizeHelper sizeHelper = null;
 
+        /// <summary>
+        /// When threshold reached, we prepare new items outside view. This will be expanded to at least 1.5 * itemSize.
+        /// </summary>
         protected float threshold = 0;
+
+        /// <summary>
+        /// Whether we use down-upsize or right-left direction?
+        /// </summary>
         [Tooltip("Reverse direction for dragging")]
         public bool reverseDirection = false;
 
+        /// <summary>
+        /// The first item id in LoopScroll.
+        /// </summary>
         protected int itemTypeStart = 0;
+
+        /// <summary>
+        /// The last item id in LoopScroll.
+        /// </summary>
         protected int itemTypeEnd = 0;
 
         protected abstract float GetSize(RectTransform item, bool includeSpacing = true);
         protected abstract float GetDimension(Vector2 vector);
         protected abstract float GetAbsDimension(Vector2 vector);
         protected abstract Vector2 GetVector(float value);
+        /// <summary>
+        /// Direction for LoopScroll. This is a bit confusing with m_Horizontal/m_Vertical.
+        /// </summary>
         protected enum LoopScrollRectDirection
         {
             Vertical,
@@ -118,7 +144,9 @@ namespace UnityEngine.UI
             }
         }
 
-        // the first line
+        /// <summary>
+        /// The first line in scroll. Grid may have multiply items in one line.
+        /// </summary>
         protected int StartLine
         {
             get
@@ -126,8 +154,10 @@ namespace UnityEngine.UI
                 return Mathf.CeilToInt((float)(itemTypeStart) / contentConstraintCount);
             }
         }
-
-        // how many lines we have for now
+        
+        /// <summary>
+        /// Current line count in scroll. Grid may have multiply items in one line.
+        /// </summary>
         protected int CurrentLines
         {
             get
@@ -135,8 +165,10 @@ namespace UnityEngine.UI
                 return Mathf.CeilToInt((float)(itemTypeEnd - itemTypeStart) / contentConstraintCount);
             }
         }
-
-        // how many lines we have in total
+        
+        /// <summary>
+        /// Total line count in scroll. Grid may have multiply items in one line.
+        /// </summary>
         protected int TotalLines
         {
             get
@@ -644,6 +676,10 @@ namespace UnityEngine.UI
                 Debug.Assert(GetAbsDimension(m_Content.pivot) == value, this);
                 Debug.Assert(GetAbsDimension(m_Content.anchorMin) == value, this);
                 Debug.Assert(GetAbsDimension(m_Content.anchorMax) == value, this);
+                if (direction == LoopScrollRectDirection.Vertical)
+                    Debug.Assert(m_Vertical && !m_Horizontal, this);
+                else
+                    Debug.Assert(!m_Vertical && m_Horizontal, this);
             }
         }
         #endif
@@ -838,6 +874,9 @@ namespace UnityEngine.UI
 
         protected abstract void ProvideData(Transform transform, int index);
 
+        /// <summary>
+        /// Refresh item data
+        /// </summary>
         public void RefreshCells()
         {
             if (Application.isPlaying && this.isActiveAndEnabled)
@@ -862,6 +901,9 @@ namespace UnityEngine.UI
             }
         }
 
+        /// <summary>
+        /// Refill cells from endItem at the end while clear existing ones
+        /// </summary>
         public void RefillCellsFromEnd(int endItem = 0, bool alignStart = false)
         {
             if (!Application.isPlaying)
@@ -920,6 +962,12 @@ namespace UnityEngine.UI
             UpdatePrevData();
         }
 
+        /// <summary>
+        /// Refill cells with startItem at the beginning while clear existing ones
+        /// </summary>
+        /// <param name="startItem">The first item to fill</param>
+        /// <param name="fillViewRect">When [startItem, totalCount] is not enough for the whole viewBound, should we fill backwords with [0, startItem)? </param>
+        /// <param name="contentOffset">The first item's offset compared to viewBound</param>
         public void RefillCells(int startItem = 0, bool fillViewRect = false, float contentOffset = 0)
         {
             if (!Application.isPlaying)
@@ -964,10 +1012,15 @@ namespace UnityEngine.UI
 
             if (fillViewRect && itemSize > 0 && sizeFilled < sizeToFill)
             {
-                int itemsToAddCount = (int)((sizeToFill - sizeFilled) / itemSize);        //calculate how many items can be added above the offset, so it still is visible in the view
+                //calculate how many items can be added above the offset, so it still is visible in the view
+                int itemsToAddCount = (int)((sizeToFill - sizeFilled) / itemSize);
                 int newOffset = startItem - itemsToAddCount;
                 if (newOffset < 0) newOffset = 0;
-                if (newOffset != startItem) RefillCells(newOffset);                 //refill again, with the new offset value, and now with fillViewRect disabled.
+                if (newOffset != startItem)
+                {
+                    //refill again, with the new offset value, and now with fillViewRect disabled.
+                    RefillCells(newOffset);
+                }
             }
 
             Vector2 pos = m_Content.anchoredPosition;
@@ -1975,7 +2028,7 @@ namespace UnityEngine.UI
             Vector3 contentSize = m_ContentBounds.size;
             Vector3 contentPos = m_ContentBounds.center;
             var contentPivot = m_Content.pivot;
-            AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);  // ============LoopScrollRect============
+            AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
             m_ContentBounds.size = contentSize;
             m_ContentBounds.center = contentPos;
 
