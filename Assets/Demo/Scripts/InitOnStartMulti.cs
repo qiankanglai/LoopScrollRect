@@ -19,7 +19,9 @@ namespace Demo
         // Cell MulitiPrefab
         public List<GameObject> m_ItemList = new List<GameObject>();
 
+        [HideInInspector]
         public string m_ClickUniqueID = "";
+        [HideInInspector]
         public object m_ClickObject;
 
         protected virtual void Awake()
