@@ -23,8 +23,9 @@ jobs:
         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
         ls -al ../a/Runtime
         ls -al ../a/Editor
-    - name: change package branch
+
     - uses: actions/setup-node@package
+    - name: change package branch
       run: |
         ls -al ./
 
