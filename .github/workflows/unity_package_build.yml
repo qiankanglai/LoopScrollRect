@@ -21,10 +21,12 @@ jobs:
         mkdir -p ../a/Editor ../a/Runtime
         cp -rf ./Assets/Scripts/Loop*.* ../a/Runtime/
         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
-        ls -al ../a/Runtime
-        ls -al ../a/Editor
         git checkout package
-        ls -al ./
+        rm -rf ./Editor/*
+        cp -rf ../a/Editor/* ./Editor/
+        cp -rf ../a/Runtime/* ./Runtime/
+        ls -al ./Editor/
+        ls -al ./Runtime/
 
 
     # - name: Commit files
