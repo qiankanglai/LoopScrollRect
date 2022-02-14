@@ -21,7 +21,8 @@ jobs:
         mkdir -p ../a/Editor ../a/Runtime
         cp -rf ./Assets/Scripts/Loop*.* ../a/Runtime/
         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
-        ls -al ../a/
+        ls -al ../a/Runtime
+        ls -al ../a/Editor
 
 
     # - name: Commit files
