@@ -21,8 +21,8 @@ jobs:
         mkdir -p ../a/Editor ../a/Runtime ../a/Demo~ ../a/Images~
         cp -rf ./Assets/Scripts/Loop*.* ../a/Runtime/
         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
-        cp -rf ./Assets/Scripts/Loop*.* ../a/Demo~/
-        cp -rf ./Assets/Scripts/Editor/* ../a/Images~/
+        cp -rf ./Assets/Demo/* ../a/Demo~/
+        cp -rf ./Images/* ../a/Images~/
         git checkout package
         rm -rf ./Editor/* ./Runtime/* ./Demo~/* ./Images~/*
         cp -rf ../a/Editor/* ./Editor/
