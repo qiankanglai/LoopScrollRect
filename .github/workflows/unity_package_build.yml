@@ -25,17 +25,14 @@ jobs:
         rm -rf ./Editor/*
         cp -rf ../a/Editor/* ./Editor/
         cp -rf ../a/Runtime/* ./Runtime/
-        ls -al ./Editor/
-        ls -al ./Runtime/
 
-
-    # - name: Commit files
-    #   run: |
-    #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
-    #     git config --local user.name "github-actions[bot]"
-    #     git commit -m "Add changes" -a
-    # - name: Push changes
-    #   uses: ad-m/github-push-action@master
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     branch: ${{ github.ref }}
+    - name: Commit files
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git commit -m "Add changes" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        # github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: package
