@@ -24,6 +24,8 @@ jobs:
         cp -rf ./Assets/Demo/* ../a/Demo~/
         cp -rf ./Images/* ../a/Images~/
         git checkout package
+        cp ./Editor/LoopScrollRect.Editor.asmdef* ../a/Editor/
+        cp ./Runtime/LoopScrollRect.Runtime.asmdef* ../a/Runtime/
         rm -rf ./Editor/* ./Runtime/* ./Demo~/* ./Images~/*
         cp -rf ../a/Editor/* ./Editor/
         cp -rf ../a/Runtime/* ./Runtime/
