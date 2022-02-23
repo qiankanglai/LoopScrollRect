@@ -60,6 +60,13 @@ namespace UnityEngine.UI
         /// </summary>
         protected int itemTypeEnd = 0;
 
+        public event Action<PointerEventData> onInitializePotentialDrag;
+        public event Action<PointerEventData> onBeginDrag;
+        public event Action<PointerEventData> onEndDrag;
+        public event Action<PointerEventData> onDrag;
+        public event Action<PointerEventData> onScroll;
+
+
         protected abstract float GetSize(RectTransform item, bool includeSpacing = true);
         protected abstract float GetDimension(Vector2 vector);
         protected abstract float GetAbsDimension(Vector2 vector);
@@ -1353,6 +1360,8 @@ namespace UnityEngine.UI
 
             SetContentAnchoredPosition(position);
             UpdateBounds();
+
+            onScroll?.Invoke(data);
         }
 
         public virtual void OnInitializePotentialDrag(PointerEventData eventData)
@@ -1361,6 +1370,8 @@ namespace UnityEngine.UI
                 return;
 
             m_Velocity = Vector2.zero;
+
+            onInitializePotentialDrag?.Invoke(eventData);
         }
 
         /// <summary>
@@ -1396,6 +1407,8 @@ namespace UnityEngine.UI
             RectTransformUtility.ScreenPointToLocalPointInRectangle(viewRect, eventData.position, eventData.pressEventCamera, out m_PointerStartLocalCursor);
             m_ContentStartPosition = m_Content.anchoredPosition;
             m_Dragging = true;
+
+            onBeginDrag?.Invoke(eventData);
         }
 
         /// <summary>
@@ -1423,6 +1436,8 @@ namespace UnityEngine.UI
                 return;
 
             m_Dragging = false;
+
+            onEndDrag?.Invoke(eventData);
         }
 
         /// <summary>
@@ -1476,6 +1491,8 @@ namespace UnityEngine.UI
             }
 
             SetContentAnchoredPosition(position);
+
+            onDrag?.Invoke(eventData);
         }
 
         /// <summary>
