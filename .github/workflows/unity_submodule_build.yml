@@ -21,6 +21,7 @@ jobs:
         mkdir -p ../a/Editor ../a/Runtime 
         cp -rf ./Assets/Scripts/Loop*.* ../a/Runtime/
         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
+        ls -al ./Assets
         cp ./Assets/.gitignore ./Assets/LICENSE ./Assets/README.md ./Assets/package.json ../a/
         git checkout submodule
         rm -rf ./*
