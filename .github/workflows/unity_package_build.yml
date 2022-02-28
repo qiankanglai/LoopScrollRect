@@ -1,45 +1,45 @@
-name: Unity Package Build
+# name: Unity Package Build
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches: 
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches: 
+#       - master
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-        fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-    - name: Create local changes
-      run: |
-        mkdir -p ../a/Editor ../a/Runtime ../a/Demo~ ../a/Images~
-        cp -rf ./Assets/Scripts/Loop*.* ../a/Runtime/
-        cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
-        cp -rf ./Assets/Demo/* ../a/Demo~/
-        cp -rf ./Images/* ../a/Images~/
-        git checkout package
-        cp ./Editor/LoopScrollRect.Editor.asmdef* ../a/Editor/
-        cp ./Runtime/LoopScrollRect.Runtime.asmdef* ../a/Runtime/
-        rm -rf ./Editor/* ./Runtime/* ./Demo~/* ./Images~/*
-        cp -rf ../a/Editor/* ./Editor/
-        cp -rf ../a/Runtime/* ./Runtime/
-        cp -rf ../a/Demo~/* ./Demo~/
-        cp -rf ../a/Images~/* ./Images~/
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+#       with:
+#         persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+#         fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+#     - name: Create local changes
+#       run: |
+#         mkdir -p ../a/Editor ../a/Runtime ../a/Demo~ ../a/Images~
+#         cp -rf ./Assets/Scripts/Loop*.* ../a/Runtime/
+#         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
+#         cp -rf ./Assets/Demo/* ../a/Demo~/
+#         cp -rf ./Images/* ../a/Images~/
+#         git checkout package
+#         cp ./Editor/LoopScrollRect.Editor.asmdef* ../a/Editor/
+#         cp ./Runtime/LoopScrollRect.Runtime.asmdef* ../a/Runtime/
+#         rm -rf ./Editor/* ./Runtime/* ./Demo~/* ./Images~/*
+#         cp -rf ../a/Editor/* ./Editor/
+#         cp -rf ../a/Runtime/* ./Runtime/
+#         cp -rf ../a/Demo~/* ./Demo~/
+#         cp -rf ../a/Images~/* ./Images~/
 
-    - name: Commit files
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git add .
-        git commit -m "Add changes" -a
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        # github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: package
+#     - name: Commit files
+#       run: |
+#         git config --local user.email "github-actions[bot]@users.noreply.github.com"
+#         git config --local user.name "github-actions[bot]"
+#         git add .
+#         git commit -m "Add changes" -a
+#     - name: Push changes
+#       uses: ad-m/github-push-action@master
+#       with:
+#         # github_token: ${{ secrets.GITHUB_TOKEN }}
+#         branch: package
