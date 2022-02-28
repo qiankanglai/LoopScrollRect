@@ -1,0 +1,18 @@
+{
+    "name": "LoopScrollRect.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:37c11a60cb604304583053971e4416c3"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
