@@ -23,7 +23,7 @@ jobs:
         cp -rf ./Assets/Scripts/Editor/* ../a/Editor/
         ls -al ./Assets
         cp ./.gitignore ./LICENSE ./README.md ./package.json ../a/
-        git checkout submodule
+        git checkout -B submodule
         rm -rf ./*
         cp -rf ../a/* ./
 
