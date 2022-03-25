@@ -16,17 +16,17 @@ Demo for Loop Scroll Rect. Each cell knows its own index, and it is able to modi
 
 Also ScrollBar is supported now! It supports both vertical & horizontal directions, back and forth.
 
-![Demo1](Images/demo1.gif)
+![Demo1](Images~/demo1.gif)
 
-![Demo2](Images/demo2.gif)
+![Demo2](Images~/demo2.gif)
 
 Demo without mask. As you can see, the cells are only instantiated when needed and recycled.
 
-![Demo3](Images/demo3.gif)
+![Demo3](Images~/demo3.gif)
 
 **New**: Scroll to Index
 
-![ScrollToIndex](Images/ScrollToIndex.gif)
+![ScrollToIndex](Images~/ScrollToIndex.gif)
 
 ## Introduction
 
@@ -67,7 +67,7 @@ You can also remove EasyObjPool and use your pool instead.
     - The cell needs `Layout Element` attached and preferred width/height
     - You should add a script receiving message `void ScrollCellIndex (int idx) `
 
-![ScrollCell](Images/ScrollCell.png)
+![ScrollCell](Images~/ScrollCell.png)
 
 - Right click in Hierarchy and click **UI/Loop Horizontal Scroll Rect** or **UI/Loop Vertical Scroll Rect**. It is the same for these two in the Component Menu.
     - Init in Start: call Refill cells automatically when Start
@@ -79,7 +79,7 @@ You can also remove EasyObjPool and use your pool instead.
     - Clear Cells: remove existing cells and keep uninitialized
     - Refill Cells: initialize and fill up cells
 
-![LoopVerticalScrollRect](Images/LoopVerticalScrollRect.png)
+![LoopVerticalScrollRect](Images~/LoopVerticalScrollRect.png)
 
 If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
 
