@@ -1,10 +1,14 @@
 # Loop Scroll Rect
 
-## v1.06
-
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
 中文说明请看[这里](http://qiankanglai.me/2015/08/15/LoopScrollRect/)。
+
+## Installation
+
+Open Package Manager and Add package from git URL `https://github.com/qiankanglai/LoopScrollRect.git`.
+
+With older Unity version, just clone the repo and put into `Assets/`.
 
 ## Demo
 
