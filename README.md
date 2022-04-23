@@ -1,3 +1,5 @@
+[![openupm](https://img.shields.io/npm/v/me.qiankanglai.loopscrollrect?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/me.qiankanglai.loopscrollrect/)
+
 # Loop Scroll Rect
 
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
@@ -7,6 +9,8 @@ These scripts help make your ScrollRect `Reusable`, because it will only build c
 ## Installation
 
 Open Package Manager and Add package from git URL `https://github.com/qiankanglai/LoopScrollRect.git`.
+
+With [OpenUPM](https://openupm.com/), just one command `openupm add me.qiankanglai.loopscrollrect`.
 
 With older Unity version, just clone the repo and put into `Assets/`.
 
