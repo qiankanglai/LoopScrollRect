@@ -61,9 +61,10 @@ namespace Demo
             {
                 int RandomResult = Random.Range(0, 10);
                 m_ListBank.AddContent(RandomResult);
-                m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
-                m_InitOnStart.m_LoopScrollRect.RefreshCells();
             }
+
+            m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
+            m_InitOnStart.m_LoopScrollRect.RefreshCells();
         }
 
         private void OnButtonSetDataClick()

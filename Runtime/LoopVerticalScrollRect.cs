@@ -138,7 +138,7 @@ namespace UnityEngine.UI
                     changed = true;
             }
 
-            if (viewBounds.min.y < contentBounds.min.y + m_ContentBottomPadding)
+            if (viewBounds.min.y < contentBounds.min.y + threshold + m_ContentBottomPadding)
             {
                 float size = NewItemAtEnd(), totalSize = size;
                 while (size > 0 && viewBounds.min.y < contentBounds.min.y + m_ContentBottomPadding - totalSize)
@@ -150,7 +150,7 @@ namespace UnityEngine.UI
                     changed = true;
             }
 
-            if (viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding)
+            if (viewBounds.max.y > contentBounds.max.y - threshold - m_ContentTopPadding)
             {
                 float size = NewItemAtStart(), totalSize = size;
                 while (size > 0 && viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding + totalSize)

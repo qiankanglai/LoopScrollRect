@@ -875,7 +875,7 @@ namespace UnityEngine.UI
         protected abstract void ProvideData(Transform transform, int index);
 
         /// <summary>
-        /// Refresh item data
+        /// Refresh item data (if totalCount increases, please call `RefillCells` instead)
         /// </summary>
         public void RefreshCells()
         {
