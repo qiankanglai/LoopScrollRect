@@ -875,7 +875,7 @@ namespace UnityEngine.UI
         protected abstract void ProvideData(Transform transform, int index);
 
         /// <summary>
-        /// Refresh item data (if totalCount increases, please call `RefillCells` instead)
+        /// Refresh item data
         /// </summary>
         public void RefreshCells()
         {
@@ -2025,28 +2025,21 @@ namespace UnityEngine.UI
             if (m_Content == null)
                 return;
 
+            // ============LoopScrollRect============
+            // Don't do this in Rebuild. Make use of ContentBounds before Adjust here.
+            if (Application.isPlaying && updateItems && UpdateItems(ref m_ViewBounds, ref m_ContentBounds))
+            {
+                EnsureLayoutHasRebuilt();
+                m_ContentBounds = GetBounds();
+            }
+            // ============LoopScrollRect============
+            
             Vector3 contentSize = m_ContentBounds.size;
             Vector3 contentPos = m_ContentBounds.center;
             var contentPivot = m_Content.pivot;
             AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
             m_ContentBounds.size = contentSize;
             m_ContentBounds.center = contentPos;
-
-            // ============LoopScrollRect============
-            // Don't do this in Rebuild
-            if (Application.isPlaying && updateItems && UpdateItems(ref m_ViewBounds, ref m_ContentBounds))
-            {
-                EnsureLayoutHasRebuilt();
-                m_ContentBounds = GetBounds();
-                // adjust again
-                contentSize = m_ContentBounds.size;
-                contentPos = m_ContentBounds.center;
-                contentPivot = m_Content.pivot;
-                AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
-                m_ContentBounds.size = contentSize;
-                m_ContentBounds.center = contentPos;
-            }
-            // ============LoopScrollRect============
 
             if (movementType == MovementType.Clamped)
             {
