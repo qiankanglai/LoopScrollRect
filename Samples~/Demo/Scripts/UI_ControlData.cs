@@ -8,6 +8,7 @@ namespace Demo
     public class UI_ControlData : MonoBehaviour
     {
         public Button m_ButtonAddData;
+        public Button m_ButtonSetInfinity;
         public Button m_ButtonSetData;
         public Button m_ButtonDelData;
         public Button m_ButtonSortData;
@@ -32,6 +33,7 @@ namespace Demo
             m_ListBank = m_InitOnStart.m_LoopListBank as CustomListBank;
 
             m_ButtonAddData.onClick.AddListener(OnButtonAddDataClick);
+            m_ButtonSetInfinity.onClick.AddListener(OnButtonSetInfinityClick);
             m_ButtonSetData.onClick.AddListener(OnButtonSetDataClick);
             m_ButtonDelData.onClick.AddListener(OnButtonDelDataClick);
             m_ButtonSortData.onClick.AddListener(OnButtonSortDataClick);
@@ -65,6 +67,12 @@ namespace Demo
 
             m_InitOnStart.m_LoopScrollRect.totalCount = m_InitOnStart.m_LoopListBank.GetListLength();
             m_InitOnStart.m_LoopScrollRect.RefreshCells();
+        }
+
+        private void OnButtonSetInfinityClick()
+        {
+            m_InitOnStart.m_LoopScrollRect.totalCount = -1;
+            m_InitOnStart.m_LoopScrollRect.RefillCells();
         }
 
         private void OnButtonSetDataClick()

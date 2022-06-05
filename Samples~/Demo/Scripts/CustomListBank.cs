@@ -58,9 +58,14 @@ namespace Demo
 
         public override LoopListBankData GetLoopListBankData(int index)
         {
-            if(m_LoopListBankDataList.Count <= index)
+            if(m_LoopListBankDataList.Count == 0)
             {
                 return new LoopListBankData();
+            }
+            index = index % m_LoopListBankDataList.Count;
+            if (index < 0)
+            {
+                index += m_LoopListBankDataList.Count;
             }
             return m_LoopListBankDataList[index];
         }
