@@ -42,11 +42,13 @@ namespace UnityEngine.UI
         {
             direction = LoopScrollRectDirection.Vertical;
             base.Awake();
-
-            GridLayoutGroup layout = m_Content.GetComponent<GridLayoutGroup>();
-            if (layout != null && layout.constraint != GridLayoutGroup.Constraint.FixedColumnCount)
+            if (m_Content)
             {
-                Debug.LogError("[LoopHorizontalScrollRect] unsupported GridLayoutGroup constraint");
+                GridLayoutGroup layout = m_Content.GetComponent<GridLayoutGroup>();
+                if (layout != null && layout.constraint != GridLayoutGroup.Constraint.FixedColumnCount)
+                {
+                    Debug.LogError("[LoopScrollRect] unsupported GridLayoutGroup constraint");
+                }
             }
         }
 
