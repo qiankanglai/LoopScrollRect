@@ -56,7 +56,7 @@ namespace UnityEngine.UI
             bool changed = false;
 
             // special case: handling move several page in one frame
-            if (viewBounds.max.x < contentBounds.min.x && itemTypeEnd > itemTypeStart && (totalCount < 0 || itemTypeEnd < totalCount))
+            if ((viewBounds.size.x < contentBounds.min.x - viewBounds.max.x) && itemTypeEnd > itemTypeStart)
             {
                 float currentSize = contentBounds.size.x;
                 float elementSize = (currentSize - contentSpacing * (CurrentLines - 1)) / CurrentLines;
@@ -83,7 +83,7 @@ namespace UnityEngine.UI
                 changed = true;
             }
 
-            if (viewBounds.min.x > contentBounds.max.x && itemTypeEnd > itemTypeStart && (totalCount < 0 || itemTypeStart > 0))
+            if ((viewBounds.min.x - contentBounds.max.x > viewBounds.size.x)  && itemTypeEnd > itemTypeStart)
             {
                 int maxItemTypeStart = -1;
                 if (totalCount >= 0)
