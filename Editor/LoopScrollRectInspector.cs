@@ -38,8 +38,8 @@ public class LoopScrollRectInspector : Editor
         float w = (EditorGUIUtility.currentViewWidth - 100) / 2;
         index = EditorGUILayout.IntField("Index", index, GUILayout.Width(w));
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.Space(10, false);
-        speed = EditorGUILayout.FloatField("Speed", speed, GUILayout.Width(w));
+        EditorGUIUtility.labelWidth = 60;
+        speed = EditorGUILayout.FloatField("    Speed", speed, GUILayout.Width(w+15));
         if(GUILayout.Button("Scroll With Speed", GUILayout.Width(130)))
         {
             scroll.SrollToCell(index, speed);
@@ -47,8 +47,8 @@ public class LoopScrollRectInspector : Editor
         EditorGUILayout.EndHorizontal();
         
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.Space(10, false);
-        time = EditorGUILayout.FloatField("Time", time, GUILayout.Width(w));
+        EditorGUIUtility.labelWidth = 60;
+        time = EditorGUILayout.FloatField("    Time", time, GUILayout.Width(w+15));
         if(GUILayout.Button("Scroll Within Time", GUILayout.Width(130)))
         {
             scroll.SrollToCellWithinTime(index, time);
