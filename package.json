@@ -1,6 +1,6 @@
 {
   "name": "me.qiankanglai.loopscrollrect",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "displayName": "LoopScrollRect",
   "description": "make your ScrollRect `Reusable`",
   "repository": {

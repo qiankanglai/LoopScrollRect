@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2] - 2022-07-18
+### Added
+- Infinity sample for multi prefab.
+### Changed
+- Fix API below Unity 2020
+- Fix `RefreshCells` with total count changes.
+- Check `m_Content` afterwards.
+- Fix SizeHelper with no content spacing considered.
+
 ## [1.1.1] - 2022-04-23
 ### Added
 - Register at OpenUPM.
