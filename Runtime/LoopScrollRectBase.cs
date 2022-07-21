@@ -116,6 +116,22 @@ namespace UnityEngine.UI
             }
         }
 
+        protected float contentPadding
+        {
+            get
+            {
+                if (direction == LoopScrollRectDirection.Horizontal)
+                {
+                    return m_ContentLeftPadding + m_ContentRightPadding;
+                }
+                else if (direction == LoopScrollRectDirection.Vertical)
+                {
+                    return m_ContentTopPadding + m_ContentBottomPadding;
+                }
+                return 0;
+            }
+        }
+
         private bool m_ContentConstraintCountInit = false;
         private int m_ContentConstraintCount = 0;
         protected int contentConstraintCount
@@ -1596,6 +1612,7 @@ namespace UnityEngine.UI
                 totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
                 offset = m_ContentBounds.min.x - elementSize * StartLine - contentSpacing * StartLine;
             }
+            totalSize += contentPadding;
         }
         
         private void GetVerticalOffsetAndSize(out float totalSize, out float offset)
@@ -1611,6 +1628,7 @@ namespace UnityEngine.UI
                 totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
                 offset = m_ContentBounds.max.y + elementSize * StartLine + contentSpacing * StartLine;
             }
+            totalSize += contentPadding;
         }
         //==========LoopScrollRect==========
 
