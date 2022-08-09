@@ -1583,7 +1583,7 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
-        private void GetHorizonalOffsetAndSize(out float totalSize, out float offset)
+        public void GetHorizonalOffsetAndSize(out float totalSize, out float offset)
         {
             if (sizeHelper != null)
             {
@@ -1598,7 +1598,7 @@ namespace UnityEngine.UI
             }
         }
         
-        private void GetVerticalOffsetAndSize(out float totalSize, out float offset)
+        public void GetVerticalOffsetAndSize(out float totalSize, out float offset)
         {
             if (sizeHelper != null)
             {
@@ -2151,29 +2151,43 @@ namespace UnityEngine.UI
 
         private Vector2 CalculateOffset(Vector2 delta)
         {
-            return InternalCalculateOffset(ref m_ViewBounds, ref m_ContentBounds, m_Horizontal, m_Vertical, m_MovementType, ref delta,
-                GetDimension(delta), itemTypeStart, itemTypeEnd, totalCount);
+        	//==========LoopScrollRect==========
+            if (totalCount < 0 || movementType == MovementType.Unrestricted)
+                return delta;
+
+            Bounds contentBound = m_ContentBounds;
+            if (m_Horizontal)
+            {
+                float totalSize, offset;
+                GetHorizonalOffsetAndSize(out totalSize, out offset);
+                
+                Vector3 center = contentBound.center;
+                center.x = offset;
+                contentBound.Encapsulate(center);
+                center.x = offset + totalSize;
+                contentBound.Encapsulate(center);
+            }
+            if (m_Vertical)
+            {
+                float totalSize, offset;
+                GetVerticalOffsetAndSize(out totalSize, out offset);
+
+                Vector3 center = contentBound.center;
+                center.y = offset;
+                contentBound.Encapsulate(center);
+                center.y = offset - totalSize;
+                contentBound.Encapsulate(center);
+            }
+        	//==========LoopScrollRect==========
+            return InternalCalculateOffset(ref m_ViewBounds, ref contentBound, m_Horizontal, m_Vertical, m_MovementType, ref delta);
         }
 
-        internal static Vector2 InternalCalculateOffset(ref Bounds viewBounds, ref Bounds contentBounds, bool horizontal, bool vertical, MovementType movementType, ref Vector2 delta,
-            float deltaDimension, int itemTypeStart, int itemTypeEnd, int totalCount) //==========LoopScrollRect==========
+        internal static Vector2 InternalCalculateOffset(ref Bounds viewBounds, ref Bounds contentBounds, bool horizontal, bool vertical, MovementType movementType, ref Vector2 delta)
         {
             Vector2 offset = Vector2.zero;
             if (movementType == MovementType.Unrestricted)
                 return offset;
             
-        	//==========LoopScrollRect==========
-            if (movementType == MovementType.Clamped || movementType == MovementType.Elastic)
-            {
-                if (totalCount < 0)
-                    return offset;
-                if (deltaDimension < 0 && itemTypeStart > 0)
-                    return offset;
-                if (deltaDimension > 0 && itemTypeEnd < totalCount)
-                    return offset;
-            }
-        	//==========LoopScrollRect==========
-
             Vector2 min = contentBounds.min;
             Vector2 max = contentBounds.max;
 
