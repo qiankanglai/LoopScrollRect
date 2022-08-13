@@ -1,6 +1,7 @@
-[![openupm](https://img.shields.io/npm/v/me.qiankanglai.loopscrollrect?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/me.qiankanglai.loopscrollrect/)
-
 # Loop Scroll Rect
+
+[![openupm](https://img.shields.io/npm/v/me.qiankanglai.loopscrollrect?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/me.qiankanglai.loopscrollrect/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 These scripts help make your ScrollRect `Reusable`, because it will only build cells when needed. If you have a large number of cells in a scroll rect, you absolutely need it! It will save a lot of time loading and draw call, along with memory in use, while still working smoothly.
 
