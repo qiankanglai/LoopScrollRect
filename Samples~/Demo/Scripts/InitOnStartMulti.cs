@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Demo
 {
-    [RequireComponent(typeof(UnityEngine.UI.LoopScrollRect))]
+    [RequireComponent(typeof(UnityEngine.UI.LoopScrollRectMulti))]
     [DisallowMultipleComponent]
     public class InitOnStartMulti : MonoBehaviour, LoopScrollPrefabSource, LoopScrollMultiDataSource
     {
