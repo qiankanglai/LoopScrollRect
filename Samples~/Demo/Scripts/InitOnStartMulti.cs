@@ -172,7 +172,7 @@ namespace Demo
 
             foreach (var TempScrollIndexCallback in m_LoopScrollRect.content.GetComponentsInChildren<ScrollIndexCallbackBase>())
             {
-                TempScrollIndexCallback.RefeashUI(ClickUniqueID, m_ClickObject);
+                TempScrollIndexCallback.RefreshUI(ClickUniqueID, m_ClickObject);
             }
         }
 

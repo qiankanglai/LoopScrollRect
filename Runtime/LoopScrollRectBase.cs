@@ -743,7 +743,7 @@ namespace UnityEngine.UI
             return itemTypeEnd - idx - 1;
         }
         
-        public void SrollToCell(int index, float speed)
+        public void ScrollToCell(int index, float speed)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
             {
@@ -759,7 +759,7 @@ namespace UnityEngine.UI
             StartCoroutine(ScrollToCellCoroutine(index, speed));
         }
         
-        public void SrollToCellWithinTime(int index, float time)
+        public void ScrollToCellWithinTime(int index, float time)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
             {

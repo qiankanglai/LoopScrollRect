@@ -43,9 +43,9 @@ namespace Demo
             //Debug.LogWarningFormat("ScrollIndexCallback_Custom => Click index: {0}, content: {1}, ClickUniqueID: {2}", index, content, ScrollIndexCallback.GetUniqueID());
         }
 
-        public override void RefeashUI(string ClickUniqueID, object ClickContent)
+        public override void RefreshUI(string ClickUniqueID, object ClickContent)
         {
-            base.RefeashUI(ClickUniqueID, ClickContent);
+            base.RefreshUI(ClickUniqueID, ClickContent);
 
             if(GetUniqueID() == ClickUniqueID)
             {
