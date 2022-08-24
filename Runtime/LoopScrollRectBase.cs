@@ -1205,6 +1205,21 @@ namespace UnityEngine.UI
         protected abstract RectTransform GetFromTempPool(int itemIdx);
         protected abstract void ReturnToTempPool(bool fromStart, int count = 1);
         protected abstract void ClearTempPool();
+
+        #region Deprecated API
+
+        [Obsolete("SrollToCell(int, float) has been renamed to ScrollToCell(int, float).")]
+        public void SrollToCell(int index, float speed)
+        {
+            ScrollToCell(index, speed);
+        }
+        
+        [Obsolete("SrollToCellWithinTime(int, float) has been renamed to ScrollToCellWithinTime(int, float).")]
+        public void SrollToCellWithinTime(int index, float time)
+        {
+            ScrollToCellWithinTime(index, time);
+        }
+        #endregion
         //==========LoopScrollRect==========
 
         public virtual void Rebuild(CanvasUpdate executing)
