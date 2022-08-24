@@ -190,7 +190,7 @@ namespace Demo
             float MoveSpeed = 0;
             float.TryParse(m_InputButtonSrollToCell_MoveSpeed.text, out MoveSpeed);
 
-            m_InitOnStart.m_LoopScrollRect.SrollToCell(Index, MoveSpeed);
+            m_InitOnStart.m_LoopScrollRect.ScrollToCell(Index, MoveSpeed);
         }
 
         private void OnButtonSrollToCellWithTimeClick()
@@ -201,7 +201,7 @@ namespace Demo
             float MoveTime = 0;
             float.TryParse(m_InputButtonSrollToCellWithTime_MoveSpeed.text, out MoveTime);
 
-            m_InitOnStart.m_LoopScrollRect.SrollToCellWithinTime(Index, MoveTime);
+            m_InitOnStart.m_LoopScrollRect.ScrollToCellWithinTime(Index, MoveTime);
         }
     }
 }

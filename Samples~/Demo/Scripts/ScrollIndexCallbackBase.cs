@@ -117,7 +117,7 @@ namespace Demo
             }
         }
 
-        public virtual void RefeashUI(string ClickUniqueID, object ClickContent)
+        public virtual void RefreshUI(string ClickUniqueID, object ClickContent)
         {
 
         }

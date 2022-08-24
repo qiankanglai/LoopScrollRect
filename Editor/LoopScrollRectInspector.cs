@@ -42,7 +42,7 @@ public class LoopScrollRectInspector : Editor
         speed = EditorGUILayout.FloatField("    Speed", speed, GUILayout.Width(w+15));
         if(GUILayout.Button("Scroll With Speed", GUILayout.Width(130)))
         {
-            scroll.SrollToCell(index, speed);
+            scroll.ScrollToCell(index, speed);
         }
         EditorGUILayout.EndHorizontal();
         
@@ -51,7 +51,7 @@ public class LoopScrollRectInspector : Editor
         time = EditorGUILayout.FloatField("    Time", time, GUILayout.Width(w+15));
         if(GUILayout.Button("Scroll Within Time", GUILayout.Width(130)))
         {
-            scroll.SrollToCellWithinTime(index, time);
+            scroll.ScrollToCellWithinTime(index, time);
         }
         EditorGUILayout.EndHorizontal();
     }
