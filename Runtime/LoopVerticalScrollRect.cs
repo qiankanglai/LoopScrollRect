@@ -115,6 +115,30 @@ namespace UnityEngine.UI
 
                 changed = true;
             }
+            // issue #149: new item before delete
+            if (viewBounds.min.y < contentBounds.min.y + m_ContentBottomPadding)
+            {
+                float size = NewItemAtEnd(), totalSize = size;
+                while (size > 0 && viewBounds.min.y < contentBounds.min.y + m_ContentBottomPadding - totalSize)
+                {
+                    size = NewItemAtEnd();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
+
+            if (viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding)
+            {
+                float size = NewItemAtStart(), totalSize = size;
+                while (size > 0 && viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding + totalSize)
+                {
+                    size = NewItemAtStart();
+                    totalSize += size;
+                }
+                if (totalSize > 0)
+                    changed = true;
+            }
 
             if (viewBounds.min.y > contentBounds.min.y + threshold + m_ContentBottomPadding)
             {
@@ -134,30 +158,6 @@ namespace UnityEngine.UI
                 while (size > 0 && viewBounds.max.y < contentBounds.max.y - threshold - m_ContentTopPadding - totalSize)
                 {
                     size = DeleteItemAtStart();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
-            }
-
-            if (viewBounds.min.y < contentBounds.min.y + m_ContentBottomPadding)
-            {
-                float size = NewItemAtEnd(), totalSize = size;
-                while (size > 0 && viewBounds.min.y < contentBounds.min.y + m_ContentBottomPadding - totalSize)
-                {
-                    size = NewItemAtEnd();
-                    totalSize += size;
-                }
-                if (totalSize > 0)
-                    changed = true;
-            }
-
-            if (viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding)
-            {
-                float size = NewItemAtStart(), totalSize = size;
-                while (size > 0 && viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding + totalSize)
-                {
-                    size = NewItemAtStart();
                     totalSize += size;
                 }
                 if (totalSize > 0)
