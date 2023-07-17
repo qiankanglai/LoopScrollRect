@@ -969,9 +969,8 @@ namespace UnityEngine.UI
         /// Refill cells with startItem at the beginning while clear existing ones
         /// </summary>
         /// <param name="startItem">The first item to fill</param>
-        /// <param name="fillViewRect">When [startItem, totalCount] is not enough for the whole viewBound, should we fill backwords with [0, startItem)? </param>
         /// <param name="contentOffset">The first item's offset compared to viewBound</param>
-        public void RefillCells(int startItem = 0, bool fillViewRect = false, float contentOffset = 0)
+        public void RefillCells(int startItem = 0, float contentOffset = 0)
         {
             if (!Application.isPlaying)
                 return;
@@ -1011,19 +1010,6 @@ namespace UnityEngine.UI
                     break;
                 first = false;
                 sizeFilled += size;
-            }
-
-            if (fillViewRect && itemSize > 0 && sizeFilled < sizeToFill)
-            {
-                //calculate how many items can be added above the offset, so it still is visible in the view
-                int itemsToAddCount = (int)((sizeToFill - sizeFilled) / itemSize);
-                int newOffset = startItem - itemsToAddCount;
-                if (newOffset < 0) newOffset = 0;
-                if (newOffset != startItem)
-                {
-                    //refill again, with the new offset value, and now with fillViewRect disabled.
-                    RefillCells(newOffset);
-                }
             }
 
             Vector2 pos = m_Content.anchoredPosition;
