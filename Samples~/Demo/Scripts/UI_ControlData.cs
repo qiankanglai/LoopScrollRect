@@ -112,7 +112,7 @@ namespace Demo
             if (LeftIndex > 0)
             {
                 // try keep the same position
-                m_InitOnStart.m_LoopScrollRect.RefillCells(LeftIndex - 1, false, offset);
+                m_InitOnStart.m_LoopScrollRect.RefillCells(LeftIndex - 1, offset);
             }
             else
             {
