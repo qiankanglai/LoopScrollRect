@@ -923,8 +923,19 @@ namespace UnityEngine.UI
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
             float sizeToFill = GetAbsDimension(viewRect.rect.size), sizeFilled = 0;
-
             bool first = true;
+            // issue 169: fill last line
+            if (itemTypeStart < itemTypeEnd)
+            {
+                itemTypeEnd = itemTypeStart;
+                float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
+                if (size >= 0)
+                {
+                    first = false;
+                    sizeFilled += size;
+                }
+            }
+
             while (sizeToFill > sizeFilled)
             {
                 float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
