@@ -8,6 +8,10 @@ namespace UnityEngine.UI
     [DisallowMultipleComponent]
     public class LoopVerticalScrollRectMulti : LoopScrollRectMulti
     {
+        LoopVerticalScrollRectMulti()
+        {
+            direction = LoopScrollRectDirection.Vertical;
+        }
         protected override float GetSize(RectTransform item, bool includeSpacing)
         {
             float size = includeSpacing ? contentSpacing : 0;
@@ -40,7 +44,6 @@ namespace UnityEngine.UI
 
         protected override void Awake()
         {
-            direction = LoopScrollRectDirection.Vertical;
             base.Awake();
             if (m_Content)
             {

@@ -7,6 +7,11 @@ namespace UnityEngine.UI
     [DisallowMultipleComponent]
     public class LoopHorizontalScrollRect : LoopScrollRect
     {
+        LoopHorizontalScrollRect()
+        {
+            direction = LoopScrollRectDirection.Horizontal;
+        }
+
         protected override float GetSize(RectTransform item, bool includeSpacing)
         {
             float size = includeSpacing ? contentSpacing : 0;
@@ -39,7 +44,6 @@ namespace UnityEngine.UI
 
         protected override void Awake()
         {
-            direction = LoopScrollRectDirection.Horizontal;
             base.Awake();
             if (m_Content)
             {
