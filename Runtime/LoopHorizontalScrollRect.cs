@@ -7,7 +7,7 @@ namespace UnityEngine.UI
     [DisallowMultipleComponent]
     public class LoopHorizontalScrollRect : LoopScrollRect
     {
-        LoopHorizontalScrollRect()
+        protected LoopHorizontalScrollRect()
         {
             direction = LoopScrollRectDirection.Horizontal;
         }
