@@ -83,19 +83,29 @@ namespace UnityEngine.UI
         {
             GameObject root = CreateUIElementRoot("Loop Horizontal Scroll Rect", new Vector2(200, 200));
             
-            GameObject content = CreateUIObject("Content", root);
+            GameObject viewport = CreateUIObject("Viewport", root);
+            
+            RectTransform viewportRT = viewport.GetComponent<RectTransform>();
+            viewportRT.anchorMin = new Vector2(0, 0);
+            viewportRT.anchorMax = new Vector2(1, 1);
+            viewportRT.sizeDelta = new Vector2(0, 0);
+            viewportRT.pivot = new Vector2(0.5f, 0.5f);
+
+            viewport.AddComponent<RectMask2D>();
+            
+            GameObject content = CreateUIObject("Content", viewport);
 
             RectTransform contentRT = content.GetComponent<RectTransform>();
-            contentRT.anchorMin = new Vector2(0, 0.5f);
-            contentRT.anchorMax = new Vector2(0, 0.5f);
-            contentRT.sizeDelta = new Vector2(0, 200);
+            contentRT.anchorMin = new Vector2(0, 0);
+            contentRT.anchorMax = new Vector2(0, 1);
+            contentRT.sizeDelta = new Vector2(0, 0);
             contentRT.pivot = new Vector2(0, 0.5f);
 
             // Setup UI components.
 
             LoopHorizontalScrollRect scrollRect = root.AddComponent<LoopHorizontalScrollRect>();
             scrollRect.content = contentRT;
-            scrollRect.viewport = null;
+            scrollRect.viewport = viewportRT;
             scrollRect.horizontalScrollbar = null;
             scrollRect.verticalScrollbar = null;
             scrollRect.horizontal = true;
@@ -105,8 +115,6 @@ namespace UnityEngine.UI
             scrollRect.horizontalScrollbarSpacing = 0;
             scrollRect.verticalScrollbarSpacing = 0;
             
-            root.AddComponent<RectMask2D>();
-
             HorizontalLayoutGroup layoutGroup = content.AddComponent<HorizontalLayoutGroup>();
             layoutGroup.childAlignment = TextAnchor.MiddleLeft;
             layoutGroup.childForceExpandWidth = false;
@@ -123,19 +131,29 @@ namespace UnityEngine.UI
         {
             GameObject root = CreateUIElementRoot("Loop Vertical Scroll Rect", new Vector2(200, 200));
             
-            GameObject content = CreateUIObject("Content", root);
+            GameObject viewport = CreateUIObject("Viewport", root);
+            
+            RectTransform viewportRT = viewport.GetComponent<RectTransform>();
+            viewportRT.anchorMin = new Vector2(0, 0);
+            viewportRT.anchorMax = new Vector2(1, 1);
+            viewportRT.sizeDelta = new Vector2(0, 0);
+            viewportRT.pivot = new Vector2(0.5f, 0.5f);
+
+            viewport.AddComponent<RectMask2D>();
+            
+            GameObject content = CreateUIObject("Content", viewport);
             
             RectTransform contentRT = content.GetComponent<RectTransform>();
-            contentRT.anchorMin = new Vector2(0.5f, 1);
-            contentRT.anchorMax = new Vector2(0.5f, 1);
-            contentRT.sizeDelta = new Vector2(200, 0);
+            contentRT.anchorMin = new Vector2(0, 1);
+            contentRT.anchorMax = new Vector2(1, 1);
+            contentRT.sizeDelta = new Vector2(0, 0);
             contentRT.pivot = new Vector2(0.5f, 1);
 
             // Setup UI components.
 
             LoopVerticalScrollRect scrollRect = root.AddComponent<LoopVerticalScrollRect>();
             scrollRect.content = contentRT;
-            scrollRect.viewport = null;
+            scrollRect.viewport = viewportRT;
             scrollRect.horizontalScrollbar = null;
             scrollRect.verticalScrollbar = null;
             scrollRect.horizontal = false;
@@ -144,8 +162,6 @@ namespace UnityEngine.UI
             scrollRect.verticalScrollbarVisibility = LoopScrollRect.ScrollbarVisibility.Permanent;
             scrollRect.horizontalScrollbarSpacing = 0;
             scrollRect.verticalScrollbarSpacing = 0;
-
-            root.AddComponent<RectMask2D>();
 
             VerticalLayoutGroup layoutGroup = content.AddComponent<VerticalLayoutGroup>();
             layoutGroup.childAlignment = TextAnchor.UpperCenter;
