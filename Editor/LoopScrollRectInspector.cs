@@ -174,12 +174,13 @@ public class LoopScrollRectInspector : Editor
 
         EditorGUILayout.PropertyField(m_OnValueChanged);
 
-        serializedObject.ApplyModifiedProperties();
-        
         //==========LoopScrollRect==========
-        EditorGUILayout.Space();
         EditorGUILayout.PropertyField(totalCount);
         EditorGUILayout.PropertyField(reverseDirection);
+        
+        serializedObject.ApplyModifiedProperties();
+        
+        EditorGUILayout.Space();
 
         LoopScrollRect scroll = (LoopScrollRect)target;
         GUI.enabled = Application.isPlaying;
