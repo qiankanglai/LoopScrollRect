@@ -21,7 +21,13 @@ namespace UnityEngine.UI
             }
             else
             {
-                size += LayoutUtility.GetPreferredWidth(item);
+                var temp = LayoutUtility.GetPreferredWidth(item);
+                if (temp == 0)
+                {
+                    temp = item.rect.width;
+                }
+
+                size += temp;
             }
             size *= m_Content.localScale.x;
             return size;

@@ -22,7 +22,13 @@ namespace UnityEngine.UI
             }
             else
             {
-                size += LayoutUtility.GetPreferredHeight(item);
+                var temp = LayoutUtility.GetPreferredHeight(item);
+                if (temp == 0)
+                {
+                    temp = item.rect.height;
+                }
+
+                size += temp;
             }
             size *= m_Content.localScale.y;
             return size;
