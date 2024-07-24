@@ -9,7 +9,7 @@ namespace UnityEngine.UI
         Vector2 GetItemsSize(int itemsCount);
     }
 
-    public static class LoopScrollSizeHelper
+    public static class LoopScrollSizeUtils
     {
         public static float GetPreferredHeight(RectTransform item)
         {
