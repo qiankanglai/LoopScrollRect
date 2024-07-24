@@ -22,13 +22,7 @@ namespace UnityEngine.UI
             }
             else
             {
-                var temp = LayoutUtility.GetPreferredHeight(item);
-                if (temp == 0)
-                {
-                    temp = item.rect.height;
-                }
-
-                size += temp;
+                size += LoopScrollSizeHelper.GetPreferredHeight(item);
             }
             size *= m_Content.localScale.y;
             return size;
