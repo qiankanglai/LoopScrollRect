@@ -132,6 +132,10 @@ namespace UnityEngine.UI
                 if (totalSize > 0)
                     changed = true;
             }
+            else if ((itemTypeEnd % contentConstraintCount != 0) && (itemTypeEnd < totalCount || totalCount < 0))
+            {
+                NewItemAtEnd();
+            }
 
             if (viewBounds.min.x < contentBounds.min.x + m_ContentLeftPadding)
             {

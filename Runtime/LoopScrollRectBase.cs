@@ -888,7 +888,7 @@ namespace UnityEngine.UI
                 // recycle items if we can
                 for (int i = 0; i < m_Content.childCount; i++)
                 {
-                    if (itemTypeEnd < totalCount)
+                    if (itemTypeEnd < totalCount || totalCount < 0)
                     {
                         ProvideData(m_Content.GetChild(i), itemTypeEnd);
                         itemTypeEnd++;

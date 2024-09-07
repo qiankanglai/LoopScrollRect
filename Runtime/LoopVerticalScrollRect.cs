@@ -131,6 +131,11 @@ namespace UnityEngine.UI
                 if (totalSize > 0)
                     changed = true;
             }
+            // issue #178: grid layout could increase totalCount at any time
+            else if ((itemTypeEnd % contentConstraintCount != 0) && (itemTypeEnd < totalCount || totalCount < 0))
+            {
+                NewItemAtEnd();
+            }
 
             if (viewBounds.max.y > contentBounds.max.y - m_ContentTopPadding)
             {
