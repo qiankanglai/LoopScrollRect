@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace UnityEngine.UI
 {
@@ -154,7 +152,7 @@ namespace UnityEngine.UI
                 return Mathf.CeilToInt((float)(itemTypeStart) / contentConstraintCount);
             }
         }
-        
+
         /// <summary>
         /// Current line count in scroll. Grid may have multiply items in one line.
         /// </summary>
@@ -165,7 +163,7 @@ namespace UnityEngine.UI
                 return Mathf.CeilToInt((float)(itemTypeEnd - itemTypeStart) / contentConstraintCount);
             }
         }
-        
+
         /// <summary>
         /// Total line count in scroll. Grid may have multiply items in one line.
         /// </summary>
@@ -259,7 +257,7 @@ namespace UnityEngine.UI
         /// <summary>
         /// Event type used by the ScrollRect.
         /// </summary>
-        public class ScrollRectEvent : UnityEvent<Vector2> {}
+        public class ScrollRectEvent : UnityEvent<Vector2> { }
 
         [SerializeField]
         protected RectTransform m_Content;	//==========LoopScrollRect==========
@@ -663,10 +661,10 @@ namespace UnityEngine.UI
         private DrivenRectTransformTracker m_Tracker;
 
         protected LoopScrollRectBase()
-        {}
+        { }
 
         //==========LoopScrollRect==========
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void Awake()
         {
             base.Awake();
@@ -675,17 +673,17 @@ namespace UnityEngine.UI
                 float value = (reverseDirection ^ (direction == LoopScrollRectDirection.Horizontal)) ? 0 : 1;
                 if (m_Content != null)
                 {
-                    Debug.Assert(GetAbsDimension(m_Content.pivot) == value, this);
-                    Debug.Assert(GetAbsDimension(m_Content.anchorMin) == value, this);
-                    Debug.Assert(GetAbsDimension(m_Content.anchorMax) == value, this);
+                    Debug.Assert(GetAbsDimension(m_Content.pivot) == value, $"Awake , GetAbsDimension(m_Content.pivot) == value, {GetAbsDimension(m_Content.pivot)} == {value} , {this}");
+                    Debug.Assert(GetAbsDimension(m_Content.anchorMin) == value, $"Awake , GetAbsDimension(m_Content.anchorMin) == value, {GetAbsDimension(m_Content.anchorMin)} == {value} , {this}");
+                    Debug.Assert(GetAbsDimension(m_Content.anchorMax) == value, $"Awake , GetAbsDimension(m_Content.anchorMax) == value, {GetAbsDimension(m_Content.anchorMax)} == {value} , {this}");
                 }
                 if (direction == LoopScrollRectDirection.Vertical)
-                    Debug.Assert(m_Vertical && !m_Horizontal, this);
+                    Debug.Assert(m_Vertical && !m_Horizontal, $"Awake , m_Vertical && !m_Horizontal, {m_Vertical} && {!m_Horizontal} , {this}");
                 else
-                    Debug.Assert(!m_Vertical && m_Horizontal, this);
+                    Debug.Assert(!m_Vertical && m_Horizontal, $"Awake , !m_Vertical && m_Horizontal, {!m_Vertical} && {m_Horizontal} , {this}");
             }
         }
-        #endif
+#endif
 
         public void ClearCells()
         {
@@ -720,7 +718,7 @@ namespace UnityEngine.UI
             }
             return idx + itemTypeStart;
         }
-        
+
         public int GetLastItem(out float offset)
         {
             if (direction == LoopScrollRectDirection.Vertical)
@@ -742,7 +740,7 @@ namespace UnityEngine.UI
             offset = -offset;
             return itemTypeEnd - idx - 1;
         }
-        
+
         public void ScrollToCell(int index, float speed)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
@@ -758,7 +756,7 @@ namespace UnityEngine.UI
             }
             StartCoroutine(ScrollToCellCoroutine(index, speed));
         }
-        
+
         public void ScrollToCellWithinTime(int index, float time)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
@@ -1210,7 +1208,7 @@ namespace UnityEngine.UI
         {
             ScrollToCell(index, speed);
         }
-        
+
         [Obsolete("SrollToCellWithinTime(int, float) has been renamed to ScrollToCellWithinTime(int, float).")]
         public void SrollToCellWithinTime(int index, float time)
         {
@@ -1237,10 +1235,10 @@ namespace UnityEngine.UI
         }
 
         public virtual void LayoutComplete()
-        {}
+        { }
 
         public virtual void GraphicUpdateComplete()
-        {}
+        { }
 
         void UpdateCachedData()
         {
@@ -1571,9 +1569,9 @@ namespace UnityEngine.UI
             if (m_ViewBounds != m_PrevViewBounds || m_ContentBounds != m_PrevContentBounds || m_Content.anchoredPosition != m_PrevPosition)
             {
                 UpdateScrollbars(offset);
-                #if UNITY_2017_1_OR_NEWER
+#if UNITY_2017_1_OR_NEWER
                 UISystemProfilerApi.AddMarker("ScrollRect.value", this);
-                #endif
+#endif
                 m_OnValueChanged.Invoke(normalizedPosition);
                 UpdatePrevData();
             }
@@ -1609,7 +1607,7 @@ namespace UnityEngine.UI
                 offset = m_ContentBounds.min.x - elementSize * StartLine - contentSpacing * StartLine;
             }
         }
-        
+
         public void GetVerticalOffsetAndSize(out float totalSize, out float offset)
         {
             if (sizeHelper != null)
@@ -1824,14 +1822,14 @@ namespace UnityEngine.UI
             else
             {
                 GetVerticalOffsetAndSize(out totalSize, out offset);
-                
+
                 if (totalSize >= m_ViewBounds.size.y)
                 {
                     newAnchoredPosition -= offset - value * (totalSize - m_ViewBounds.size.y) - m_ViewBounds.max.y;
                 }
             }
             //==========LoopScrollRect==========
-            
+
             Vector3 anchoredPosition = m_Content.anchoredPosition;
             if (Mathf.Abs(anchoredPosition[axis] - newAnchoredPosition) > 0.01f)
             {
@@ -1874,12 +1872,12 @@ namespace UnityEngine.UI
         /// <summary>
         /// Called by the layout system.
         /// </summary>
-        public virtual void CalculateLayoutInputHorizontal() {}
+        public virtual void CalculateLayoutInputHorizontal() { }
 
         /// <summary>
         /// Called by the layout system.
         /// </summary>
-        public virtual void CalculateLayoutInputVertical() {}
+        public virtual void CalculateLayoutInputVertical() { }
 
         /// <summary>
         /// Called by the layout system.
@@ -2048,7 +2046,7 @@ namespace UnityEngine.UI
                 m_ContentBounds = GetBounds();
             }
             // ============LoopScrollRect============
-            
+
             Vector3 contentSize = m_ContentBounds.size;
             Vector3 contentPos = m_ContentBounds.center;
             var contentPivot = m_Content.pivot;
@@ -2140,7 +2138,7 @@ namespace UnityEngine.UI
             bounds.Encapsulate(vMax);
             return bounds;
         }
-        
+
         //==========LoopScrollRect==========
         private Bounds GetBounds4Item(int index)
         {
@@ -2163,7 +2161,7 @@ namespace UnityEngine.UI
 
         private Vector2 CalculateOffset(Vector2 delta)
         {
-        	//==========LoopScrollRect==========
+            //==========LoopScrollRect==========
             if (totalCount < 0 || movementType == MovementType.Unrestricted)
                 return delta;
 
@@ -2172,7 +2170,7 @@ namespace UnityEngine.UI
             {
                 float totalSize, offset;
                 GetHorizonalOffsetAndSize(out totalSize, out offset);
-                
+
                 Vector3 center = contentBound.center;
                 center.x = offset;
                 contentBound.Encapsulate(center);
@@ -2190,7 +2188,7 @@ namespace UnityEngine.UI
                 center.y = offset - totalSize;
                 contentBound.Encapsulate(center);
             }
-        	//==========LoopScrollRect==========
+            //==========LoopScrollRect==========
             return InternalCalculateOffset(ref m_ViewBounds, ref contentBound, m_Horizontal, m_Vertical, m_MovementType, ref delta);
         }
 
@@ -2199,7 +2197,7 @@ namespace UnityEngine.UI
             Vector2 offset = Vector2.zero;
             if (movementType == MovementType.Unrestricted)
                 return offset;
-            
+
             Vector2 min = contentBounds.min;
             Vector2 max = contentBounds.max;
 
@@ -2259,12 +2257,12 @@ namespace UnityEngine.UI
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             SetDirtyCaching();
         }
 
-        #endif
+#endif
     }
 }
