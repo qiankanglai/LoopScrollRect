@@ -921,7 +921,7 @@ namespace UnityEngine.UI
             }
 
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
-
+            Canvas.ForceUpdateCanvases();
             float sizeToFill = GetAbsDimension(viewRect.rect.size), sizeFilled = 0;
             bool first = true;
             // issue 169: fill last line
@@ -995,7 +995,7 @@ namespace UnityEngine.UI
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
-
+            Canvas.ForceUpdateCanvases();
             float sizeToFill = GetAbsDimension(viewRect.rect.size) + Mathf.Abs(contentOffset);
             float sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
