@@ -743,7 +743,20 @@ namespace UnityEngine.UI
             return itemTypeEnd - idx - 1;
         }
         
-        public void ScrollToCell(int index, float speed)
+        public enum ScrollMode
+        {
+            /// <summary>
+            /// Scroll specified cell to the beginning of viewport
+            /// </summary>
+            ToStart,
+
+            /// <summary>
+            /// Scroll specified cell to the center of viewport
+            /// </summary>
+            ToCenter,
+        }
+
+        public void ScrollToCell(int index, float speed, float offset = 0, ScrollMode mode = ScrollMode.ToStart)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
             {
@@ -753,13 +766,14 @@ namespace UnityEngine.UI
             StopAllCoroutines();
             if (speed <= 0)
             {
-                RefillCells(index);
+                Debug.Assert(mode == ScrollMode.ToStart, "Not Implemented yet");
+                RefillCells(index, offset);
                 return;
             }
-            StartCoroutine(ScrollToCellCoroutine(index, speed));
+            StartCoroutine(ScrollToCellCoroutine(index, speed, offset, mode));
         }
         
-        public void ScrollToCellWithinTime(int index, float time)
+        public void ScrollToCellWithinTime(int index, float time, float offset = 0, ScrollMode mode = ScrollMode.ToStart)
         {
             if (totalCount >= 0 && (index < 0 || index >= totalCount))
             {
@@ -769,38 +783,45 @@ namespace UnityEngine.UI
             StopAllCoroutines();
             if (time <= 0)
             {
-                RefillCells(index);
+                Debug.Assert(mode == ScrollMode.ToStart, "Not Implemented yet");
+                RefillCells(index, offset);
                 return;
             }
             float dist = 0;
-            float offset = 0;
-            int currentFirst = reverseDirection ? GetLastItem(out offset) : GetFirstItem(out offset);
+            float currentOffset = 0;
+            int currentFirst = reverseDirection ? GetLastItem(out currentOffset) : GetFirstItem(out currentOffset);
 
             int TargetLine = (index / contentConstraintCount);
             int CurrentLine = (currentFirst / contentConstraintCount);
 
             if (TargetLine == CurrentLine)
             {
-                dist = offset;
+                dist = -currentOffset;
             }
             else
             {
                 if (sizeHelper != null)
                 {
-                    dist = GetDimension(sizeHelper.GetItemsSize(currentFirst) - sizeHelper.GetItemsSize(index)) + contentSpacing * (CurrentLine - TargetLine - 1);
-                    dist += offset;
+                    dist = GetDimension(sizeHelper.GetItemsSize(currentFirst) - sizeHelper.GetItemsSize(index)) + contentSpacing * (CurrentLine - TargetLine);
+                    dist -= currentOffset;
                 }
                 else
                 {
                     float elementSize = (GetAbsDimension(m_ContentBounds.size) - contentSpacing * (CurrentLines - 1)) / CurrentLines;
-                    dist = elementSize * (CurrentLine - TargetLine) + contentSpacing * (CurrentLine - TargetLine - 1);
-                    dist -= offset;
+                    dist = elementSize * (CurrentLine - TargetLine) + contentSpacing * (CurrentLine - TargetLine);
+                    dist -= currentOffset;
                 }
             }
-            StartCoroutine(ScrollToCellCoroutine(index, Mathf.Abs(dist) / time));
+            dist += offset;
+            if (mode == ScrollMode.ToCenter)
+            {
+                float sizeToFill = GetAbsDimension(viewRect.rect.size);
+                dist -= sizeToFill * 0.5f;
+            }
+            StartCoroutine(ScrollToCellCoroutine(index, Mathf.Abs(dist) / time, offset, mode));
         }
 
-        IEnumerator ScrollToCellCoroutine(int index, float speed)
+        IEnumerator ScrollToCellCoroutine(int index, float speed, float offset, ScrollMode mode)
         {
             bool needMoving = true;
             while (needMoving)
@@ -821,19 +842,35 @@ namespace UnityEngine.UI
                     {
                         m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
                         var m_ItemBounds = GetBounds4Item(index);
-                        var offset = 0.0f;
-                        if (direction == LoopScrollRectDirection.Vertical)
+                        var delta = 0.0f;
+                        if (mode == ScrollMode.ToStart)
                         {
-                            offset = reverseDirection ? (m_ViewBounds.min.y - m_ItemBounds.min.y) : (m_ViewBounds.max.y - m_ItemBounds.max.y);
+                            if (direction == LoopScrollRectDirection.Vertical)
+                            {
+                                delta = reverseDirection ? (m_ViewBounds.min.y - m_ItemBounds.min.y) : (m_ViewBounds.max.y - m_ItemBounds.max.y);
+                            }
+                            else
+                            {
+                                delta = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
+                            }
                         }
                         else
                         {
-                            offset = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
+                            // ToCenter
+                            if (direction == LoopScrollRectDirection.Vertical)
+                            {
+                                delta = (m_ViewBounds.center.y - m_ItemBounds.center.y);
+                            }
+                            else
+                            {
+                                delta = (m_ItemBounds.center.x - m_ViewBounds.center.x);
+                            }
                         }
+                        delta += offset;
                         // check if we cannot move on
                         if (totalCount >= 0)
                         {
-                            if (offset > 0 && itemTypeEnd == totalCount && !reverseDirection)
+                            if (delta > 0 && itemTypeEnd == totalCount)
                             {
                                 m_ItemBounds = GetBounds4Item(totalCount - 1);
                                 // reach bottom
@@ -844,7 +881,7 @@ namespace UnityEngine.UI
                                     break;
                                 }
                             }
-                            else if (offset < 0 && itemTypeStart == 0 && reverseDirection)
+                            else if (delta < 0 && itemTypeStart == 0)
                             {
                                 m_ItemBounds = GetBounds4Item(0);
                                 if ((direction == LoopScrollRectDirection.Vertical && m_ItemBounds.max.y < m_ViewBounds.max.y) ||
@@ -857,20 +894,22 @@ namespace UnityEngine.UI
                         }
 
                         float maxMove = Time.deltaTime * speed;
-                        if (Mathf.Abs(offset) < maxMove)
+                        if (Mathf.Abs(delta) < maxMove)
                         {
                             needMoving = false;
-                            move = offset;
+                            move = delta;
                         }
                         else
-                            move = Mathf.Sign(offset) * maxMove;
+                        {
+                            move = Mathf.Sign(delta) * maxMove;
+                        }
                     }
                     if (move != 0)
                     {
-                        Vector2 offset = GetVector(move);
-                        m_Content.anchoredPosition += offset;
-                        m_PrevPosition += offset;
-                        m_ContentStartPosition += offset;
+                        Vector2 delta = GetVector(move);
+                        m_Content.anchoredPosition += delta;
+                        m_PrevPosition += delta;
+                        m_ContentStartPosition += delta;
                         UpdateBounds(true);
                     }
                 }

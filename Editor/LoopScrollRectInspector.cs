@@ -32,6 +32,8 @@ public class LoopScrollRectInspector : Editor
     SerializedProperty totalCount;
     SerializedProperty reverseDirection;
     int index = 0;
+    float offset = 0;
+    LoopScrollRectBase.ScrollMode scrollMode = LoopScrollRectBase.ScrollMode.ToStart;
     float speed = 1000, time = 1;
 
     protected virtual void OnEnable()
@@ -180,10 +182,10 @@ public class LoopScrollRectInspector : Editor
         
         serializedObject.ApplyModifiedProperties();
         
-        EditorGUILayout.Space();
-
         LoopScrollRect scroll = (LoopScrollRect)target;
         GUI.enabled = Application.isPlaying;
+        
+        EditorGUILayout.Space();
 
         EditorGUILayout.BeginHorizontal();
         if(GUILayout.Button("Clear"))
@@ -204,9 +206,16 @@ public class LoopScrollRectInspector : Editor
         }
         EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.Space();
+
+        float w = (EditorGUIUtility.currentViewWidth - 50) / 3;
+        EditorGUILayout.BeginHorizontal();
         EditorGUIUtility.labelWidth = 45;
-        float w = (EditorGUIUtility.currentViewWidth - 100) / 2;
         index = EditorGUILayout.IntField("Index", index, GUILayout.Width(w));
+        offset = EditorGUILayout.FloatField("Offset", offset, GUILayout.Width(w));
+        scrollMode = (LoopScrollRectBase.ScrollMode)EditorGUILayout.EnumPopup("Mode", scrollMode, GUILayout.Width(w));
+        EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.BeginHorizontal();
         EditorGUIUtility.labelWidth = 60;
         EditorGUI.indentLevel++;
@@ -214,7 +223,7 @@ public class LoopScrollRectInspector : Editor
         EditorGUI.indentLevel--;
         if(GUILayout.Button("Scroll With Speed", GUILayout.Width(130)))
         {
-            scroll.ScrollToCell(index, speed);
+            scroll.ScrollToCell(index, speed, offset, scrollMode);
         }
         EditorGUILayout.EndHorizontal();
         
@@ -225,7 +234,7 @@ public class LoopScrollRectInspector : Editor
         EditorGUI.indentLevel--;
         if(GUILayout.Button("Scroll Within Time", GUILayout.Width(130)))
         {
-            scroll.ScrollToCellWithinTime(index, time);
+            scroll.ScrollToCellWithinTime(index, time, offset, scrollMode);
         }
         EditorGUILayout.EndHorizontal();
     }
