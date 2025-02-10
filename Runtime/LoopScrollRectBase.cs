@@ -823,9 +823,13 @@ namespace UnityEngine.UI
                         var m_ItemBounds = GetBounds4Item(index);
                         var offset = 0.0f;
                         if (direction == LoopScrollRectDirection.Vertical)
+                        {
                             offset = reverseDirection ? (m_ViewBounds.min.y - m_ItemBounds.min.y) : (m_ViewBounds.max.y - m_ItemBounds.max.y);
+                        }
                         else
+                        {
                             offset = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
+                        }
                         // check if we cannot move on
                         if (totalCount >= 0)
                         {
@@ -2163,7 +2167,7 @@ namespace UnityEngine.UI
 
         private Vector2 CalculateOffset(Vector2 delta)
         {
-        	//==========LoopScrollRect==========
+            //==========LoopScrollRect==========
             if (totalCount < 0 || movementType == MovementType.Unrestricted)
                 return delta;
 
@@ -2190,7 +2194,7 @@ namespace UnityEngine.UI
                 center.y = offset - totalSize;
                 contentBound.Encapsulate(center);
             }
-        	//==========LoopScrollRect==========
+            //==========LoopScrollRect==========
             return InternalCalculateOffset(ref m_ViewBounds, ref contentBound, m_Horizontal, m_Vertical, m_MovementType, ref delta);
         }
 
