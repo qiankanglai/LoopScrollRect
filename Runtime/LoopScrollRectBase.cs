@@ -999,7 +999,8 @@ namespace UnityEngine.UI
             }
 
             Vector2 pos = m_Content.anchoredPosition;
-            float dist = alignStart ? 0 : Mathf.Max(0, sizeFilled - sizeToFill);
+            float padding_dist =  GetAbsDimension(new Vector2(m_ContentLeftPadding + m_ContentRightPadding, m_ContentTopPadding + m_ContentBottomPadding));
+            float dist = alignStart ? 0 : Mathf.Max(0, sizeFilled + padding_dist - sizeToFill);
             if (reverseDirection)
                 dist = -dist;
             if (direction == LoopScrollRectDirection.Vertical)
