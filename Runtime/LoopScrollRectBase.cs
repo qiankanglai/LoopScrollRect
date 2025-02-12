@@ -754,6 +754,11 @@ namespace UnityEngine.UI
             /// Scroll specified cell to the center of viewport
             /// </summary>
             ToCenter,
+
+            /// <summary>
+            /// Scroll until specified cell appears in viewport
+            /// </summary>
+            JustAppear,
         }
 
         public void ScrollToCell(int index, float speed, float offset = 0, ScrollMode mode = ScrollMode.ToStart)
@@ -763,13 +768,12 @@ namespace UnityEngine.UI
                 Debug.LogErrorFormat("invalid index {0}", index);
                 return;
             }
-            StopAllCoroutines();
             if (speed <= 0)
             {
-                Debug.Assert(mode == ScrollMode.ToStart, "Not Implemented yet");
-                RefillCells(index, offset);
+                Debug.LogErrorFormat("invalid speed {0}", index);
                 return;
             }
+            StopAllCoroutines();
             StartCoroutine(ScrollToCellCoroutine(index, speed, offset, mode));
         }
         
@@ -780,13 +784,17 @@ namespace UnityEngine.UI
                 Debug.LogErrorFormat("invalid index {0}", index);
                 return;
             }
-            StopAllCoroutines();
             if (time <= 0)
             {
-                Debug.Assert(mode == ScrollMode.ToStart, "Not Implemented yet");
-                RefillCells(index, offset);
+                Debug.LogErrorFormat("invalid time {0}", time);
                 return;
             }
+            if (mode == ScrollMode.JustAppear)
+            {
+                Debug.LogErrorFormat("scroll mode {0} not supported yet.", mode);
+                return;
+            }
+            StopAllCoroutines();
             float dist = 0;
             float currentOffset = 0;
             int currentFirst = reverseDirection ? GetLastItem(out currentOffset) : GetFirstItem(out currentOffset);
@@ -854,16 +862,35 @@ namespace UnityEngine.UI
                                 delta = reverseDirection ? (m_ItemBounds.max.x - m_ViewBounds.max.x) : (m_ItemBounds.min.x - m_ViewBounds.min.x);
                             }
                         }
-                        else
+                        else if (mode == ScrollMode.ToCenter)
                         {
-                            // ToCenter
+                            delta = GetDimension(m_ViewBounds.center - m_ItemBounds.center);
+                        }
+                        else // ScrollMode.FirstAppear
+                        {
+                            float min_delta = GetDimension(m_ViewBounds.min - m_ItemBounds.min);
+                            float max_delta =  GetDimension(m_ViewBounds.max - m_ItemBounds.max);
                             if (direction == LoopScrollRectDirection.Vertical)
                             {
-                                delta = (m_ViewBounds.center.y - m_ItemBounds.center.y);
+                                if (min_delta > 0)
+                                {
+                                    delta = min_delta;
+                                }
+                                else if(max_delta < 0)
+                                {
+                                    delta = max_delta;
+                                }
                             }
                             else
                             {
-                                delta = (m_ItemBounds.center.x - m_ViewBounds.center.x);
+                                if (min_delta < 0)
+                                {
+                                    delta = min_delta;
+                                }
+                                else if(max_delta > 0)
+                                {
+                                    delta = max_delta;
+                                }
                             }
                         }
                         delta += offset;
