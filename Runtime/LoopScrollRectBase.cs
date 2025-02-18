@@ -977,7 +977,7 @@ namespace UnityEngine.UI
         /// <summary>
         /// Refill cells from endItem at the end while clear existing ones
         /// </summary>
-        public void RefillCellsFromEnd(int endItem = 0, bool alignStart = false)
+        public void RefillCellsFromEnd(int endItem = 0, float contentOffset = 0)
         {
             if (!Application.isPlaying)
                 return;
@@ -992,7 +992,8 @@ namespace UnityEngine.UI
 
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
-            float sizeToFill = GetAbsDimension(viewRect.rect.size), sizeFilled = 0;
+            float sizeToFill = GetAbsDimension(viewRect.rect.size) + contentOffset;
+            float sizeFilled = 0;
             bool first = true;
             // issue 169: fill last line
             if (itemTypeStart < itemTypeEnd)
@@ -1027,13 +1028,11 @@ namespace UnityEngine.UI
 
             Vector2 pos = m_Content.anchoredPosition;
             float padding_dist =  GetAbsDimension(new Vector2(m_ContentLeftPadding + m_ContentRightPadding, m_ContentTopPadding + m_ContentBottomPadding));
-            float dist = alignStart ? 0 : Mathf.Max(0, sizeFilled + padding_dist - sizeToFill);
-            if (reverseDirection)
-                dist = -dist;
+            float dist = Mathf.Max(0, sizeFilled + padding_dist - sizeToFill);
             if (direction == LoopScrollRectDirection.Vertical)
-                pos.y = dist;
+                pos.y = reverseDirection ? -dist : dist;
             else
-                pos.x = -dist;
+                pos.x = reverseDirection ? dist : -dist;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;
 
@@ -1067,7 +1066,7 @@ namespace UnityEngine.UI
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
 
-            float sizeToFill = GetAbsDimension(viewRect.rect.size) + Mathf.Abs(contentOffset);
+            float sizeToFill = GetAbsDimension(viewRect.rect.size) + contentOffset;
             float sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
 
@@ -1095,10 +1094,11 @@ namespace UnityEngine.UI
             }
 
             Vector2 pos = m_Content.anchoredPosition;
+            float dist = contentOffset;
             if (direction == LoopScrollRectDirection.Vertical)
-                pos.y = -contentOffset;
+                pos.y = reverseDirection ? -dist : dist;
             else
-                pos.x = contentOffset;
+                pos.x = reverseDirection ? dist : -dist;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;
 
