@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.3] - 2025-02-28
+### Added
+- Multi cell full screen sample.
+- Support item without `ILayoutElement`
+- Support `ToCenter`/`FirstAppear` in `ScrollToCell`
+- Add `contentOffset` in `RefillCellsFromEnd`
+### Changed
+- Deprecated typo API 
+- Fill last line in `RefillCellsFromEnd`
+- Consider padding in `RefillCellsFromEnd`
+- `UpdateItems` when `OnRectTransformDimensionsChange`
+
 ## [1.1.2] - 2022-07-18
 ### Added
 - Infinity sample for multi prefab.
