@@ -824,7 +824,16 @@ namespace UnityEngine.UI
             if (mode == ScrollMode.ToCenter)
             {
                 float sizeToFill = GetAbsDimension(viewRect.rect.size);
-                dist -= sizeToFill * 0.5f;
+                if (sizeHelper != null)
+                {
+                    sizeToFill -= GetDimension(sizeHelper.GetItemsSize(index));
+                }
+                else
+                {
+                    float elementSize = (GetAbsDimension(m_ContentBounds.size) - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    sizeToFill -= elementSize;
+                }
+                dist += sizeToFill * 0.5f;
             }
             StartCoroutine(ScrollToCellCoroutine(index, Mathf.Abs(dist) / time, offset, mode));
         }
