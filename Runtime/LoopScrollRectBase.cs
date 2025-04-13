@@ -2339,7 +2339,7 @@ namespace UnityEngine.UI
             CanvasUpdateRegistry.RegisterCanvasElementForLayoutRebuild(this);
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
-
+        /* We don't need `[ExecuteAlways]` so comment here
         #if UNITY_EDITOR
         protected override void OnValidate()
         {
@@ -2347,5 +2347,6 @@ namespace UnityEngine.UI
         }
 
         #endif
+        */
     }
 }
