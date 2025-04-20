@@ -1930,7 +1930,10 @@ namespace UnityEngine.UI
         protected override void OnRectTransformDimensionsChange()
         {
             SetDirty();
-            UpdateBounds(true);
+            if (isActiveAndEnabled)
+            {
+                UpdateBounds(true);
+            }
         }
 
         private bool hScrollingNeeded
