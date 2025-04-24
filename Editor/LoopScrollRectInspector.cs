@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
-[CustomEditor(typeof(LoopScrollRect), true)]
+[CustomEditor(typeof(LoopScrollRectBase), true)]
 public class LoopScrollRectInspector : Editor
 {
     SerializedProperty m_Content;
@@ -91,7 +91,7 @@ public class LoopScrollRectInspector : Editor
         m_VScrollbarIsNotChild = false;
         if (targets.Length == 1)
         {
-            Transform transform = ((LoopScrollRect)target).transform;
+            Transform transform = ((LoopScrollRectBase)target).transform;
             if (m_Viewport.objectReferenceValue == null || ((RectTransform)m_Viewport.objectReferenceValue).transform.parent != transform)
                 m_ViewportIsNotChild = true;
             if (m_HorizontalScrollbar.objectReferenceValue == null || ((Scrollbar)m_HorizontalScrollbar.objectReferenceValue).transform.parent != transform)
@@ -184,7 +184,7 @@ public class LoopScrollRectInspector : Editor
         
         serializedObject.ApplyModifiedProperties();
         
-        LoopScrollRect scroll = (LoopScrollRect)target;
+        LoopScrollRectBase scroll = (LoopScrollRectBase)target;
         GUI.enabled = Application.isPlaying;
         
         EditorGUILayout.Space();
