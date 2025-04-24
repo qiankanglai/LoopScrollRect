@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 
-[CustomEditor(typeof(LoopScrollRect), true)]
-public class LoopScrollRectInspector : Editor
+[CustomEditor(typeof(LoopScrollRectMulti), true)]
+public class LoopScrollRectMultiInspector : Editor
 {
     SerializedProperty m_Content;
     SerializedProperty m_Horizontal;
@@ -28,14 +28,10 @@ public class LoopScrollRectInspector : Editor
     static string s_HError = "For this visibility mode, the Viewport property and the Horizontal Scrollbar property both needs to be set to a Rect Transform that is a child to the Scroll Rect.";
     static string s_VError = "For this visibility mode, the Viewport property and the Vertical Scrollbar property both needs to be set to a Rect Transform that is a child to the Scroll Rect.";
 
-    //==========LoopScrollRect==========
+    //==========LoopScrollRectMulti==========
     SerializedProperty totalCount;
     SerializedProperty reverseDirection;
-    int index = 0;
-    float offset = 0;
-    LoopScrollRectBase.ScrollMode scrollMode = LoopScrollRectBase.ScrollMode.ToStart;
-    float speed = 1000, time = 1;
-
+    
     protected virtual void OnEnable()
     {
         m_Content = serializedObject.FindProperty("m_Content");
@@ -59,11 +55,11 @@ public class LoopScrollRectInspector : Editor
         m_ShowDecelerationRate = new AnimBool(Repaint);
         SetAnimBools(true);
 
-        //==========LoopScrollRect==========
+        //==========LoopScrollRectMulti==========
         totalCount = serializedObject.FindProperty("totalCount");
         reverseDirection = serializedObject.FindProperty("reverseDirection");
     }
-
+    
     protected virtual void OnDisable()
     {
         m_ShowElasticity.valueChanged.RemoveListener(Repaint);
@@ -75,7 +71,7 @@ public class LoopScrollRectInspector : Editor
         SetAnimBool(m_ShowElasticity, !m_MovementType.hasMultipleDifferentValues && m_MovementType.enumValueIndex == (int)ScrollRect.MovementType.Elastic, instant);
         SetAnimBool(m_ShowDecelerationRate, !m_Inertia.hasMultipleDifferentValues && m_Inertia.boolValue == true, instant);
     }
-
+    
     void SetAnimBool(AnimBool a, bool value, bool instant)
     {
         if (instant)
@@ -91,7 +87,7 @@ public class LoopScrollRectInspector : Editor
         m_VScrollbarIsNotChild = false;
         if (targets.Length == 1)
         {
-            Transform transform = ((LoopScrollRect)target).transform;
+            Transform transform = ((LoopScrollRectMulti)target).transform;
             if (m_Viewport.objectReferenceValue == null || ((RectTransform)m_Viewport.objectReferenceValue).transform.parent != transform)
                 m_ViewportIsNotChild = true;
             if (m_HorizontalScrollbar.objectReferenceValue == null || ((Scrollbar)m_HorizontalScrollbar.objectReferenceValue).transform.parent != transform)
@@ -100,7 +96,7 @@ public class LoopScrollRectInspector : Editor
                 m_VScrollbarIsNotChild = true;
         }
     }
-
+    
     public override void OnInspectorGUI()
     {
         SetAnimBools(false);
@@ -177,67 +173,12 @@ public class LoopScrollRectInspector : Editor
 
         EditorGUILayout.PropertyField(m_OnValueChanged);
 
-        //==========LoopScrollRect==========
-        EditorGUILayout.LabelField("Loop Scroll Rect", EditorStyles.boldLabel);
+        //==========LoopScrollRectMulti==========
+        EditorGUILayout.LabelField("Loop Scroll Rect Multi", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(totalCount);
         EditorGUILayout.PropertyField(reverseDirection);
         
         serializedObject.ApplyModifiedProperties();
-        
-        LoopScrollRect scroll = (LoopScrollRect)target;
         GUI.enabled = Application.isPlaying;
-        
-        EditorGUILayout.Space();
-
-        EditorGUILayout.BeginHorizontal();
-        if(GUILayout.Button("Clear"))
-        {
-            scroll.ClearCells();
-        }
-        if (GUILayout.Button("Refresh"))
-        {
-            scroll.RefreshCells();
-        }
-        if(GUILayout.Button("Refill"))
-        {
-            scroll.RefillCells();
-        }
-        if(GUILayout.Button("RefillFromEnd"))
-        {
-            scroll.RefillCellsFromEnd();
-        }
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.Space();
-
-        float w = (EditorGUIUtility.currentViewWidth - 50) / 3;
-        EditorGUILayout.BeginHorizontal();
-        EditorGUIUtility.labelWidth = 45;
-        index = EditorGUILayout.IntField("Index", index, GUILayout.Width(w));
-        offset = EditorGUILayout.FloatField("Offset", offset, GUILayout.Width(w));
-        scrollMode = (LoopScrollRectBase.ScrollMode)EditorGUILayout.EnumPopup("Mode", scrollMode, GUILayout.Width(w));
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        EditorGUIUtility.labelWidth = 60;
-        EditorGUI.indentLevel++;
-        speed = EditorGUILayout.FloatField("Speed", speed, GUILayout.Width(w+15));
-        EditorGUI.indentLevel--;
-        if(GUILayout.Button("Scroll With Speed", GUILayout.Width(130)))
-        {
-            scroll.ScrollToCell(index, speed, offset, scrollMode);
-        }
-        EditorGUILayout.EndHorizontal();
-        
-        EditorGUILayout.BeginHorizontal();
-        EditorGUIUtility.labelWidth = 60;
-        EditorGUI.indentLevel++;
-        time = EditorGUILayout.FloatField("Time", time, GUILayout.Width(w+15));
-        EditorGUI.indentLevel--;
-        if(GUILayout.Button("Scroll Within Time", GUILayout.Width(130)))
-        {
-            scroll.ScrollToCellWithinTime(index, time, offset, scrollMode);
-        }
-        EditorGUILayout.EndHorizontal();
     }
 }
