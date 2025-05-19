@@ -1677,30 +1677,32 @@ namespace UnityEngine.UI
         //==========LoopScrollRect==========
         public void GetHorizonalOffsetAndSize(out float totalSize, out float offset)
         {
+            float paddingSize = m_ContentLeftPadding + m_ContentRightPadding;
             if (sizeHelper != null)
             {
-                totalSize = sizeHelper.GetItemsSize(TotalLines).x + contentSpacing * (TotalLines - 1);
+                totalSize = sizeHelper.GetItemsSize(TotalLines).x + contentSpacing * (TotalLines - 1) + paddingSize;
                 offset = m_ContentBounds.min.x - sizeHelper.GetItemsSize(StartLine).x - contentSpacing * StartLine;
             }
             else
             {
-                float elementSize = (m_ContentBounds.size.x - contentSpacing * (CurrentLines - 1)) / CurrentLines;
-                totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                float elementSize = (m_ContentBounds.size.x - paddingSize - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1) + paddingSize;
                 offset = m_ContentBounds.min.x - elementSize * StartLine - contentSpacing * StartLine;
             }
         }
         
         public void GetVerticalOffsetAndSize(out float totalSize, out float offset)
         {
+            float paddingSize = m_ContentTopPadding + m_ContentBottomPadding;
             if (sizeHelper != null)
             {
-                totalSize = sizeHelper.GetItemsSize(TotalLines).y + contentSpacing * (TotalLines - 1);
+                totalSize = sizeHelper.GetItemsSize(TotalLines).y + contentSpacing * (TotalLines - 1) + paddingSize;
                 offset = m_ContentBounds.max.y + sizeHelper.GetItemsSize(StartLine).y + contentSpacing * StartLine;
             }
             else
             {
-                float elementSize = (m_ContentBounds.size.y - contentSpacing * (CurrentLines - 1)) / CurrentLines;
-                totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1);
+                float elementSize = (m_ContentBounds.size.y - paddingSize - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1) + paddingSize;
                 offset = m_ContentBounds.max.y + elementSize * StartLine + contentSpacing * StartLine;
             }
         }
