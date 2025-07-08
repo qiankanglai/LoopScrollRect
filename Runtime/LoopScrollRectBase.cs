@@ -815,7 +815,7 @@ namespace UnityEngine.UI
                 }
                 else
                 {
-                    float elementSize = (GetAbsDimension(m_ContentBounds.size) - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    float elementSize = EstimiateElementSize();
                     dist = elementSize * (CurrentLine - TargetLine) + contentSpacing * (CurrentLine - TargetLine);
                     dist -= currentOffset;
                 }
@@ -830,7 +830,7 @@ namespace UnityEngine.UI
                 }
                 else
                 {
-                    float elementSize = (GetAbsDimension(m_ContentBounds.size) - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                    float elementSize = EstimiateElementSize();
                     sizeToFill -= elementSize;
                 }
                 dist += sizeToFill * 0.5f;
@@ -1675,6 +1675,14 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
+        float EstimiateElementSize()
+        {
+            Vector2 firstAnchorPos = m_Content.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
+            Vector2 lastAnchorPos = m_Content.GetChild(m_Content.childCount - 1).GetComponent<RectTransform>().anchoredPosition;
+            float elementSize = GetDimension(firstAnchorPos - lastAnchorPos) / (CurrentLines - 1) - contentSpacing;
+            return elementSize;
+        }
+
         public void GetHorizonalOffsetAndSize(out float totalSize, out float offset)
         {
             float paddingSize = m_ContentLeftPadding + m_ContentRightPadding;
@@ -1685,7 +1693,7 @@ namespace UnityEngine.UI
             }
             else
             {
-                float elementSize = (m_ContentBounds.size.x - paddingSize - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                float elementSize = EstimiateElementSize();
                 totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1) + paddingSize;
                 offset = m_ContentBounds.min.x - elementSize * StartLine - contentSpacing * StartLine;
             }
@@ -1701,7 +1709,7 @@ namespace UnityEngine.UI
             }
             else
             {
-                float elementSize = (m_ContentBounds.size.y - paddingSize - contentSpacing * (CurrentLines - 1)) / CurrentLines;
+                float elementSize = EstimiateElementSize();
                 totalSize = elementSize * TotalLines + contentSpacing * (TotalLines - 1) + paddingSize;
                 offset = m_ContentBounds.max.y + elementSize * StartLine + contentSpacing * StartLine;
             }
