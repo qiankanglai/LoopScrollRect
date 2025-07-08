@@ -1139,6 +1139,7 @@ namespace UnityEngine.UI
 
             if (size > 0)
             {
+                SetDirtyCaching();
                 m_HasRebuiltLayout = false;
                 if (!reverseDirection)
                 {
@@ -1183,6 +1184,7 @@ namespace UnityEngine.UI
 
             if (size > 0)
             {
+                SetDirtyCaching();
                 m_HasRebuiltLayout = false;
                 if (!reverseDirection)
                 {
@@ -1222,6 +1224,7 @@ namespace UnityEngine.UI
 
             if (size > 0)
             {
+                SetDirtyCaching();
                 m_HasRebuiltLayout = false;
                 if (reverseDirection)
                 {
@@ -1264,6 +1267,7 @@ namespace UnityEngine.UI
 
             if (size > 0)
             {
+                SetDirtyCaching();
                 m_HasRebuiltLayout = false;
                 if (reverseDirection)
                 {
