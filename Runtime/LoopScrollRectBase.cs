@@ -60,6 +60,8 @@ namespace UnityEngine.UI
         /// </summary>
         protected int itemTypeEnd = 0;
 
+        protected float itemTypeSize = 0;
+
         protected abstract float GetSize(RectTransform item, bool includeSpacing = true);
         protected abstract float GetDimension(Vector2 vector);
         protected abstract float GetAbsDimension(Vector2 vector);
@@ -693,6 +695,7 @@ namespace UnityEngine.UI
             {
                 itemTypeStart = 0;
                 itemTypeEnd = 0;
+                itemTypeSize = 0;
                 totalCount = 0;
                 for (int i = m_Content.childCount - 1; i >= 0; i--)
                 {
@@ -964,6 +967,7 @@ namespace UnityEngine.UI
             if (Application.isPlaying && this.isActiveAndEnabled)
             {
                 itemTypeEnd = itemTypeStart;
+                itemTypeSize = 0;
                 // recycle items if we can
                 for (int i = 0; i < m_Content.childCount; i++)
                 {
@@ -971,6 +975,7 @@ namespace UnityEngine.UI
                     {
                         ProvideData(m_Content.GetChild(i), itemTypeEnd);
                         itemTypeEnd++;
+                        itemTypeSize += GetSize(m_Content.GetChild(i).GetComponent<RectTransform>());
                     }
                     else
                     {
@@ -993,6 +998,7 @@ namespace UnityEngine.UI
 
             itemTypeEnd = reverseDirection ? endItem : totalCount - endItem;
             itemTypeStart = itemTypeEnd;
+            itemTypeSize = 0;
 
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
             {
@@ -1071,6 +1077,7 @@ namespace UnityEngine.UI
                 itemTypeStart = (itemTypeStart / contentConstraintCount) * contentConstraintCount;
             }
             itemTypeEnd = itemTypeStart;
+            itemTypeSize = 0;
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
@@ -1079,8 +1086,6 @@ namespace UnityEngine.UI
             float sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
 
-            float itemSize = 0;
-
             bool first = true;
             while (sizeToFill > sizeFilled)
             {
@@ -1088,7 +1093,6 @@ namespace UnityEngine.UI
                 if (size < 0)
                     break;
                 first = false;
-                itemSize = size;
                 sizeFilled += size;
             }
 
@@ -1148,6 +1152,7 @@ namespace UnityEngine.UI
                     m_PrevPosition += offset;
                     m_ContentStartPosition += offset;
                 }
+                itemTypeSize += size;
             }
 
             return size;
@@ -1193,6 +1198,7 @@ namespace UnityEngine.UI
                     m_PrevPosition -= offset;
                     m_ContentStartPosition -= offset;
                 }
+                itemTypeSize -= size;
             }
 
             return size;
@@ -1233,6 +1239,7 @@ namespace UnityEngine.UI
                     m_PrevPosition -= offset;
                     m_ContentStartPosition -= offset;
                 }
+                itemTypeSize += size;
             }
 
             return size;
@@ -1276,6 +1283,7 @@ namespace UnityEngine.UI
                     m_PrevPosition += offset;
                     m_ContentStartPosition += offset;
                 }
+                itemTypeSize -= size;
             }
 
             return size;
@@ -1681,9 +1689,12 @@ namespace UnityEngine.UI
         //==========LoopScrollRect==========
         float EstimiateElementSize()
         {
-            Vector2 firstAnchorPos = m_Content.GetChild(0).GetComponent<RectTransform>().anchoredPosition;
-            Vector2 lastAnchorPos = m_Content.GetChild(m_Content.childCount - 1).GetComponent<RectTransform>().anchoredPosition;
-            float elementSize = GetDimension(firstAnchorPos - lastAnchorPos) / (CurrentLines - 1) - contentSpacing;
+            int childCount = m_Content.childCount;
+            if (CurrentLines == 0)
+            {
+                return 0;
+            }
+            float elementSize = (itemTypeSize - contentSpacing * (CurrentLines - 1)) / CurrentLines;
             return elementSize;
         }
 
