@@ -1009,35 +1009,31 @@ namespace UnityEngine.UI
 
             float sizeToFill = GetAbsDimension(viewRect.rect.size) + contentOffset;
             float sizeFilled = 0;
-            bool first = true;
             // issue 169: fill last line
             if (itemTypeStart < itemTypeEnd)
             {
                 itemTypeEnd = itemTypeStart;
-                float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
+                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
                 if (size >= 0)
                 {
-                    first = false;
                     sizeFilled += size;
                 }
             }
 
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
+                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
                 if (size < 0)
                     break;
-                first = false;
                 sizeFilled += size;
             }
 
             // refill from start in case not full yet
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
+                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
                 if (size < 0)
                     break;
-                first = false;
                 sizeFilled += size;
             }
 
@@ -1086,23 +1082,20 @@ namespace UnityEngine.UI
             float sizeFilled = 0;
             // m_ViewBounds may be not ready when RefillCells on Start
 
-            bool first = true;
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtStart(!first) : NewItemAtEnd(!first);
+                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
                 if (size < 0)
                     break;
-                first = false;
                 sizeFilled += size;
             }
 
             // refill from start in case not full yet
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtEnd(!first) : NewItemAtStart(!first);
+                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
                 if (size < 0)
                     break;
-                first = false;
                 sizeFilled += size;
             }
 
@@ -1125,12 +1118,13 @@ namespace UnityEngine.UI
             UpdatePrevData();
         }
 
-        protected float NewItemAtStart(bool includeSpacing = true)
+        protected float NewItemAtStart()
         {
             if (totalCount >= 0 && itemTypeStart - contentConstraintCount < 0)
             {
                 return -1;
             }
+            bool includeSpacing = (CurrentLines > 0);
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
@@ -1171,12 +1165,12 @@ namespace UnityEngine.UI
             {
                 return 0;
             }
-
+            bool includeSpacing = (CurrentLines > 1);
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
                 RectTransform oldItem = m_Content.GetChild(deletedItemTypeStart) as RectTransform;
-                size = Mathf.Max(GetSize(oldItem), size);
+                size = Mathf.Max(GetSize(oldItem, includeSpacing), size);
                 ReturnToTempPool(true);
                 availableChilds--;
                 itemTypeStart++;
@@ -1205,12 +1199,13 @@ namespace UnityEngine.UI
         }
 
 
-        protected float NewItemAtEnd(bool includeSpacing = true)
+        protected float NewItemAtEnd()
         {
             if (totalCount >= 0 && itemTypeEnd >= totalCount)
             {
                 return -1;
             }
+            bool includeSpacing = (CurrentLines > 0);
             float size = 0;
             // issue 4: fill lines to end first
             int availableChilds = m_Content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
@@ -1257,12 +1252,12 @@ namespace UnityEngine.UI
             {
                 return 0;
             }
-
+            bool includeSpacing = (CurrentLines > 1);
             float size = 0;
             for (int i = 0; i < contentConstraintCount; i++)
             {
                 RectTransform oldItem = m_Content.GetChild(m_Content.childCount - deletedItemTypeEnd - 1) as RectTransform;
-                size = Mathf.Max(GetSize(oldItem), size);
+                size = Mathf.Max(GetSize(oldItem, includeSpacing), size);
                 ReturnToTempPool(false);
                 availableChilds--;
                 itemTypeEnd--;
@@ -1687,7 +1682,7 @@ namespace UnityEngine.UI
         }
 
         //==========LoopScrollRect==========
-        float EstimiateElementSize()
+        protected float EstimiateElementSize()
         {
             int childCount = m_Content.childCount;
             if (CurrentLines == 0)
