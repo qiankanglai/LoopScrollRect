@@ -151,7 +151,8 @@ namespace UnityEngine.UI
                     changed = true;
             }
 
-            if (viewBounds.max.x < contentBounds.max.x - threshold - m_ContentRightPadding)
+            if (viewBounds.max.x < contentBounds.max.x - threshold - m_ContentRightPadding
+                && viewBounds.size.x < contentBounds.size.x - threshold)
             {
                 float size = DeleteItemAtEnd(), totalSize = size;
                 while (size > 0 && viewBounds.max.x < contentBounds.max.x - threshold - m_ContentRightPadding - totalSize)
@@ -163,7 +164,8 @@ namespace UnityEngine.UI
                     changed = true;
             }
 
-            if (viewBounds.min.x > contentBounds.min.x + threshold + m_ContentLeftPadding)
+            if (viewBounds.min.x > contentBounds.min.x + threshold + m_ContentLeftPadding
+                && viewBounds.size.x < contentBounds.size.x - threshold)
             {
                 float size = DeleteItemAtStart(), totalSize = size;
                 while (size > 0 && viewBounds.min.x > contentBounds.min.x + threshold + m_ContentLeftPadding + totalSize)

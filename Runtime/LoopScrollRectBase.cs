@@ -2146,6 +2146,10 @@ namespace UnityEngine.UI
 
             // ============LoopScrollRect============
             // Don't do this in Rebuild. Make use of ContentBounds before Adjust here.
+            if (!m_HasRebuiltLayout)
+            {
+                updateItems = false;
+            }
             if (Application.isPlaying && updateItems && UpdateItems(ref m_ViewBounds, ref m_ContentBounds))
             {
                 EnsureLayoutHasRebuilt();
