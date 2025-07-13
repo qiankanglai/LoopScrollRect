@@ -1741,7 +1741,9 @@ namespace UnityEngine.UI
                 else
                     m_HorizontalScrollbar.size = 1;
 
-                m_HorizontalScrollbar.value = horizontalNormalizedPosition;
+                //==========LoopScrollRect==========
+                m_HorizontalScrollbar.SetValueWithoutNotify(horizontalNormalizedPosition);
+                //==========LoopScrollRect==========
             }
 
             if (m_VerticalScrollbar)
@@ -1757,7 +1759,9 @@ namespace UnityEngine.UI
                 else
                     m_VerticalScrollbar.size = 1;
 
-                m_VerticalScrollbar.value = verticalNormalizedPosition;
+                //==========LoopScrollRect==========
+                m_VerticalScrollbar.SetValueWithoutNotify(verticalNormalizedPosition);
+                //==========LoopScrollRect==========
             }
         }
 
