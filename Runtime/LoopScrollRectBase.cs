@@ -707,43 +707,48 @@ namespace UnityEngine.UI
         public int GetFirstItem(out float offset)
         {
             if (direction == LoopScrollRectDirection.Vertical)
-                offset = m_ViewBounds.max.y - m_ContentBounds.max.y;
+                offset = m_ContentBounds.max.y - m_ViewBounds.max.y;
             else
-                offset = m_ContentBounds.min.x - m_ViewBounds.min.x;
+                offset = m_ViewBounds.min.x - m_ContentBounds.min.x;
             int idx = 0;
             if (itemTypeEnd > itemTypeStart)
             {
-                float size = GetSize(m_Content.GetChild(0) as RectTransform, false);
-                while (size + offset <= 0 && itemTypeStart + idx + contentConstraintCount < itemTypeEnd)
+                float size = GetSize(m_Content.GetChild(0) as RectTransform);
+                while (offset - size >= 0 && itemTypeStart + idx + contentConstraintCount < itemTypeEnd)
                 {
-                    offset += size;
+                    offset -= size;
                     idx += contentConstraintCount;
                     size = GetSize(m_Content.GetChild(idx) as RectTransform);
                 }
             }
-            return idx + itemTypeStart;
+            int item = idx + itemTypeStart;
+            return item;
         }
         
         public int GetLastItem(out float offset)
         {
             if (direction == LoopScrollRectDirection.Vertical)
-                offset = m_ContentBounds.min.y - m_ViewBounds.min.y;
+                offset = m_ViewBounds.min.y - m_ContentBounds.min.y;
             else
-                offset = m_ViewBounds.max.x - m_ContentBounds.max.x;
+                offset = m_ContentBounds.max.x - m_ViewBounds.max.x;
             int idx = 0;
             if (itemTypeEnd > itemTypeStart)
             {
                 int totalChildCount = m_Content.childCount;
-                float size = GetSize(m_Content.GetChild(totalChildCount - idx - 1) as RectTransform, false);
-                while (size + offset <= 0 && itemTypeStart < itemTypeEnd - idx - contentConstraintCount)
+                float size = GetSize(m_Content.GetChild(totalChildCount - idx - 1) as RectTransform);
+                while (offset - size >= 0 && itemTypeStart < itemTypeEnd - idx - contentConstraintCount)
                 {
-                    offset += size;
+                    offset -= size;
                     idx += contentConstraintCount;
                     size = GetSize(m_Content.GetChild(totalChildCount - idx - 1) as RectTransform);
                 }
             }
-            offset = -offset;
-            return itemTypeEnd - idx - 1;
+            int item = itemTypeEnd - idx;
+            if (totalCount >= 0 && idx > 0 && item % contentConstraintCount != 0)
+            {
+                item = (item / contentConstraintCount) * contentConstraintCount;
+            }
+            return item;
         }
         
         public enum ScrollMode
@@ -1009,11 +1014,11 @@ namespace UnityEngine.UI
 
             float sizeToFill = GetAbsDimension(viewRect.rect.size) + contentOffset;
             float sizeFilled = 0;
-            // issue 169: fill last line
+            // issue #169: fill last line
             if (itemTypeStart < itemTypeEnd)
             {
                 itemTypeEnd = itemTypeStart;
-                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                float size = NewItemAtEnd();
                 if (size >= 0)
                 {
                     sizeFilled += size;
@@ -1022,28 +1027,34 @@ namespace UnityEngine.UI
 
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+                float size = NewItemAtStart();
                 if (size < 0)
                     break;
                 sizeFilled += size;
             }
-
+            float sizeFilledAtStart = sizeFilled;
+            
             // refill from start in case not full yet
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                float size = NewItemAtEnd();
                 if (size < 0)
                     break;
                 sizeFilled += size;
             }
+            float sizeFilledAtEnd = sizeFilled - sizeFilledAtStart;
 
             Vector2 pos = m_Content.anchoredPosition;
-            float padding_dist =  GetAbsDimension(new Vector2(m_ContentLeftPadding + m_ContentRightPadding, m_ContentTopPadding + m_ContentBottomPadding));
-            float dist = Mathf.Max(0, sizeFilled + padding_dist - sizeToFill);
-            if (direction == LoopScrollRectDirection.Vertical)
-                pos.y = reverseDirection ? -dist : dist;
+            float padding_dist = GetAbsDimension(new Vector2(m_ContentLeftPadding + m_ContentRightPadding, m_ContentTopPadding + m_ContentBottomPadding));
+            float offset = 0;
+            if (reverseDirection)
+                offset = Mathf.Max(0, sizeFilledAtEnd + padding_dist - sizeToFill) + contentOffset;
             else
-                pos.x = reverseDirection ? dist : -dist;
+                offset = Mathf.Max(0, sizeFilledAtStart + padding_dist - sizeToFill);
+            if (direction == LoopScrollRectDirection.Vertical)
+                pos.y = reverseDirection ? -offset : offset;
+            else
+                pos.x = reverseDirection ? offset : -offset;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;
 
@@ -1084,27 +1095,34 @@ namespace UnityEngine.UI
 
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtStart() : NewItemAtEnd();
+                float size = NewItemAtEnd();
                 if (size < 0)
                     break;
                 sizeFilled += size;
             }
+            float sizeFilledAtEnd = sizeFilled;
 
             // refill from start in case not full yet
             while (sizeToFill > sizeFilled)
             {
-                float size = reverseDirection ? NewItemAtEnd() : NewItemAtStart();
+                float size = NewItemAtStart();
                 if (size < 0)
                     break;
                 sizeFilled += size;
             }
+            float sizeFilledAtStart = sizeFilled - sizeFilledAtEnd;
 
             Vector2 pos = m_Content.anchoredPosition;
-            float dist = contentOffset;
-            if (direction == LoopScrollRectDirection.Vertical)
-                pos.y = reverseDirection ? -dist : dist;
+            float padding_dist = GetAbsDimension(new Vector2(m_ContentLeftPadding + m_ContentRightPadding, m_ContentTopPadding + m_ContentBottomPadding));
+            float offset = 0;
+            if (reverseDirection)
+                offset = Mathf.Max(0, sizeFilledAtEnd + padding_dist - sizeToFill);
             else
-                pos.x = reverseDirection ? dist : -dist;
+                offset = sizeFilledAtStart + contentOffset;
+            if (direction == LoopScrollRectDirection.Vertical)
+                pos.y = reverseDirection ? -offset : offset;
+            else
+                pos.x = reverseDirection ? offset : -offset;
             m_Content.anchoredPosition = pos;
             m_ContentStartPosition = pos;
 
@@ -1207,7 +1225,7 @@ namespace UnityEngine.UI
             }
             bool includeSpacing = (CurrentLines > 0);
             float size = 0;
-            // issue 4: fill lines to end first
+            // issue #4: fill lines to end first
             int availableChilds = m_Content.childCount - deletedItemTypeStart - deletedItemTypeEnd;
             int count = contentConstraintCount - (availableChilds % contentConstraintCount);
             for (int i = 0; i < count; i++)
