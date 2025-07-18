@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.4] - 2025-07-18
+### Changed
+- Avoid `UpdateBounds` when disabled
+- Apply inspector to `LoopScrollRectBase`
+- Improved element size estimation
+- Ensure `Rebuild` called as expected
+- Fix scrollbar precision problem with many items and avoid redundant callback
+- Fix `GetFirstItem`+`RefillCells` and `LastItem`+`RefillCellsFromEnd` usage, keeping ScrollRect stable
+- Add more tests in inspector
+
 ## [1.1.3] - 2025-02-28
 ### Added
 - Multi cell full screen sample.
