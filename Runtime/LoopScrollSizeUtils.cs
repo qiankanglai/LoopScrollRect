@@ -16,7 +16,7 @@ namespace UnityEngine.UI
             {
                 result = item.rect.height;
             }
-
+            Debug.Assert(result > 0);
             return result;
         }
         
@@ -31,7 +31,7 @@ namespace UnityEngine.UI
             {
                 result = item.rect.width;
             }
-
+            Debug.Assert(result > 0);
             return result;
         }
     }
