@@ -979,8 +979,11 @@ namespace UnityEngine.UI
                     if (itemTypeEnd < totalCount || totalCount < 0)
                     {
                         ProvideData(m_Content.GetChild(i), itemTypeEnd);
+                        if (itemTypeEnd % contentConstraintCount == 0)
+                        {
+                            itemTypeSize += GetSize(m_Content.GetChild(i).GetComponent<RectTransform>());
+                        }
                         itemTypeEnd++;
-                        itemTypeSize += GetSize(m_Content.GetChild(i).GetComponent<RectTransform>());
                     }
                     else
                     {
