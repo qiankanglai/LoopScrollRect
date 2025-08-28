@@ -1015,6 +1015,8 @@ namespace UnityEngine.UI
 
             ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
+            EnsureLayoutHasRebuilt();
+
             float sizeToFill = GetAbsDimension(viewRect.rect.size) + contentOffset;
             float sizeFilled = 0;
             // issue #169: fill last line
@@ -1091,6 +1093,9 @@ namespace UnityEngine.UI
 
             // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
             ReturnToTempPool(reverseDirection, m_Content.childCount);
+
+            // issue #207: avoid empty sizeToFill when Awake+RefillCells at the same time
+            EnsureLayoutHasRebuilt();
 
             float sizeToFill = GetAbsDimension(viewRect.rect.size) + contentOffset;
             float sizeFilled = 0;
