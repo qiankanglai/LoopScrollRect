@@ -642,6 +642,8 @@ namespace UnityEngine.UI
         private Bounds m_PrevViewBounds;
         [NonSerialized]
         private bool m_HasRebuiltLayout = false;
+        [NonSerialized]
+        private bool m_PrevPositionValid = false;
 
         private bool m_HSliderExpand;
         private bool m_VSliderExpand;
@@ -1165,6 +1167,7 @@ namespace UnityEngine.UI
             {
                 SetDirtyCaching();
                 m_HasRebuiltLayout = false;
+                m_PrevPositionValid = true;
                 if (!reverseDirection)
                 {
                     Vector2 offset = GetVector(size);
@@ -1211,6 +1214,7 @@ namespace UnityEngine.UI
             {
                 SetDirtyCaching();
                 m_HasRebuiltLayout = false;
+                m_PrevPositionValid = true;
                 if (!reverseDirection)
                 {
                     Vector2 offset = GetVector(size);
@@ -1253,6 +1257,7 @@ namespace UnityEngine.UI
             {
                 SetDirtyCaching();
                 m_HasRebuiltLayout = false;
+                m_PrevPositionValid = true;
                 if (reverseDirection)
                 {
                     Vector2 offset = GetVector(size);
@@ -1297,6 +1302,7 @@ namespace UnityEngine.UI
             {
                 SetDirtyCaching();
                 m_HasRebuiltLayout = false;
+                m_PrevPositionValid = true;
                 if (reverseDirection)
                 {
                     Vector2 offset = GetVector(size);
@@ -1346,6 +1352,7 @@ namespace UnityEngine.UI
                 UpdatePrevData();
 
                 m_HasRebuiltLayout = true;
+                m_PrevPositionValid = false;
             }
         }
 
@@ -1699,10 +1706,14 @@ namespace UnityEngine.UI
         /// </summary>
         protected void UpdatePrevData()
         {
-            if (m_Content == null)
-                m_PrevPosition = Vector2.zero;
-            else
-                m_PrevPosition = m_Content.anchoredPosition;
+            if (!m_PrevPositionValid)
+            {
+                // issue #209: When new/delete item occurred, `Rebuild()` is invoked but we shouldn't reset here.
+                if (m_Content == null)
+                    m_PrevPosition = Vector2.zero;
+                else
+                    m_PrevPosition = m_Content.anchoredPosition;
+            }
             m_PrevViewBounds = m_ViewBounds;
             m_PrevContentBounds = m_ContentBounds;
         }
