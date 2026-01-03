@@ -546,11 +546,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 410871722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 15, y: -0.0000030994415}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -362.00006, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!1 &392973512
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +728,7 @@ GameObject:
   - component: {fileID: 410871725}
   - component: {fileID: 410871727}
   m_Layer: 5
-  m_Name: HorizontalScroll_RandomSize
+  m_Name: HorizontalScroll_Reverse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -768,7 +768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalCount: 0
-  reverseDirection: 0
+  reverseDirection: 1
   m_Content: {fileID: 289570324}
   m_Horizontal: 1
   m_Vertical: 0
