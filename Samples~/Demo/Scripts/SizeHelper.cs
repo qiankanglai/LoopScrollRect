@@ -20,16 +20,17 @@ namespace Demo
             m_LoopListBank = GetComponent<LoopListBankBase>();
         }
 
-        public Vector2 GetItemsSize(int itemsCount)
+        public float GetItemsSize(int itemStart, int itemEnd)
         {
-            if (itemsCount <= 0) return new Vector2();
-            int count = m_LoopListBank.GetListLength();
-            Vector2 sum = new Vector2();
-            for (int i = 0; i < count; i++)
+            if (itemEnd <= itemStart) return 0;
+            float sum = 0;
+            for (int i = itemStart; i < itemEnd; i++)
             {
-                if (itemsCount <= i) break;
-                int t = (itemsCount - 1 - i) / count + 1;
-                sum += t * m_LoopListBank.GetCellPreferredSize(i);
+                Vector2 size = m_LoopListBank.GetCellPreferredSize(i);
+                if (m_LoopScrollRect.horizontal)
+                    sum += size.x;
+                else
+                    sum += size.y;
             }
             return sum;
         }

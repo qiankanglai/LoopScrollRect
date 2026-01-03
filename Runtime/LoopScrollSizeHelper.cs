@@ -6,6 +6,7 @@ namespace UnityEngine.UI
     // optional class for better scroll support
     public interface LoopScrollSizeHelper
     {
-        Vector2 GetItemsSize(int itemsCount);
+        // calculate size for elements within [itemStart, itemEnd)
+        float GetItemsSize(int itemStart, int itemEnd);
     }
 }
