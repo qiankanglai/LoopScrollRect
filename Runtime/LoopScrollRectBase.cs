@@ -826,23 +826,24 @@ namespace UnityEngine.UI
                 dist = elementSize * (TargetLine - CurrentLine) + contentSpacing * (TargetLine - CurrentLine);
             }
             dist += reverseDirection ? currentOffset : -currentOffset;
-            if (direction == LoopScrollRectDirection.Horizontal)
-                dist = -dist;
-            dist += offset;
             if (mode == ScrollMode.ToCenter)
             {
+                float elementSize = 0;
                 float sizeToFill = GetAbsDimension(viewRect.rect.size);
                 if (sizeHelper != null)
                 {
-                    sizeToFill -= sizeHelper.GetItemsSize(index, index);
+                    elementSize = sizeHelper.GetItemsSize(index, index + 1);
                 }
                 else
                 {
-                    float elementSize = EstimiateElementSize();
-                    sizeToFill -= elementSize;
+                    elementSize = EstimiateElementSize();
                 }
-                dist += sizeToFill * 0.5f;
+                float centerOffset = (sizeToFill - elementSize) * 0.5f;
+                dist += reverseDirection ? centerOffset : -centerOffset;
             }
+            if (direction == LoopScrollRectDirection.Horizontal)
+                dist = -dist;
+            dist += offset;
             StartCoroutine(ScrollToCellCoroutine(index, Mathf.Abs(dist) / time, offset, mode));
         }
 
