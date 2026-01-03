@@ -745,7 +745,7 @@ namespace UnityEngine.UI
                     size = GetSize(m_Content.GetChild(totalChildCount - idx - 1) as RectTransform);
                 }
             }
-            int item = itemTypeEnd - idx;
+            int item = itemTypeEnd - 1 - idx;
             if (totalCount >= 0 && idx > 0 && item % contentConstraintCount != 0)
             {
                 item = (item / contentConstraintCount) * contentConstraintCount;
@@ -812,31 +812,29 @@ namespace UnityEngine.UI
             int TargetLine = (index / contentConstraintCount);
             int CurrentLine = (currentFirst / contentConstraintCount);
 
-            if (TargetLine == CurrentLine)
+            if (sizeHelper != null)
             {
-                dist = -currentOffset;
+                int delta = reverseDirection ? 1 : 0;
+                if (TargetLine > CurrentLine)
+                    dist = sizeHelper.GetItemsSize(currentFirst + delta, index + delta) + contentSpacing * (TargetLine - CurrentLine);
+                else if (TargetLine < CurrentLine)
+                    dist = -sizeHelper.GetItemsSize(index + delta, currentFirst + delta) + contentSpacing * (TargetLine - CurrentLine);
             }
             else
             {
-                if (sizeHelper != null)
-                {
-                    dist = GetDimension(sizeHelper.GetItemsSize(currentFirst) - sizeHelper.GetItemsSize(index)) + contentSpacing * (CurrentLine - TargetLine);
-                    dist -= currentOffset;
-                }
-                else
-                {
-                    float elementSize = EstimiateElementSize();
-                    dist = elementSize * (CurrentLine - TargetLine) + contentSpacing * (CurrentLine - TargetLine);
-                    dist -= currentOffset;
-                }
+                float elementSize = EstimiateElementSize();
+                dist = elementSize * (TargetLine - CurrentLine) + contentSpacing * (TargetLine - CurrentLine);
             }
+            dist += reverseDirection ? currentOffset : -currentOffset;
+            if (direction == LoopScrollRectDirection.Horizontal)
+                dist = -dist;
             dist += offset;
             if (mode == ScrollMode.ToCenter)
             {
                 float sizeToFill = GetAbsDimension(viewRect.rect.size);
                 if (sizeHelper != null)
                 {
-                    sizeToFill -= GetDimension(sizeHelper.GetItemsSize(index));
+                    sizeToFill -= sizeHelper.GetItemsSize(index, index);
                 }
                 else
                 {
@@ -1736,8 +1734,8 @@ namespace UnityEngine.UI
             float paddingSize = m_ContentLeftPadding + m_ContentRightPadding;
             if (sizeHelper != null)
             {
-                totalSize = sizeHelper.GetItemsSize(TotalLines).x + contentSpacing * (TotalLines - 1) + paddingSize;
-                offset = m_ContentBounds.min.x - sizeHelper.GetItemsSize(StartLine).x - contentSpacing * StartLine;
+                totalSize = sizeHelper.GetItemsSize(0, TotalLines) + contentSpacing * (TotalLines - 1) + paddingSize;
+                offset = m_ContentBounds.min.x - sizeHelper.GetItemsSize(0, StartLine) - contentSpacing * StartLine;
             }
             else
             {
@@ -1752,8 +1750,8 @@ namespace UnityEngine.UI
             float paddingSize = m_ContentTopPadding + m_ContentBottomPadding;
             if (sizeHelper != null)
             {
-                totalSize = sizeHelper.GetItemsSize(TotalLines).y + contentSpacing * (TotalLines - 1) + paddingSize;
-                offset = m_ContentBounds.max.y + sizeHelper.GetItemsSize(StartLine).y + contentSpacing * StartLine;
+                totalSize = sizeHelper.GetItemsSize(0, TotalLines) + contentSpacing * (TotalLines - 1) + paddingSize;
+                offset = m_ContentBounds.max.y + sizeHelper.GetItemsSize(0, StartLine) + contentSpacing * StartLine;
             }
             else
             {
