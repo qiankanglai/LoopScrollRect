@@ -939,7 +939,8 @@ namespace UnityEngine.UI
                             }
                         }
 
-                        float maxMove = Time.deltaTime * speed;
+                        // issue #212: speed maybe zero when target is close enough
+                        float maxMove = Mathf.Max(Time.deltaTime * speed, 0.001f);
                         if (Mathf.Abs(delta) < maxMove)
                         {
                             needMoving = false;
