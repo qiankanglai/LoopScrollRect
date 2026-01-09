@@ -1041,7 +1041,7 @@ namespace UnityEngine.UI
             }
             float sizeFilledAtStart = sizeFilled;
             
-            // refill from start in case not full yet
+            // refill from end in case not full yet
             while (sizeToFill > sizeFilled)
             {
                 float size = NewItemAtEnd();
@@ -1069,7 +1069,8 @@ namespace UnityEngine.UI
             // force build bounds here so scrollbar can access newest bounds
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
             Canvas.ForceUpdateCanvases();
-            UpdateBounds(false);
+            // issue #214: content padding may leave fillable space
+            UpdateBounds(true);
             UpdateScrollbars(Vector2.zero);
             StopMovement();
             UpdatePrevData();
@@ -1140,7 +1141,8 @@ namespace UnityEngine.UI
             // force build bounds here so scrollbar can access newest bounds
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_Content);
             Canvas.ForceUpdateCanvases();
-            UpdateBounds(false);
+            // issue #214: content padding may leave fillable space
+            UpdateBounds(true);
             UpdateScrollbars(Vector2.zero);
             StopMovement();
             UpdatePrevData();
