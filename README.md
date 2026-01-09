@@ -9,83 +9,61 @@ These scripts help make your ScrollRect `Reusable`, because it will only build c
 
 ## Installation
 
-Open Package Manager and Add package from git URL `https://github.com/qiankanglai/LoopScrollRect.git`.
+`openupm add me.qiankanglai.loopscrollrect` with [OpenUPM](https://openupm.com/), or open Package Manager and Add package from git URL `https://github.com/qiankanglai/LoopScrollRect.git`.
 
-With [OpenUPM](https://openupm.com/), just one command `openupm add me.qiankanglai.loopscrollrect`.
+## Demo Scene
 
-With older Unity version, just clone the repo and put into `Assets/`.
-
-## Demo
-
-Demo for Loop Scroll Rect. Each cell knows its own index, and it is able to modify its content/size/color easily.
-
-Also ScrollBar is supported now! It supports both vertical & horizontal directions, back and forth.
+Please refer to `DemoScene` for quick startup.
 
 ![Demo1](Images~/demo1.gif)
 
 ![Demo2](Images~/demo2.gif)
 
-Demo without mask. As you can see, the cells are only instantiated when needed and recycled.
+LoopScrollRect with mask disabled.
 
 ![Demo3](Images~/demo3.gif)
 
-**New**: Scroll to Index
+More complex example can be found in `DemoScene_MultiCell`.
 
-![ScrollToIndex](Images~/ScrollToIndex.gif)
+`DemoSceneSingle` tests LoopScrollRects which are not fully filled.
 
-## Introduction
+### Quick Start
 
-The original idea comes from @ivomarel's [InfinityScroll](https://github.com/ivomarel/InfinityScroll). After serveral refactorisations, I almost rewrite all the codes:
-- Avoid using `sizeDelta` directly since it doesn't always mean size
-- Support GridLayout
-- Avoid blocking when dragging back
-- Take advantage of pool rather than instantiate/destroy every time
-- Improve some other details for performance
-- Supports reverse direction
-- **Supports ScrollBar** (this doesn't work in Infinite mode, and may behavior strange for cells with different size)
+Please refer to `InitOnStart.cs` for simplest example usage:
+- Implementing `LoopScrollPrefabSource` for providing different cells, and it's high recommended for using cache pool.
+- Implementing `LoopScrollDataSource` for providing data for specified cell.
 
-My scripts copies `ScrollRect` from [UGUI](https://bitbucket.org/Unity-Technologies/ui) rather than inherit `ScrollRect` like InfinityScroll. I need to modify some private variants to make dragging smooth. All my codes is wrapped with comments like `==========LoopScrollRect==========`, making maintaining a little easier.
+Also refer to `SizeHelper.cs` if you are using cells with different sizes:
+- Implementing `LoopScrollSizeHelper` for providing precise cell sizes.
 
-## Example
+### Inspector & API
 
-Please refer to `InitOnStart.cs` for quick example implmentation. It's high recommended for implmentating your own cache pool.
+Apart from implementing interfaces above, other staffs are provided in Inspector for quick test.
 
-### Infinite Version
+![Inspector](Images~/Inspector.png)
 
-If you need scroll infinitely, you can simply set `totalCount` to a negative number.
+- Total Count: How many cells in total? Negative number means infinity.
+- Reverse Direction: If you need scrolling from down to top(vertical) or right to left(horizontal), enable this and adjust Content's pivot&Anchor.
 
-### Quick Jump
+- Basic Usage
+    - Clear: Clear existing items and set total count to zero.
+    - Refresh: Refresh existing items without effecting layout. All cells only get data updated for performance concern.
+    - Refill: Clear and refill items from start. Layout is recalculated fully.
+    - RefillFromEnd: Clear and refill items from end. Layout is recalculated fully.
+- Refill Test
+    - GetFirstItem: Get the first visible item index and offset
+    - Refill: Clear and refill items from start, using specified first item and offset.
+- RefillFromEnd Test
+    - GetLastItem: Get the last visible item index and offset
+    - RefillFromEnd: Clear and refill items from end, using specified last item and offset.
+- Scroll Test
+    - ScrollToCell: Scroll to specified item and offset with speed
+    - ScrollToCellWithinTime: Scroll to specified item and offset in time
 
-I've implemented a simple version with `Coroutine`. You can use the following API:
+### Cell setup
 
-    public void SrollToCell(int index, float speed)
+The cell needs `Layout Element` attached and preferred width/height.
 
-Here is a corner case unsolved yet: You can't jump to the last cells which cannot be pulled to the start.
-
-## Example: Loop Vertical Scroll Rect
-
-These steps may be confusing, so you can just open the demo scene and copy & paste :D
-
-You can also remove EasyObjPool and use your pool instead.
-
-- Prepare cell prefabs
-    - The cell needs `Layout Element` attached and preferred width/height
-    - You should add a script receiving message `void ScrollCellIndex (int idx) `
+Also cell needs to be attached with script receiving `void ScrollCellIndex (int idx)`.
 
 ![ScrollCell](Images~/ScrollCell.png)
-
-- Right click in Hierarchy and click **UI/Loop Horizontal Scroll Rect** or **UI/Loop Vertical Scroll Rect**. It is the same for these two in the Component Menu.
-    - Init in Start: call Refill cells automatically when Start
-    - Prefab Pool: the EasyObjPool gameObject
-    - Prefab Pool Name: the corresponding pool in step 1
-    - Total Count: How many cells are available (index: 0 ~ TotalCount-1)
-    - Threshold: How many additional pixels of content should be prepared before start or after end?
-    - ReverseDirection: If you want scroll from bottom or right, you should toggle this
-    - Clear Cells: remove existing cells and keep uninitialized
-    - Refill Cells: initialize and fill up cells
-
-![LoopVerticalScrollRect](Images~/LoopVerticalScrollRect.png)
-
-If you need scroll from top or left, setting content's pivot to 1 and disable ReverseDirection. Otherwise, you should set 0 to pivot and enable ReverseDirection (I have made `VerticalScroll_Reverse` in the demo scene as reference).
-
-I highly suggests you trying these parameters by hand. More details can be found in the demo scene.

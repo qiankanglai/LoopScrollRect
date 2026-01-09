@@ -190,8 +190,8 @@ namespace UnityEditor.UI
             GUI.enabled = Application.isPlaying;
             const float buttonWidth = 100f;
 
-            #region Basic Test
-            EditorGUILayout.LabelField("Basic Test", EditorStyles.boldLabel);
+            #region Basic Usage
+            EditorGUILayout.LabelField("Basic Usage", EditorStyles.boldLabel);
             
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Clear existing items");
