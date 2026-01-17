@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5] - 2026-01-17
+### Changed
+- new `GetItemsSize` interface to support infinity scroll
+- Fix velocity calculation, thanks to @zhiyangyou
+- Fix distance estimation in `ScrollToCellWithinTime`, thanks to @fddjjj
+- Fix `RefillCells` with content padding
+
 ## [1.1.4] - 2025-07-18
 ### Changed
 - Avoid `UpdateBounds` when disabled
