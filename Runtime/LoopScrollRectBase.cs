@@ -603,6 +603,33 @@ namespace UnityEngine.UI
         /// </example>
         public ScrollRectEvent onValueChanged { get { return m_OnValueChanged; } set { m_OnValueChanged = value; } }
 
+        //==========LoopScrollRect==========
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float m_FixedHorizontalScrollbarSize = 0f;
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float m_FixedVerticalScrollbarSize = 0f;
+
+        /// <summary>
+        /// Optional fixed size for horizontal scrollbar handle (0 = auto, 0.1 = 10% of track, etc).
+        /// </summary>
+        public float fixedHorizontalScrollbarSize
+        {
+            get => m_FixedHorizontalScrollbarSize;
+            set { m_FixedHorizontalScrollbarSize = Mathf.Clamp01(value); SetDirty(); }
+        }
+
+        /// <summary>
+        /// Optional fixed size for vertical scrollbar handle (0 = auto, 0.1 = 10% of track, etc).
+        /// </summary>
+        public float fixedVerticalScrollbarSize
+        {
+            get => m_FixedVerticalScrollbarSize;
+            set { m_FixedVerticalScrollbarSize = Mathf.Clamp01(value); SetDirty(); }
+        }
+        //==========LoopScrollRect==========
+
         // The offset from handle position to mouse down position
         private Vector2 m_PointerStartLocalCursor = Vector2.zero;
         protected Vector2 m_ContentStartPosition = Vector2.zero;
@@ -1774,7 +1801,12 @@ namespace UnityEngine.UI
                 {
                     float totalSize, _;
                     GetHorizonalOffsetAndSize(out totalSize, out _);
-                    m_HorizontalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / totalSize);
+                    float size = Mathf.Clamp01((m_ViewBounds.size.x - Mathf.Abs(offset.x)) / totalSize);
+                    if (m_FixedHorizontalScrollbarSize > 0f)
+                    {
+                        size = size / (m_ViewBounds.size.x / totalSize) * m_FixedHorizontalScrollbarSize;
+                    }
+                    m_HorizontalScrollbar.size = size;
                 }
                 //==========LoopScrollRect==========
                 else
@@ -1792,7 +1824,12 @@ namespace UnityEngine.UI
                 {
                     float totalSize, _;
                     GetVerticalOffsetAndSize(out totalSize, out _);
-                    m_VerticalScrollbar.size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / totalSize);
+                    float size = Mathf.Clamp01((m_ViewBounds.size.y - Mathf.Abs(offset.y)) / totalSize);
+                    if (m_FixedVerticalScrollbarSize > 0f)
+                    {
+                        size = size / (m_ViewBounds.size.y / totalSize) * m_FixedVerticalScrollbarSize;
+                    }
+                    m_VerticalScrollbar.size = size;
                 }
                 //==========LoopScrollRect==========
                 else
