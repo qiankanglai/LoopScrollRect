@@ -1033,6 +1033,8 @@ namespace UnityEngine.UI
             if (!Application.isPlaying)
                 return;
 
+            ReturnToTempPool(!reverseDirection, m_Content.childCount);
+
             itemTypeEnd = reverseDirection ? endItem : totalCount - endItem;
             itemTypeStart = itemTypeEnd;
             itemTypeSize = 0;
@@ -1041,8 +1043,6 @@ namespace UnityEngine.UI
             {
                 itemTypeStart = (itemTypeStart / contentConstraintCount) * contentConstraintCount;
             }
-
-            ReturnToTempPool(!reverseDirection, m_Content.childCount);
 
             EnsureLayoutHasRebuilt();
 
@@ -1113,6 +1113,9 @@ namespace UnityEngine.UI
             if (!Application.isPlaying)
                 return;
 
+            // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
+            ReturnToTempPool(reverseDirection, m_Content.childCount);
+
             itemTypeStart = reverseDirection ? totalCount - startItem : startItem;
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
             {
@@ -1120,9 +1123,6 @@ namespace UnityEngine.UI
             }
             itemTypeEnd = itemTypeStart;
             itemTypeSize = 0;
-
-            // Don't `Canvas.ForceUpdateCanvases();` here, or it will new/delete cells to change itemTypeStart/End
-            ReturnToTempPool(reverseDirection, m_Content.childCount);
 
             // issue #207: avoid empty sizeToFill when Awake+RefillCells at the same time
             EnsureLayoutHasRebuilt();

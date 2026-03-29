@@ -1,9 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnityEngine.UI
 {
@@ -21,17 +18,32 @@ namespace UnityEngine.UI
         protected override RectTransform GetFromTempPool(int itemIdx)
         {
             RectTransform nextItem = null;
-            if (deletedItemTypeStart > 0)
+            bool existingData = false;
+            if (deletedItemsAtStart.TryGetValue(itemIdx, out nextItem))
             {
+                deletedItemsAtStart.Remove(itemIdx);
                 deletedItemTypeStart--;
-                nextItem = m_Content.GetChild(0) as RectTransform;
-                nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
+                existingData = true;
+            }
+            else if (deletedItemsAtEnd.TryGetValue(itemIdx, out nextItem))
+            {
+                deletedItemsAtEnd.Remove(itemIdx);
+                deletedItemTypeEnd--;
+                existingData = true;
+            }
+            else if (deletedItemsAtStart.Count > 0)
+            {
+                var first = deletedItemsAtStart.First();
+                deletedItemsAtStart.Remove(first.Key);
+                deletedItemTypeStart--;
+                nextItem = first.Value;
             }
             else if (deletedItemTypeEnd > 0)
             {
+                var first = deletedItemsAtEnd.First();
+                deletedItemsAtEnd.Remove(first.Key);
                 deletedItemTypeEnd--;
-                nextItem = m_Content.GetChild(m_Content.childCount - 1) as RectTransform;
-                nextItem.SetSiblingIndex(itemIdx - itemTypeStart + deletedItemTypeStart);
+                nextItem = first.Value;
             }
             else
             {
@@ -39,21 +51,40 @@ namespace UnityEngine.UI
                 nextItem.transform.SetParent(m_Content, false);
                 nextItem.gameObject.SetActive(true);
             }
-            ProvideData(nextItem, itemIdx);
+            if (!existingData)
+            {
+                ProvideData(nextItem, itemIdx);
+            }
             return nextItem;
         }
 
+        protected Dictionary<int, RectTransform> deletedItemsAtStart = new Dictionary<int, RectTransform>();
+        protected Dictionary<int, RectTransform> deletedItemsAtEnd = new Dictionary<int, RectTransform>();
         protected override void ReturnToTempPool(bool fromStart, int count)
         {
             if (fromStart)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    deletedItemsAtStart.Add(itemTypeStart + i, m_Content.GetChild(deletedItemTypeStart + i) as RectTransform);
+                }
                 deletedItemTypeStart += count;
+            }
             else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    deletedItemsAtEnd.Add(itemTypeEnd - 1 - i, m_Content.GetChild(m_Content.childCount - 1 - deletedItemTypeEnd - i) as RectTransform);
+                }
                 deletedItemTypeEnd += count;
+            }
         }
 
         protected override void ClearTempPool()
         {
             Debug.Assert(m_Content.childCount >= deletedItemTypeStart + deletedItemTypeEnd);
+            deletedItemsAtStart.Clear();
+            deletedItemsAtEnd.Clear();
             if (deletedItemTypeStart > 0)
             {
                 for (int i = deletedItemTypeStart - 1; i >= 0; i--)
