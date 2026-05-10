@@ -76,8 +76,8 @@ namespace UnityEngine.UI
         }
         protected LoopScrollRectDirection direction = LoopScrollRectDirection.Horizontal;
 
-        private bool m_ContentSpaceInit = false;
-        private float m_ContentSpacing = 0;
+        protected bool m_ContentSpaceInit = false;
+        protected float m_ContentSpacing = 0;
         protected float m_ContentLeftPadding = 0;
         protected float m_ContentRightPadding = 0;
         protected float m_ContentTopPadding = 0;
