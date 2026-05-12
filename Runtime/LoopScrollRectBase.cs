@@ -118,8 +118,8 @@ namespace UnityEngine.UI
             }
         }
 
-        private bool m_ContentConstraintCountInit = false;
-        private int m_ContentConstraintCount = 0;
+        protected bool m_ContentConstraintCountInit = false;
+        protected int m_ContentConstraintCount = 0;
         protected int contentConstraintCount
         {
             get
