@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System;
@@ -966,15 +966,24 @@ namespace UnityEngine.UI
                         }
 
                         // issue #212: speed maybe zero when target is close enough
-                        float maxMove = Mathf.Max(Time.deltaTime * speed, 0.001f);
-                        if (Mathf.Abs(delta) < maxMove)
+                        float maxMove = Time.deltaTime * speed;
+                        if (maxMove <= 0)
                         {
                             needMoving = false;
                             move = delta;
                         }
                         else
                         {
-                            move = Mathf.Sign(delta) * maxMove;
+                            maxMove = Mathf.Max(maxMove, 0.001f);
+                            if (Mathf.Abs(delta) < maxMove)
+                            {
+                                needMoving = false;
+                                move = delta;
+                            }
+                            else
+                            {
+                                move = Mathf.Sign(delta) * maxMove;
+                            }
                         }
                     }
                     if (move != 0)
