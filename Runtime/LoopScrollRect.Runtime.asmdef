@@ -11,6 +11,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "2.6.0",
+            "define": "LOOPSCROLLRECT_UGUI_2_6_OR_NEWER"
+        }
+    ],
     "noEngineReferences": false
 }

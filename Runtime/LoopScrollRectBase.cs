@@ -2078,6 +2078,12 @@ namespace UnityEngine.UI
         /// Called by the layout system.
         /// </summary>
         public virtual float minWidth { get { return -1; } }
+        #if LOOPSCROLLRECT_UGUI_2_6_OR_NEWER
+        /// <summary>
+        /// Called by the layout system.
+        /// </summary>
+        public virtual float maxWidth { get { return LayoutUtility.DefaultMaxSize; } }
+        #endif
         /// <summary>
         /// Called by the layout system.
         /// </summary>
@@ -2091,6 +2097,12 @@ namespace UnityEngine.UI
         /// Called by the layout system.
         /// </summary>
         public virtual float minHeight { get { return -1; } }
+        #if LOOPSCROLLRECT_UGUI_2_6_OR_NEWER
+        /// <summary>
+        /// Called by the layout system.
+        /// </summary>
+        public virtual float maxHeight { get { return LayoutUtility.DefaultMaxSize; } }
+        #endif
         /// <summary>
         /// Called by the layout system.
         /// </summary>
