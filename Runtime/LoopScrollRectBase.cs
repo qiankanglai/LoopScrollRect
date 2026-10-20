@@ -1042,6 +1042,9 @@ namespace UnityEngine.UI
             if (!Application.isPlaying)
                 return;
 
+            m_ContentSpaceInit = false;
+            m_ContentConstraintCountInit = false;
+
             itemTypeEnd = reverseDirection ? endItem : totalCount - endItem;
             itemTypeStart = itemTypeEnd;
             itemTypeSize = 0;
@@ -1121,6 +1124,10 @@ namespace UnityEngine.UI
         {
             if (!Application.isPlaying)
                 return;
+
+            // issue #223: invalid cache
+            m_ContentSpaceInit = false;
+            m_ContentConstraintCountInit = false;
 
             itemTypeStart = reverseDirection ? totalCount - startItem : startItem;
             if (totalCount >= 0 && itemTypeStart % contentConstraintCount != 0)
